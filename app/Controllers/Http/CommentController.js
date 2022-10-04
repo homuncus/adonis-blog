@@ -42,8 +42,19 @@ class CommentController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response }) {
-    
+  async store ({ request, response, session }) {
+    const {value, type} = request.all()
+    const comment = new Comment()
+    try{
+      comment.value = value
+      comment.type = type
+      await comment.save()
+      session.flash({success: 'Successfully posted a comment'})
+      return response.redirect('back')
+    } catch (e) {
+      session.flash({error: "something went wrong"})
+      return response.redirect('back')
+    }
   }
 
   /**
@@ -79,6 +90,18 @@ class CommentController {
    * @param {Response} ctx.response
    */
   async update ({ params, request, response }) {
+    const {id} = params
+    const {value} = request.all()
+    const comment = await Comment.find(id)
+    try{
+      comment.value = value
+      await comment.save()
+      session.flash({success: 'Update successful'})
+      return response.redirect('back')
+    } catch (e) {
+      session.flash({error: 'Something went wrong'})
+      return response.redirect('back')
+    }
   }
 
   /**
@@ -90,6 +113,15 @@ class CommentController {
    * @param {Response} ctx.response
    */
   async destroy ({ params, request, response }) {
+    const {id} = params
+    const comment = await Comment.find(id)
+    try { 
+      await comment.delete()
+      session.flash({success: 'Delete successful'})
+    } catch(e) {
+      session.flash({error: 'Deletion went wrong'})
+    }
+    response.redirect('back')
   }
 }
 
