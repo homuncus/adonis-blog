@@ -43,11 +43,10 @@ class CommentController {
    * @param {Response} ctx.response
    */
   async store ({ request, response, session }) {
-    const {value, type} = request.all()
+    const {value} = request.all()
     const comment = new Comment()
     try{
       comment.value = value
-      comment.type = type
       await comment.save()
       session.flash({success: 'Successfully posted a comment'})
       return response.redirect('back')
