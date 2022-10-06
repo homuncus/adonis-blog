@@ -7,6 +7,8 @@ class PostLikeSchema extends Schema {
   up () {
     this.create('post_likes', (table) => {
       table.increments()
+      table.integer('user_id').references('id').inTable('users')
+      table.integer('post_id').references('id').inTable('posts')
       table.timestamps()
     })
   }

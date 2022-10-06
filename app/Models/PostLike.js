@@ -4,6 +4,12 @@
 const Model = use('Model')
 
 class PostLike extends Model {
+    post(){
+        return this.belongsTo('App/Models/Post')
+    }
+    user(){
+        return this.belongsTo('App/Models/User')
+    }
 }
 
 module.exports = PostLike

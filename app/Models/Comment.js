@@ -4,6 +4,15 @@
 const Model = use('Model')
 
 class Comment extends Model {
+    likes(){
+        return this.hasMany('App/Models/CommentLike')
+    }
+    user(){
+        return this.belongsTo('App/Models/User')
+    }
+    likeCount(){
+        return this.hasMany('App/Models/CommentLikes').length
+    }
 }
 
 module.exports = Comment
