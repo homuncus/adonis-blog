@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Home</title>
+    @include('includes/head')
+</head>
+<body>
+    @include('includes/header')
+    <div class="container row">
+        <div class="col-8">
+            @if(posts)
+                @!each(post in posts, include = 'includes/post_card', {post: post, user: post.user().fetch()})
+            @else
+                <div class="d-flex justify-content-center">
+                    <p class="fw-2">No recent posts</p>
+                </div>
+            @endif
+        </div>
+    </div>
+</body>
+</html>
