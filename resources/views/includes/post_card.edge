@@ -1,20 +1,22 @@
-<div class="card row-hover pos-relative py-3 px-3 mb-3 border-warning border-top-0 border-right-0 border-bottom-0 rounded-0">
+<div class="card row-hover pos-relative py-3 px-3 mb-3 hover-shadow border-start border-3">
     <div class="row align-items-center">
       <div class="col-md-8 mb-3 mb-sm-0">
         <h5>
-          <a href="#" class="text-primary">{{post.theme}}</a>
+          <a href="/posts/{{post.id}}" class="text-primary">{{post.title}}</a>
         </h5>
-        <p class="text-sm"><span class="op-6">Posted</span> <a class="text-black" href="#">? minutes</a> <span class="op-6">ago by</span> <a class="text-black" href="{{}}">KenyeW</a></p>
+        <p class="text-sm"><span class="op-6">Posted at</span> <a class="text-black" href="/search?time={{post.created_at}}">{{post.created_at}}</a> <span class="op-6">by</span> <a class="text-black" href="/users/{{post.user.id}}">{{post.user.username}}</a></p>
         <div class="text-sm op-5"> 
-          @each(tag in post.tags().fetch())
-            <a class="text-black mr-2" href="#">{{tag.value}}</a>
-          @endeach
+          @each(tag in post.tags)
+            <a class="text-black mr-2 mb-0" href="/search?tag={{tag.value}}">{{tag.value}}</a>
+          @else
+            <p class="text-black mr-2 mb-0 fst-italic">No tags</p>
+          @endeach  
         </div>
       </div>
       <div class="col-md-4 op-7">
         <div class="row text-center op-7">
-          <div class="col px-1"> <i class="ion-connection-bars icon-1x"></i> <span class="d-block text-sm">{{post.votes().getCount()}}</span> </div>
-          <div class="col px-1"> <i class="ion-ios-chatboxes-outline icon-1x"></i> <span class="d-block text-sm">{{post.comments().getCount()}}</span> </div>
+          <div class="col px-1"> <i class="fas fa-signal fa-lg"></i> <span class="d-block text-sm">Votes: <span class="fw-bold">{{post.likes.length}}</span></span> </div>
+        <div class="col px-1"> <i class="far fa-comments fa-lg"></i> <span class="d-block text-sm">Posts: <span class="fw-bold">{{post.comments.length}}</span></span> </div>
         </div>
       </div>
     </div>

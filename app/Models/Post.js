@@ -13,6 +13,13 @@ class Post extends Model {
     likeCount(){
         return this.hasMany('App/Models/PostLike').length
     }
+    comments(){
+        return this.hasMany('App/Models/Comment')
+    }
+    tags(){
+        return this.belongsToMany('App/Models/Tag')
+        .pivotTable('post_tags')
+    }
 }
 
 module.exports = Post

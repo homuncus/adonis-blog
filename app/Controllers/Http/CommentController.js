@@ -4,6 +4,7 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
+/** @type {typeof import('@adonisjs/../../app/Models/Comment')} */
 const Comment = use('App/Models/Comment')
 
 /**
@@ -42,11 +43,12 @@ class CommentController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response, session }) {
+  async store ({ request, response, session, auth }) {
     const {value} = request.all()
     const comment = new Comment()
     try{
       comment.value = value
+      comment.user_id = auth.user.id
       await comment.save()
       session.flash({success: 'Successfully posted a comment'})
       return response.redirect('back')
@@ -116,7 +118,7 @@ class CommentController {
     const comment = await Comment.find(id)
     try { 
       await comment.delete()
-      session.flash({success: 'Delete successful'})
+      session.flash({success: 'Deletion is successful'})
     } catch(e) {
       session.flash({error: 'Deletion went wrong'})
     }

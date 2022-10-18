@@ -1,16 +1,16 @@
 @layout('layouts.root')
 
-
 @section('body')
-@set('title', 'Home')
+@set('title', 'Search: ' + query)
 <div class="container">
     <div class="row my-4">
+        <a href="/" class="btn btn-primary mb-4">Searching "{{query}}"</a>
         <div class="col-lg-8">
             @each(post in posts)
                 @include('includes/post_card')
             @else
                 <div class="d-flex justify-content-center w-100">
-                    <h3>No recent posts</h3>
+                    <p class="fw-2">No recent posts</p>
                 </div>
             @endeach
         </div>

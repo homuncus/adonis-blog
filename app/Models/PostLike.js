@@ -5,10 +5,10 @@ const Model = use('Model')
 
 class PostLike extends Model {
     post(){
-        return this.belongsTo('App/Models/Post')
+        return this.hasOne('App/Models/Post')
     }
     user(){
-        return this.belongsTo('App/Models/User')
+        return this.hasOne('App/Models/User')
     }
 }
 

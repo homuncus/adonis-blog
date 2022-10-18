@@ -11,7 +11,7 @@ class Comment extends Model {
         return this.belongsTo('App/Models/User')
     }
     likeCount(){
-        return this.hasMany('App/Models/CommentLikes').length
+        return this.hasMany('App/Models/CommentLike').length
     }
 }
 

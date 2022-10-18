@@ -1,12 +1,20 @@
 'use strict'
 
+const { UserNotFoundException } = require('@adonisjs/auth/src/Exceptions')
 const { RuntimeException } = require('@adonisjs/lucid/src/Exceptions')
 
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
+/** @type {typeof import('@adonisjs/../../app/Models/Post')} */
 const Post = use('App/Models/Post')
+/** @type {typeof import('@adonisjs/../../app/Models/User')} */
+const User = use('App/Models/User')
+/** @type {typeof import('@adonisjs/../../app/Models/Comment')} */
+const Comment = use('App/Models/Comment')
+
+const CloudinaryService = use('App/Services/CloudinaryService');
 const Helpers = use('Helpers')
 
 /**
@@ -23,8 +31,11 @@ class PostController {
    * @param {View} ctx.view
    */
   async index ({ request, response, view }) {
-    const posts = await Post.all()
-    view.render('index', {posts: posts})
+    const posts = await Post.query().with('comments').with('tags').with('likes').with('user').fetch()
+    return view.render('index', {
+      posts: posts.toJSON(),
+      meta: request.meta
+    })
   }
 
   /**
@@ -37,7 +48,7 @@ class PostController {
    * @param {View} ctx.view
    */
   async create ({ request, response, view }) {
-    view.render('addpost');
+    return view.render('post_add');
   }
 
   /**
@@ -48,31 +59,34 @@ class PostController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response, session }) {
-    const {theme, text} = request.all()
-    const img = request.file('img', {
+  async store ({ request, response, session, auth }) {
+    const {title, text} = request.all()
+    const img = request.file('image', {
       types: ['image'],
-      size: '2mb',
-      extnames: ['png', 'jpg', 'jpeg']
+      size: '2mb'
     })
-
     try{
-      await img.move(Helpers.tmpPath('uploads'), {
-        name: `${new Date().getTime()}.${file.subtype}`
-      })
-      if (!img.moved()) {
-        throw new RuntimeException
-      }
       const post = new Post()
-      post.theme = theme
+        // await img.move(Helpers.tmpPath('uploads'), {
+        // name: `${new Date().getTime()}.${file.subtype}`
+        // })
+        // if (!img.moved()) {
+        //   session.flash({error: img.error()})
+        //   return response.redirect('back')
+        // }
+        // post.img_path = img.fileName
+      const cloudinaryResponse = await CloudinaryService.v2.uploader.upload(img.tmpPath, {folder: 'forum/uploads'});
+      post.img_path = cloudinaryResponse.secure_url
+      
+      post.title = title
       post.text = text
-      post.img_path = img.fileName
+      post.user_id = auth.user.id
       await post.save()
       session.flash({success: 'Sucessfully created a post'})
     } catch(e) {
-      session.flash({error: 'Error creating a post'})
+      session.flash({error: e.message})
     }
-    response.redirect('back');
+    return response.redirect('/');
   }
 
   /**
@@ -87,7 +101,46 @@ class PostController {
   async show ({ params, request, response, view }) {
     const {id} = params
     const post = await Post.find(id)
-    return view.render('post-show', {post: post})
+    return view.render('post', {post: post.toJSON()})
+  }
+
+  /**
+   * Search for a posts.
+   * GET search
+   *
+   * @param {object} ctx
+   * @param {Request} ctx.request
+   * @param {Response} ctx.response
+   * @param {View} ctx.view
+   */
+   async search ({ params, request, response, view }) {
+    const {tag, title, time} = request.all()
+    var queryToDisplay = ""; 
+    var query = Post.query();
+    if(tag) {
+      query = query.whereHas('tags', (builder) => {
+        builder.where('value', tag)
+      })
+      queryToDisplay += `tag: ${tag}`
+    }
+    if(title) {
+      query = query.where('title', 'like', `%${title}%`)
+      if(queryToDisplay)
+        queryToDisplay += `, `
+      queryToDisplay += `title: ${title}`
+    }
+    if(time) {
+      query = query.where(`datediff(day, created_at, ${time})`, 0)
+      if(queryToDisplay)
+        queryToDisplay += `, `
+      queryToDisplay += `time: ${time}`
+    }
+    const posts = await query.with('user').with('likes').with('comments').fetch()
+    return view.render('search', {
+      posts: posts.toJSON(),
+      meta: request.meta,
+      query: queryToDisplay
+    })
   }
 
   /**
@@ -102,7 +155,7 @@ class PostController {
   async edit ({ params, request, response, view }) {
     const {id} = params
     const post = await Post.find(id)
-    return view.render('post-edit', {post: post})
+    return view.render('post_edit', {post: post.toJSON()})
   }
 
   /**
@@ -115,7 +168,7 @@ class PostController {
    */
   async update ({ params, request, response, session }) {
     const {id} = params
-    const {theme, text} = request.all()
+    const {title, text} = request.all()
     const img = request.file('img', {
       types: ['image'],
       size: '2mb',
@@ -123,7 +176,7 @@ class PostController {
     })
     const post = await Post.find(id)
     try{
-      if(theme) post.theme = theme
+      if(title) post.title = title
       if(text) post.text = text
       if(img) {
         await img.move(Helpers.tmpPath('uploads'), {
@@ -137,6 +190,7 @@ class PostController {
     } catch(e) {
       session.flash({error: 'Error updating the post'})
     }
+    return response.redirect('back')
   }
 
   /**
@@ -151,7 +205,7 @@ class PostController {
     const {id} = params;
     const post = await Post.find(id)
     await post.delete()
-    response.redirect('back')
+    return response.redirect('back')
   }
 }
 

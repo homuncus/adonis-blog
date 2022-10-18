@@ -2,6 +2,7 @@
 
 /** @type {import('@adonisjs/lucid/src/Schema')} */
 const Schema = use('Schema')
+const Env = use('Env')
 
 class UserSchema extends Schema {
   up () {
@@ -10,6 +11,8 @@ class UserSchema extends Schema {
       table.string('username', 80).notNullable().unique()
       table.string('email', 254).notNullable().unique()
       table.string('password', 60).notNullable()
+      table.string('role').notNullable().defaultTo('user')
+      table.string('avatar_url').notNullable().defaultTo(Env.get('GUEST_AVATAR_URL'))
       table.timestamps()
     })
   }
