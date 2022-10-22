@@ -12,6 +12,9 @@ const Comment = use('App/Models/Comment')
 
 class Meta {
   /**
+   * Fill the *reqest.meta* object with data for
+   * sidebar, header etc.
+   * 
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Function} next
@@ -19,10 +22,11 @@ class Meta {
   async handle ({ request }, next) {
     const newestUsers = await User.query().orderBy('created_at', 'desc').fetch()
     request.meta = {
+      activePosts: (await Post.query().with('user').limit(4).fetch()).toJSON(),
       userCount: await User.getCount(),
       postCount: await Post.getCount(),
       commentCount: await Comment.getCount(),
-      newestUserName: newestUsers.toJSON()[0].username
+      newestUser: newestUsers.toJSON()[0] ? newestUsers.toJSON()[0] : 'undefined'
     }
     await next()
   }

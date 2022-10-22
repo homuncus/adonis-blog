@@ -75,9 +75,10 @@ class PostController {
         //   return response.redirect('back')
         // }
         // post.img_path = img.fileName
-      const cloudinaryResponse = await CloudinaryService.v2.uploader.upload(img.tmpPath, {folder: 'forum/uploads'});
-      post.img_path = cloudinaryResponse.secure_url
-      
+      if(img) {
+        const cloudinaryResponse = await CloudinaryService.v2.uploader.upload(img.tmpPath, {folder: 'forum/uploads'});
+        post.img_path = cloudinaryResponse.secure_url
+      }
       post.title = title
       post.text = text
       post.user_id = auth.user.id
@@ -100,8 +101,9 @@ class PostController {
    */
   async show ({ params, request, response, view }) {
     const {id} = params
-    const post = await Post.find(id)
-    return view.render('post', {post: post.toJSON()})
+    const post = await Post.query().where('id', id).with('user').first()
+    post.comments = (await Comment.query().where('post_id', post.id).with('user').fetch()).toJSON()
+    return view.render('post', {post: post.toJSON(), meta: request.meta})
   }
 
   /**
@@ -114,7 +116,7 @@ class PostController {
    * @param {View} ctx.view
    */
    async search ({ params, request, response, view }) {
-    const {tag, title, time} = request.all()
+    const {tag, title, time, user} = request.all()
     var queryToDisplay = ""; 
     var query = Post.query();
     if(tag) {
@@ -134,6 +136,12 @@ class PostController {
       if(queryToDisplay)
         queryToDisplay += `, `
       queryToDisplay += `time: ${time}`
+    }
+    if(user) {
+      query = query.where(`user_id`, user)
+      if(queryToDisplay)
+        queryToDisplay += `, `
+      queryToDisplay += `user: ${(await User.find(user)).username}`
     }
     const posts = await query.with('user').with('likes').with('comments').fetch()
     return view.render('search', {

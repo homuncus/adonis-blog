@@ -39,6 +39,8 @@ const globalMiddleware = [
 */
 const namedMiddleware = {
   auth: 'Adonis/Middleware/Auth',
+  auth_red: 'App/Middleware/AuthRedirect',
+  admin: 'App/Middleware/Admin',
   guest: 'Adonis/Middleware/AllowGuestOnly',
   meta: 'App/Middleware/Meta' //for sidebar
 }

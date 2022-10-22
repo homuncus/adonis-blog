@@ -8,8 +8,8 @@ class CommentSchema extends Schema {
     this.create('comments', (table) => {
       table.increments()
       table.text('value').notNullable()
-      table.integer('user_id').notNullable().references('id').inTable('users')
-      table.integer('post_id').notNullable().references('id').inTable('posts')
+      table.integer('user_id').notNullable().references('id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE')
+      table.integer('post_id').notNullable().references('id').inTable('posts').onDelete('CASCADE').onUpdate('CASCADE')
       table.timestamps()
     })
   }

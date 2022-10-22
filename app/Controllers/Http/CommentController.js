@@ -44,10 +44,11 @@ class CommentController {
    * @param {Response} ctx.response
    */
   async store ({ request, response, session, auth }) {
-    const {value} = request.all()
+    const {value, post_id} = request.all()
     const comment = new Comment()
     try{
       comment.value = value
+      comment.post_id = post_id
       comment.user_id = auth.user.id
       await comment.save()
       session.flash({success: 'Successfully posted a comment'})
@@ -80,7 +81,7 @@ class CommentController {
    * @param {View} ctx.view
    */
   async edit ({ params, request, response, view }) {
-  }
+  } 
 
   /**
    * Update comment details.
@@ -113,7 +114,7 @@ class CommentController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
+  async destroy ({ params, request, response, session }) {
     const {id} = params
     const comment = await Comment.find(id)
     try { 

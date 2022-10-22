@@ -4,7 +4,7 @@
 @set('title', 'Search: ' + query)
 <div class="container">
     <div class="row my-4">
-        <a href="/" class="btn btn-primary mb-4">Searching "{{query}}"</a>
+        <a href="/" class="btn btn-primary mb-4 fs-6">Searching by "{{query}}"</a>
         <div class="col-lg-8">
             @each(post in posts)
                 @include('includes/post_card')

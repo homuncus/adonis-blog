@@ -11,8 +11,9 @@ class UserSchema extends Schema {
       table.string('username', 80).notNullable().unique()
       table.string('email', 254).notNullable().unique()
       table.string('password', 60).notNullable()
-      table.string('role').notNullable().defaultTo('user')
+      table.string('role').defaultTo('user')
       table.string('avatar_url').notNullable().defaultTo(Env.get('GUEST_AVATAR_URL'))
+      table.string('description')
       table.timestamps()
     })
   }
