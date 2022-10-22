@@ -1,29 +1,23 @@
-<div class="col-md-4">
-  <div class="card card-blog">
-    <div class="card-img">
-      <a href="/posts/{{post.id}}"><img src="{{post.img_path}}" alt="" class="img-fluid"></a>
-    </div>
-    <div class="card-body">
-      <div class="card-category-box">
-        <div class="card-category">
-          <h6 class="category">Category</h6>
+<div class="card row-hover pos-relative py-3 px-3 mb-3 hover-shadow border-start border-3">
+    <div class="row align-items-center">
+      <div class="col-md-8 mb-3 mb-sm-0">
+        <h5>
+          <a href="/posts/{{post.id}}" class="text-primary">{{post.title}}</a>
+        </h5>
+        <p class="text-sm"><span class="op-6">Posted at</span> <a class="text-black" href="/search?time={{post.created_at}}">{{post.created_at}}</a> <span class="op-6">by</span> <a class="text-black" href="/users/{{post.user.id}}">{{post.user.username}}</a></p>
+        <div class="text-sm op-5"> 
+          @each(tag in post.tags)
+            <a class="text-black mr-2 mb-0" href="/search?tag={{tag.value}}">{{tag.value}}</a>
+          @else
+            <p class="text-black mr-2 mb-0 fst-italic">No tags</p>
+          @endeach  
         </div>
       </div>
-      <h3 class="card-title"><a href="blog-single.html">{{post.title}}</a></h3>
-      <p class="card-description">
-        {{post.description}}
-      </p>
-    </div>
-    <div class="card-footer">
-      <div class="post-author">
-        <a href="/users/{{post.user.id}}">
-          <img src="{{post.user.avatar_url}}" alt="" class="avatar rounded-circle">
-          <span class="author">{{post.user.username}}</span>
-        </a>
-      </div>
-      <div class="post-date">
-        <span class="bi bi-clock"></span> 10 min
+      <div class="col-md-4 op-7">
+        <div class="row text-center op-7">
+          <div class="col px-1"> <i class="fas fa-signal fa-lg"></i> <span class="d-block text-sm">Votes: <span class="fw-bold">{{post.likes.length}}</span></span> </div>
+        <div class="col px-1"> <i class="far fa-comments fa-lg"></i> <span class="d-block text-sm">Posts: <span class="fw-bold">{{post.comments.length}}</span></span> </div>
+        </div>
       </div>
     </div>
-  </div>
 </div>
