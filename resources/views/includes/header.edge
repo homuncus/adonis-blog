@@ -70,7 +70,11 @@
               alt="Authenticated user avatar"
               loading="lazy"
             />
-            <strong class="d-none d-sm-block ms-1">{{auth.user.username}}</strong>
+            <strong class="d-none d-sm-block ms-1">{{auth.user.username}} 
+            @if(auth.user.role == 'admin')
+              (admin)
+            @endif
+            </strong>
           </a>
         @else
           <a class="nav-link d-sm-flex align-items-sm-center" href="/login">
@@ -173,6 +177,9 @@
               <a class="dropdown-item" href="/login">Login</a>
             @endloggedIn
           </li>
+          @if(auth.user.role == 'admin')
+            <a class="dropdown-item" href="/admin"></a>
+          @endif
         </ul>
       </li>
     </ul>
