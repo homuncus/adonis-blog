@@ -4,6 +4,24 @@
 const Model = use('Model')
 
 class Post extends Model {
+    static boot () {
+        super.boot()
+
+        /**
+         * A hook to hash the user password before saving
+         * it to the database.
+         */
+        this.addHook('afterFetch', (postInstances) => {
+            postInstances.forEach(instance => {
+                if (instance.text) {
+                    instance.reading_time = Math.ceil(instance.text.split(' ').length / 225)  //reading time in minutes 
+                }
+                else   
+                    instance.reading_time = 0
+            })
+            
+        })
+    }
     likes(){
         return this.hasMany('App/Models/PostLike')
     }

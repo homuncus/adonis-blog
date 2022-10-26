@@ -2,162 +2,153 @@
 
 @section('body')
 @set('title', 'Post: ' + post.title)
-<section>
-  <div id="intro" class="p-5 text-center bg-white shadow-inner">
-    <h1 class="mb-0 h4 text-black">{{post.title}}</h1>
-  </div>
-  <div class="mt-4 mb-5">
-    <div class="container">
-      <!--Grid row-->
-      <div class="row px-0">
-        <!--Grid column-->
-        <div class="card col-md-8 mb-4">
-          <!--Section: Post data-mdb-->
-          <section class="border-bottom mb-4 card-header py-4 px-3">
-            <div class="row align-items-center mb-4 px-0">
-              <div class="col-lg-6 text-center text-lg-start mb-3 m-lg-0">
-                <img src="{{post.user.avatar_url}}" class="rounded-5 shadow-1-strong me-2"
-                  height="35" alt="Avatar" />
-                <span> Published <u>{{post.created_at}}</u> by</span>
-                <a href="/users/{{post.user.id}}" class="text-dark">{{post.user.username}}</a>
-              </div>
-
-              <div class="col-lg-6 text-center text-lg-end">
-                <button type="button" class="btn btn-primary px-3 me-1" style="background-color: #3b5998;">
-                  <i class="fab fa-facebook-f"></i>
-                </button>
-                <button type="button" class="btn btn-primary px-3 me-1" style="background-color: #55acee;">
-                  <i class="fab fa-twitter"></i>
-                </button>
-                <button type="button" class="btn btn-primary px-3 me-1" style="background-color: #0082ca;">
-                  <i class="fab fa-linkedin"></i>
-                </button>
-                <a type="button" class="btn btn-primary px-3 me-1" href="#leave-a-reply">
-                  <i class="fas fa-comments"></i>
-                </a>
-              </div>
-            </div>
-          </section>
-          <!--Section: Post data-mdb-->
-
-          <!--Section: Text-->
-          <section class="py-4 px-3">
-            <p>{{post.text}}</p>
-
-            <img src="{{post.img_path}}"
-              class="img-fluid shadow-2-strong rounded-5 mb-4" alt="" />
-          </section>
-          <!--Section: Text-->
-
-          <!--Section: Share buttons-->
-          <section class="text-center border-top border-bottom py-4 mb-4">
-            <p><strong>Share with your friends:</strong></p>
-
-            <button type="button" class="btn btn-primary me-1" style="background-color: #3b5998;">
-              <i class="fab fa-facebook-f"></i>
-            </button>
-            <button type="button" class="btn btn-primary me-1" style="background-color: #55acee;">
-              <i class="fab fa-twitter"></i>
-            </button>
-            <button type="button" class="btn btn-primary me-1" style="background-color: #0082ca;">
-              <i class="fab fa-linkedin"></i>
-            </button>
-            <a type="button" class="btn btn-primary me-1" href="#leave-a-reply">
-              <i class="fas fa-comments me-2"></i>Add comment
-            </a>
-          </section>
-          <!--Section: Share buttons-->
-
-          <!--Section: Author-->
-          
-          <!--Section: Author-->
-
-          <!--Section: Comments-->
-          <section class="border-bottom mb-3">
-            <p class="text-center"><strong>Comments: {{post.comments.length}}</strong></p>
-            @each(comment in post.comments)
-            <!-- Comment -->
-            <div class="row mb-4">
-              <div class="col-2">
-                <img src="{{comment.user.avatar_url}}"
-                  class="img-fluid shadow-1-strong rounded-5" alt="Commentator avatar" />
-              </div>
-
-              <div class="col-10 mb-4">
-                <div class="row">
-                  <strong class="col-auto me-auto">{{comment.user.username}}</strong>
-                  @if(comment.user_id == auth.user.id)
-                    <form action="/comments/{{comment.id}}/delete" method="post" class="col-auto">
-                      {{ csrfField() }}
-                      <button type="submit" class="btn shadow-0 border-start border-end"><i class="fas fa-trash fa-lg"></i></button>
-                    </form>
-                  @endif
-                </div>
-                <div class="text-truncate" style="">
-                  {{comment.value}}
-                </div>
-              </div>
-            </div>
-            @endeach
-            <!-- Comment -->
-          </section>
-          <!--Section: Comments-->
-
-          <!--Section: Reply-->
-          <section>
-            <p class="text-center"><strong>Leave a reply</strong></p>
-
-            <form id="leave-a-reply" action="/comments/create" method="POST">
-              {{ csrfField() }}
-              <input type="hidden" name="post_id" value="{{post.id}}">
-              {{--  
-                <!-- Name input -->
-              <div class="form-outline mb-4">
-                <input type="text" id="form4Example1" class="form-control" />
-                <label class="form-label" for="form4Example1">Name</label>
-              </div>
-
-              <!-- Email input -->
-              <div class="form-outline mb-4">
-                <input type="email" id="form4Example2" class="form-control" />
-                <label class="form-label" for="form4Example2">Email address</label>
-              </div>  
-              --}}
-
-              <!-- Message input -->
-              <div class="form-outline mb-4">
-                <textarea class="form-control" id="form4Example3" rows="4" name="value"></textarea>
-                <label class="form-label" for="form4Example3">Text</label>
-              </div>
-
-              <!-- Checkbox -->
-              <div class="form-check d-flex justify-content-center mb-4">
-                <input class="form-check-input me-2" type="checkbox" value="" id="form4Example4" checked />
-                <label class="form-check-label" for="form4Example4">
-                  Send me a copy of this comment
-                </label>
-              </div>
-
-              <!-- Submit button -->
-              <button type="submit" class="btn btn-primary btn-block mb-4">
-                Publish
-              </button>
-            </form>
-          </section>
-          <!--Section: Reply-->
-        </div>
-        <!--Grid column-->
-
-        <!--Grid column-->
-        <div class="col-md-4 mb-4">
-          <!--Section: Sidebar-->
-          @include('includes.sidebar')
-          <!--Section: Sidebar-->
-        </div>
-        <!--Grid column-->
+<div id="hero" class="hero hero-single route bg-image" style="background-image: url(assets/img/overlay-bg.jpg)">
+  <div class="overlay-mf"></div>
+  <div class="hero-content display-table">
+    <div class="table-cell">
+      <div class="container">
+        <h2 class="hero-title mb-4">{{post.title}}</h2>
+        <ol class="breadcrumb d-flex justify-content-center">
+          <li class="breadcrumb-item">
+            <a href="#">Home</a>
+          </li>
+          <li class="breadcrumb-item">
+            <a href="#">Library</a>
+          </li>
+          <li class="breadcrumb-item active">Data</li>
+        </ol>
       </div>
-      <!--Grid row-->
     </div>
   </div>
-</section>
+</div>
+<!-- ======= Blog Single Section ======= -->
+<section class="blog-wrapper sect-pt4" id="blog">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="post-box">
+          <div class="post-thumb">
+            <img src="assets/img/post-1.jpg" class="img-fluid" alt="">
+          </div>
+          <div class="post-meta">
+            <h1 class="article-title">{{post.title}}</h1>
+            <ul>
+              <li>
+                <span class="bi bi-person"></span>
+                <a href="/users/{{post.user.id}}">{{post.user.username}}</a>
+              </li>
+              <li>
+                <span class="bi bi-tag"></span>
+                @if(post.tags)
+                  <a href="/search?tag={{post.tags[0].value}}">{{post.tags[0].value}}</a>
+                @else
+                  <a href="#">No tag</a>
+                @endif
+              </li>
+              <li>
+                <span class="bi bi-chat-left-text"></span>
+                <a href="#">{{post.comments.length}}</a>
+              </li>
+            </ul>
+          </div>
+          <div class="article-content">
+            <p>
+              {{post.text}}
+            </p>
+          </div>
+        </div>
+        <div class="box-comments">
+          <div class="title-box-2">
+            <h4 class="title-comments title-left">Comments ({{post.comments.length}})</h4>
+          </div>
+          <ul class="list-comments">
+            @each(comment in post.comments)
+              <li class="border-top pt-3">
+                <div class="comment-avatar">
+                  <img src="{{comment.user.avatar_url}}" alt="">
+                </div>
+                <div class="comment-details">
+                  <h4 class="comment-author">{{comment.user.username}}</h4>
+                  <span>{{comment.created_at_locale}}</span>
+                  <p>
+                    {{comment.value}}
+                  </p>
+                  <a href="#">Reply</a>
+                </div>
+              </li>
+            @endeach
+          </ul>
+        </div>
+        <div class="form-comments">
+          <div class="title-box-2">
+            <h3 class="title-left">
+              Leave a Reply
+            </h3>
+          </div>
+          @loggedIn
+            <form class="form-mf" action="/comments/create" method="POST">
+              {{ csrfField() }}
+              <input type="hidden" name="post_id" value="{{post.id}}">
+              <div class="row">
+                <div class="col-md-12 mb-3">
+                  <div class="form-group">
+                    <textarea id="textMessage" class="form-control input-mf" placeholder="Comment *" name="value" cols="45" rows="8" required></textarea>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <button type="submit" class="button button-a button-big button-rouded">Send Message</button>
+                </div>
+              </div>
+            </form>
+          @else
+            <h4>You have to be logged in in order to leave comments</h4>
+          @endloggedIn
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="widget-sidebar sidebar-search">
+          <h5 class="sidebar-title">Search</h5>
+          <div class="sidebar-content">
+            <form>
+              <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search for..." aria-label="Search for...">
+                <span class="input-group-btn">
+                  <button class="btn btn-secondary btn-search" type="button">
+                    <span class="bi bi-search"></span>
+                  </button>
+                </span>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="widget-sidebar">
+          <h5 class="sidebar-title">Recent Posts</h5>
+          <div class="sidebar-content">
+            <ul class="list-sidebar">
+              @each(post in recentPosts)
+                <li>
+                  <a href="/posts/{{post.id}}">{{post.title}}</a>
+                </li>
+              @endeach
+            </ul>
+          </div>
+        </div>
+        <div class="widget-sidebar widget-tags">
+          <h5 class="sidebar-title">Tags</h5>
+          <div class="sidebar-content">
+            <ul>
+              @each(tag in post.tags)
+                <li>
+                  <a href="/search?tag={{tag.value}}">{{tag.value}}</a>
+                </li>
+              @else
+                <p>No tags</p>
+              @endeach
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section><!-- End Blog Single Section -->
 @endsection

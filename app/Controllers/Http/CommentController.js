@@ -54,7 +54,7 @@ class CommentController {
       session.flash({success: 'Successfully posted a comment'})
       return response.redirect('back')
     } catch (e) {
-      session.flash({error: "something went wrong"})
+      session.flash({error: e.message})
       return response.redirect('back')
     }
   }

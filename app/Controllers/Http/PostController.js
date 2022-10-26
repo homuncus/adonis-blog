@@ -31,9 +31,12 @@ class PostController {
    * @param {View} ctx.view
    */
   async index ({ request, response, view }) {
-    const posts = await Post.query().with('comments').with('tags').with('likes').with('user').fetch()
+    const posts = await Post.query().orderBy('created_at').with('comments').with('tags').with('likes').with('user').fetch()
+    const admin = await User.findBy('role', 'admin')
+    // console.log(posts.rows);
     return view.render('index', {
       posts: posts.toJSON(),
+      admin: admin.toJSON(),
       meta: request.meta
     })
   }
@@ -76,7 +79,7 @@ class PostController {
         // }
         // post.img_path = img.fileName
       if(img) {
-        const cloudinaryResponse = await CloudinaryService.v2.uploader.upload(img.tmpPath, {folder: 'forum/uploads'});
+        const cloudinaryResponse = await CloudinaryService.v2.uploader.upload(img.tmpPath, {folder: 'forum/uploads', width:500, height:333, crop: 'fill'});
         post.img_path = cloudinaryResponse.secure_url
       }
       post.title = title
@@ -103,7 +106,8 @@ class PostController {
     const {id} = params
     const post = await Post.query().where('id', id).with('user').first()
     post.comments = (await Comment.query().where('post_id', post.id).with('user').fetch()).toJSON()
-    return view.render('post', {post: post.toJSON(), meta: request.meta})
+    const recentPosts = await Post.query().orderBy('created_at').limit(4).fetch()
+    return view.render('post', {post: post.toJSON(), recentPosts: recentPosts.toJSON()})
   }
 
   /**

@@ -42,7 +42,7 @@ class UserController {
     const {id} = params
     const user = await User.find(id)
     await user.load('comments')
-    user.posts = (await user.posts().orderBy('created_at').limit(4).with('user').with('comments').with('likes').with('tags').fetch()).toJSON()
+    user.posts = (await user.posts().orderBy('created_at').with('user').with('comments').with('likes').with('tags').fetch()).toJSON()
     if(id == auth.user.id)
       return view.render('profile_private', {user: user.toJSON()})
     else

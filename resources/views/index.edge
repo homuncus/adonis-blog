@@ -3,20 +3,108 @@
 
 @section('body')
 @set('title', 'Home')
-<div class="container">
-    <div class="row my-4">
-        <div class="col-lg-8">
-            @each(post in posts)
-                @include('includes/post_card')
-            @else
-                <div class="d-flex justify-content-center w-100">
-                    <h3>No recent posts</h3>
-                </div>
-            @endeach
+<!-- ======= Hero Section ======= -->
+<div id="hero" class="hero route bg-image" style="background-image: url(assets/img/hero-bg.jpg)">
+    <div class="overlay-itro"></div>
+    <div class="hero-content display-table">
+      <div class="table-cell">
+        <div class="container">
+          <!--<p class="display-6 color-d">Hello, world!</p>-->
+          <h1 class="hero-title mb-4">I am {{admin.username}}</h1>
+          <p class="hero-subtitle"><span class="typed" data-typed-items="Back-ender, Developer, Idiot, Photographer, Average war crime enjoyer"></span></p>
+          <!-- <p class="pt-3"><a class="btn btn-primary btn js-scroll px-4" href="#about" role="button">Learn More</a></p> -->
         </div>
-        <div class="col-lg-4">
-            @include('includes/sidebar')
-        </div>
+      </div>
     </div>
-</div>
+  </div><!-- End Hero Section -->
+
+  <main id="main">
+
+    <!-- ======= About Section ======= -->
+    <section id="about" class="about-mf sect-pt4 route">
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-12">
+            <div class="box-shadow-full">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="row">
+                    <div class="col-sm-6 col-md-5">
+                      <div class="about-img">
+                        <img src="{{admin.avatar_url}}" class="img-fluid rounded b-shadow-a" alt="">
+                      </div>
+                    </div>
+                    <div class="col-sm-6 col-md-7">
+                      <div class="about-info">
+                        <p><span class="title-s">Name: </span> <span>{{admin.username}}</span></p>
+                        <p><span class="title-s">Profile: </span> <span>back-end developer</span></p>
+                        <p><span class="title-s">Email: </span> <span>{{admin.email}}</span></p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="skill-mf">
+                    <p class="title-s">Skill</p>
+                    <span>HTML</span> <span class="pull-right">0%</span>
+                    <div class="progress">
+                      <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <span>CSS3</span> <span class="pull-right">0%</span>
+                    <div class="progress">
+                      <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <span>PHP</span> <span class="pull-right">0%</span>
+                    <div class="progress">
+                      <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <span>JAVASCRIPT</span> <span class="pull-right">1%</span>
+                    <div class="progress">
+                      <div class="progress-bar" role="progressbar" style="width: 1%" aria-valuenow="1" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="about-me pt-4 pt-md-0">
+                    <div class="title-box-2">
+                      <h5 class="title-left">
+                        About me
+                      </h5>
+                    </div>
+                    <p class="lead">
+                      {{admin.description}}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section><!-- End About Section -->
+
+<section id="blog" class="blog-mf sect-pt4 route">
+  <div class="container"> 
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="title-box text-center">
+          <h3 class="title-a">
+            Blog
+          </h3>
+          <p class="subtitle-a">
+            
+          </p>
+          <div class="line-mf"></div>
+        </div>
+      </div>
+    </div>
+    <div class="row my-4">
+    @each(post in posts)
+      @include('includes/post_card')
+    @else
+      <div class="d-flex justify-content-center w-100">
+        <h3>No recent posts</h3>
+      </div>
+    @endeach
+    </div>
+  </div>
+</section>
 @endsection
