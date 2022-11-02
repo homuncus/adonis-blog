@@ -27,9 +27,15 @@
     "@adonisjs/session": "^1.0.27",
     "@adonisjs/shield": "^1.0.8",
     "cloudinary": "^1.32.0",
+    "eslint-config-airbnb": "^19.0.4",
     "pg": "^8.8.0"
   },
   "autoload": {
     "App": "./app"
+  },
+  "devDependencies": {
+    "eslint": "^8.26.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0"
   }
 }

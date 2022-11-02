@@ -1,5 +1,3 @@
-'use strict'
-
 const { UserNotFoundException } = require('@adonisjs/auth/src/Exceptions')
 const { RuntimeException } = require('@adonisjs/lucid/src/Exceptions')
 
@@ -13,8 +11,9 @@ const Post = use('App/Models/Post')
 const User = use('App/Models/User')
 /** @type {typeof import('@adonisjs/../../app/Models/Comment')} */
 const Comment = use('App/Models/Comment')
+const NotFoundException = use('App/Exceptions/NotFoundException')
 
-const CloudinaryService = use('App/Services/CloudinaryService');
+const cloudinary = use('App/Services/CloudinaryService');
 const Helpers = use('Helpers')
 
 /**
@@ -30,8 +29,15 @@ class PostController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index ({ request, response, view }) {
-    const posts = await Post.query().orderBy('created_at').with('comments').with('tags').with('likes').with('user').fetch()
+  async index({ request, response, view }) {
+    const posts = await Post.query()
+      .with('comments')
+      .with('tags')
+      .with('likes')
+      .with('user')
+      .orderBy('created_at')
+      .fetch()
+
     const admin = await User.findBy('role', 'admin')
     // console.log(posts.rows);
     return view.render('index', {
@@ -50,7 +56,7 @@ class PostController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async create ({ request, response, view }) {
+  async create({ view }) {
     return view.render('post_add');
   }
 
@@ -62,34 +68,37 @@ class PostController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async store ({ request, response, session, auth }) {
-    const {title, text} = request.all()
+  async store({ request, response, session, auth }) {
+    const { title, text } = request.all()
     const img = request.file('image', {
       types: ['image'],
       size: '2mb'
     })
-    try{
-      const post = new Post()
-        // await img.move(Helpers.tmpPath('uploads'), {
-        // name: `${new Date().getTime()}.${file.subtype}`
-        // })
-        // if (!img.moved()) {
-        //   session.flash({error: img.error()})
-        //   return response.redirect('back')
-        // }
-        // post.img_path = img.fileName
-      if(img) {
-        const cloudinaryResponse = await CloudinaryService.v2.uploader.upload(img.tmpPath, {folder: 'forum/uploads', width:500, height:333, crop: 'fill'});
-        post.img_path = cloudinaryResponse.secure_url
-      }
-      post.title = title
-      post.text = text
-      post.user_id = auth.user.id
-      await post.save()
-      session.flash({success: 'Sucessfully created a post'})
-    } catch(e) {
-      session.flash({error: e.message})
+
+    const post = new Post()
+    // await img.move(Helpers.tmpPath('uploads'), {
+    // name: `${new Date().getTime()}.${file.subtype}`
+    // })
+    // if (!img.moved()) {
+    //   session.flash({error: img.error()})
+    //   return response.redirect('back')
+    // }
+    // post.img_path = img.fileName
+    if (img) {
+      const cloudinaryResponse = await cloudinary.v2.uploader.upload(
+        img.tmpPath,
+        {
+          folder: 'forum/uploads', width: 500, height: 333, crop: 'fill'
+        }
+      )
+      post.img_path = cloudinaryResponse.secure_url
     }
+    post.title = title
+    post.text = text
+    post.user_id = auth.user.id
+    await post.save()
+    session.flash({ success: 'Sucessfully created a post' })
+
     return response.redirect('/');
   }
 
@@ -102,12 +111,12 @@ class PostController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
-    const {id} = params
+  async show({ params, view }) {
+    const { id } = params
     const post = await Post.query().where('id', id).with('user').first()
     post.comments = (await Comment.query().where('post_id', post.id).with('user').fetch()).toJSON()
     const recentPosts = await Post.query().orderBy('created_at').limit(4).fetch()
-    return view.render('post', {post: post.toJSON(), recentPosts: recentPosts.toJSON()})
+    return view.render('post', { post: post.toJSON(), recentPosts: recentPosts.toJSON() })
   }
 
   /**
@@ -119,35 +128,39 @@ class PostController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-   async search ({ params, request, response, view }) {
-    const {tag, title, time, user} = request.all()
-    var queryToDisplay = ""; 
-    var query = Post.query();
-    if(tag) {
-      query = query.whereHas('tags', (builder) => {
+  async search({ request, view }) {
+    const {
+      tag, title, time, user
+    } = request.all()
+    let queryToDisplay = [];
+    let query = Post.query();
+    if (tag) {
+      query.whereHas('tags', (builder) => {
         builder.where('value', tag)
       })
-      queryToDisplay += `tag: ${tag}`
+      queryToDisplay.push({ tag });
     }
-    if(title) {
+    if (title) {
       query = query.where('title', 'like', `%${title}%`)
-      if(queryToDisplay)
-        queryToDisplay += `, `
-      queryToDisplay += `title: ${title}`
+      queryToDisplay.push({ title });
     }
-    if(time) {
+    if (time) {
       query = query.where(`datediff(day, created_at, ${time})`, 0)
-      if(queryToDisplay)
-        queryToDisplay += `, `
+      if (queryToDisplay) queryToDisplay += ', '
       queryToDisplay += `time: ${time}`
     }
-    if(user) {
-      query = query.where(`user_id`, user)
-      if(queryToDisplay)
-        queryToDisplay += `, `
+    if (user) {
+      query = query.where('user_id', user)
+      if (queryToDisplay) queryToDisplay += ', '
       queryToDisplay += `user: ${(await User.find(user)).username}`
     }
-    const posts = await query.with('user').with('likes').with('comments').fetch()
+
+    const posts = await query
+      .with('user')
+      .with('likes')
+      .with('comments')
+      .fetch()
+
     return view.render('search', {
       posts: posts.toJSON(),
       meta: request.meta,
@@ -164,10 +177,10 @@ class PostController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async edit ({ params, request, response, view }) {
-    const {id} = params
+  async edit({ params, request, response, view }) {
+    const { id } = params
     const post = await Post.find(id)
-    return view.render('post_edit', {post: post.toJSON()})
+    return view.render('post_edit', { post: post.toJSON() })
   }
 
   /**
@@ -178,29 +191,38 @@ class PostController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response, session }) {
-    const {id} = params
-    const {title, text} = request.all()
+  async update({ params, request, response, session }) {
+    const { id } = params
+    const { title, text } = request.all()
     const img = request.file('img', {
       types: ['image'],
       size: '2mb',
       extnames: ['png', 'jpg', 'jpeg']
     })
     const post = await Post.find(id)
-    try{
-      if(title) post.title = title
-      if(text) post.text = text
-      if(img) {
-        await img.move(Helpers.tmpPath('uploads'), {
-          name: `${new Date().getTime()}.${file.subtype}`
-        })
-        if (!img.moved()) {
-          throw new RuntimeException
-        }
-        post.img_path = img.fileName
+    try {
+      if (title) post.title = title
+      if (text) post.text = text
+      if (img) {
+        // await img.move(Helpers.tmpPath('uploads'), {
+        //   name: `${new Date().getTime()}.${file.subtype}`
+        // })
+        // if (!img.moved()) {
+        //   throw new RuntimeException
+        // }
+        const imgFileName = post.img_path.split('/').at(-1)
+        const imgId = `forum/uploads/${imgFileName.slice(0, imgFileName.indexOf('.'))}`
+        await cloudinary.v2.uploader.destroy(imgId, { invalidate: true, resource_type: 'image' })
+        const cloudinaryResponse = await cloudinary.v2.uploader.upload(
+          img.tmpPath,
+          {
+            folder: 'forum/uploads', width: 500, height: 333, crop: 'fill'
+          }
+        )
+        post.img_path = cloudinaryResponse.secure_url
       }
-    } catch(e) {
-      session.flash({error: 'Error updating the post'})
+    } catch (e) {
+      session.flash({ error: 'Error updating the post' })
     }
     return response.redirect('back')
   }
@@ -213,9 +235,12 @@ class PostController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
-    const {id} = params;
+  async destroy({ params, response }) {
+    const { id } = params;
     const post = await Post.find(id)
+    const imgFileName = post.img_path.split('/').at(-1)
+    const imgId = `forum/uploads/${imgFileName.slice(0, imgFileName.indexOf('.'))}`
+    await cloudinary.v2.uploader.destroy(imgId, { invalidate: true, resource_type: 'image' })
     await post.delete()
     return response.redirect('back')
   }

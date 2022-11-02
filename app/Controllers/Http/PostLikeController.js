@@ -6,6 +6,8 @@
 
 /** @type {typeof import('@adonisjs/../../app/Models/PostLike')} */
 const Like = use('App/Models/PostLike')
+const CodeException = use('App/Exceptions/CodeException')
+const NotFoundException = use('App/Exceptions/NotFoundException')
 
 /**
  * Resourceful controller for interacting with likes
@@ -21,16 +23,14 @@ class PostLikeController {
    */
   async like ({ request, response, session, auth }) {
     const {post_id} = request.all()
-    const like = new Like();
-    try{
-      like.post_id = post_id
-      like.user_id = auth.user.id
-      await like.save()
+    if(await Like.create({
+      post_id: post_id,
+      user_id: auth.user.id
+    }))
       session.flash({success: 'Liking successful'})
-    } catch(e) {
-      session.flash({error: 'Liking unsuccessful'})
-    }
-    response.redirect('back')
+    else 
+      throw new CodeException()
+    return response.redirect('back')
   }
 
   /**
@@ -43,14 +43,13 @@ class PostLikeController {
    */
   async dislike ({ params, request, response }) {
     const {id} = params
-    try{
-      const like = await Like.find(id)
-      await like.delete()
+    const like = await Like.find(id)
+    if(!like) throw new NotFoundException()
+    if(await like.delete())
       session.flash({success: 'Unliking successful'})
-    } catch(e) {
-      session.flash({success: 'Unliking unsuccessful'})
-    }
-    response.redirect('back');
+    else
+      throw new CodeException()
+    return response.redirect('back')
   }
 }
 
