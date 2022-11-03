@@ -7,8 +7,19 @@ class PostLikeSchema extends Schema {
   up () {
     this.create('post_likes', (table) => {
       table.increments()
-      table.integer('user_id').references('id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE')
-      table.integer('post_id').references('id').inTable('posts').onDelete('CASCADE').onUpdate('CASCADE')
+      table.integer('user_id')
+        .notNullable()
+        .references('id')
+        .inTable('users')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE')
+      table.integer('post_id')
+        .notNullable()
+        .references('id')
+        .inTable('posts')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE')
+      table.unique(['user_id', 'post_id'])
       table.timestamps()
     })
   }

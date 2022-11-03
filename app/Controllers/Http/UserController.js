@@ -44,9 +44,9 @@ class UserController {
     await user.load('comments')
     user.posts = (await user.posts().orderBy('created_at').limit(4).with('user').with('comments').with('likes').with('tags').fetch()).toJSON()
     if(id == auth.user.id)
-      return view.render('profile_private', {user: user.toJSON()})
+      return view.render('profile/private', {user: user.toJSON()})
     else
-      return view.render('profile_public', {user: user.toJSON()})
+      return view.render('profile/public', {user: user.toJSON()})
   }
 
   /**
@@ -60,7 +60,7 @@ class UserController {
    */
   async enter ({ request, response, view, auth }) {
     await auth.logout()
-    return view.render('login');
+    return view.render('auth/login');
   }
 
   /**
@@ -96,7 +96,7 @@ class UserController {
    * @param {View} ctx.view
    */
   async registration ({ view }) {
-    return view.render('signup');
+    return view.render('auth.signup');
   }
 
   /**
@@ -148,7 +148,7 @@ class UserController {
     const {id} = params
     const user = await User.find(id)
     if(auth.user.id == id)
-      return view.render('profile_edit', {user: user.toJSON()})
+      return view.render('profile.edit', {user: user.toJSON()})
     else {
       session.flash({error: 'You cannot edit someone else`s profile'})
       return response.redirect('back')

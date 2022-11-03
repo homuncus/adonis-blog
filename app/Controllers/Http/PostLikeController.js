@@ -1,11 +1,14 @@
 'use strict'
 
+
+
 /** @typedef {import('@adonisjs/framework/src/Request')} Request */
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
 /** @type {typeof import('@adonisjs/../../app/Models/PostLike')} */
 const Like = use('App/Models/PostLike')
+const NotFoundException = use('App/Exceptions/NotFoundException');
 
 /**
  * Resourceful controller for interacting with likes
@@ -19,17 +22,13 @@ class PostLikeController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async like ({ request, response, session, auth }) {
-    const {post_id} = request.all()
+  async like({ params, response, session, auth }) {
+    const { id } = params
     const like = new Like();
-    try{
-      like.post_id = post_id
-      like.user_id = auth.user.id
-      await like.save()
-      session.flash({success: 'Liking successful'})
-    } catch(e) {
-      session.flash({error: 'Liking unsuccessful'})
-    }
+    like.post_id = id
+    like.user_id = auth.user.id
+    await like.save()
+    session.flash({ success: 'Liking successful' })
     response.redirect('back')
   }
 
@@ -41,15 +40,14 @@ class PostLikeController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async dislike ({ params, request, response }) {
-    const {id} = params
-    try{
-      const like = await Like.find(id)
-      await like.delete()
-      session.flash({success: 'Unliking successful'})
-    } catch(e) {
-      session.flash({success: 'Unliking unsuccessful'})
+  async dislike({ params, request, response, session }) {
+    const { id } = params
+    const like = await Like.findBy('post_id', id)
+    if (!like) {
+      throw new NotFoundException()
     }
+    await like.delete()
+    session.flash({ success: 'Unliking successful' })
     response.redirect('back');
   }
 }

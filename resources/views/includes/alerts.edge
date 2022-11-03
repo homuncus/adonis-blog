@@ -15,14 +15,14 @@
 --}}
 
 @if(flashMessage('success'))
-<div class="alert alert-dismissible fade show alert-success" role="alert" data-mdb-color="success" id="customxD">
+<div class="alert alert-dismissible fade show alert-success fixed-top ms-4" role="alert" data-mdb-color="success" id="customxD" style="top:3rem; width:fit-content">
     <strong>Well done!</strong> {{{flashMessage('success')}}}
     <button type="button" class="btn-close" data-mdb-dismiss="alert" aria-label="Close"></button>
 </div>
 @endif
 
 @if(flashMessage('error'))
-    <div class="alert alert-dismissible fade show alert-danger" role="alert" data-mdb-color="danger" id="customxD">
+    <div class="alert alert-dismissible fade show alert-danger fixed-top ms-4" role="alert" data-mdb-color="danger" id="customxD" style="top:3rem; width:fit-content">
         <strong>Oh snap!</strong> {{{flashMessage('error')}}}
         <button type="button" class="btn-close" data-mdb-dismiss="alert" aria-label="Close"></button>
     </div>

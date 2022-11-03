@@ -1,5 +1,3 @@
-'use strict'
-
 /*
 |--------------------------------------------------------------------------
 | Routes
@@ -17,30 +15,53 @@
 const Route = use('Route')
 
 Route.get('/', 'PostController.index').middleware('meta')
+Route.get('search', 'PostController.search').prefix('posts')
 
-Route.get('/login', 'UserController.enter')
-Route.post('/login', 'UserController.login')
-Route.get('/signup', 'UserController.registration')
-Route.post('/signup', 'UserController.signup')
-Route.get('/logout', 'UserController.logout')
+Route.group(() => {
+  Route.get('login', 'UserController.enter')
+  Route.post('login', 'UserController.login')
+  Route.get('signup', 'UserController.registration')
+  Route.post('signup', 'UserController.signup')  
+}).middleware('guest')
+Route.get('logout', 'UserController.logout')
+// Route.group(()=>{
 
-Route.get('posts/create', 'PostController.create').middleware('auth_red')
-Route.post('posts/create', 'PostController.store').middleware('auth_red')
-Route.get('posts/:id', 'PostController.show').middleware('meta')
-Route.get('search', 'PostController.search').middleware('meta')
+Route.group('posts', () => {
+  Route.get('create', 'PostController.create')
+  Route.post('create', 'PostController.store')
+  Route.get(':id', 'PostController.show').middleware('meta')
+  Route.get(':id/edit', 'PostController.edit')
+  Route.patch(':id', 'PostController.update')
+  Route.delete(':id', 'PostController.destroy')
+  Route.post(':id/like', 'PostLikeController.like')
+  Route.post(':id/unlike', 'PostLikeController.dislike')
+})
+  .prefix('posts')
+  .middleware('auth')
 
-Route.get('post_like/:id', 'PostLikeController.like').middleware('auth_red')
-Route.get('post_unlike/:id', 'PostLikeController.dislike').middleware('auth_red')
-Route.get('comment_like/:id', 'CommentLikeController.like').middleware('auth_red')
-Route.get('comment_unlike/:id', 'CommentLikeController.dislike').middleware('auth_red')
+Route.group('comments', () => {
+  Route.post('create', 'CommentController.store')
+  Route.post(':id/like', 'CommentLikeController.like')
+  Route.post(':id/unlike', 'CommentLikeController.dislike')
+  Route.post(':id/delete', 'CommentController.destroy')
+})
+  .prefix('comments')
+  .middleware('auth')
 
-Route.post('comments/create', 'CommentController.store').middleware('auth_red')
-Route.post('comments/:id/delete', 'CommentController.destroy').middleware('auth_red')
+Route.group('users', () => {
+  Route.get(':id', 'UserController.show')
+  Route.get(':id/edit', 'UserController.edit')
+  Route.patch(':id/general', 'UserController.updateGeneral')
+  Route.patch(':id/private', 'UserController.updatePrivate')
+  Route.delete(':id', 'UserController.destroy')
+})
+  .prefix('users')
+  .middleware('auth')
 
-Route.get('users/:id', 'UserController.show')
-Route.get('users/:id/edit', 'UserController.edit').middleware('auth_red')
-Route.post('users/:id/edit.general', 'UserController.updateGeneral').middleware('auth_red')
-Route.post('users/:id/edit.private', 'UserController.updatePrivate').middleware('auth_red')
-Route.post('users/:id/destroy', 'UserController.destroy')
+Route.group('admin', () => {
+  Route.get('/', 'AdminController.index')
+})
+  .prefix('admin')
+  .middleware(['auth', 'admin'])
 
-Route.get('admin', 'AdminController.index').middleware(['auth', 'admin'])
+// }).middleware('auth')
