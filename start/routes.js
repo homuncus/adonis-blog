@@ -60,6 +60,7 @@ Route.group('users', () => {
 
 Route.group('admin', () => {
   Route.get('/', 'AdminController.index')
+  Route.get('search', 'AdminController.search')
 })
   .prefix('admin')
   .middleware(['auth', 'admin'])
