@@ -8,50 +8,68 @@
 const Post = use('App/Models/Post')
 const User = use('App/Models/User')
 const NoSubjectException = use('App/Exceptions/NoSubjectException')
+const NotFoundException = use('App/Exceptions/NotFoundException')
 
 /**
  * Resourceful controller for interacting with admins
  */
 class AdminController {
-  /**
-   * Admin dashboard.
-   * GET admin/
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   * @param {View} ctx.view
-   */
+
   async index({ request, response, view }) {
 
     return view.render('admin.index')
   }
 
   async search({ request, response, view, session }) {
-    const { subject, attr, query } = request.all()
+    const { attr, query } = request.all()
+    const subject = request.url().split('/').at(-1)
     var model;
-    switch(subject){
+    switch (subject) {
       // TODO: case 'topics':
       case 'posts':
-        model = Post; break
+        model = Post.query().with('user'); break
       case 'users':
-        model = User; break
+        model = User.query(); break
       default:
         throw new NoSubjectException()
     }
-    const items = query ? 
+
+    const timeBefore = new Date()
+    const items = query ?
       await model
-        .query()
         .where(attr, 'LIKE', `%${query}%`)
-        .fetch() 
+        .fetch()
       :
-      await model.all()
+      await model.fetch()
+    const timeAfter = new Date()
 
     return view.render(`admin.search.${subject}`, {
-      items: items.toJSON()
+      items: items.toJSON(),
+      executionTime: (timeAfter - timeBefore) / 1000
     })
   }
 
+  async showUser({ params, view }) {
+    const { id } = params
+    const user = await User
+      .query()
+      .where('id', id)
+      .with('posts.comments.user')
+      .first()
+    if (!user) throw new NotFoundException()
+    return view.render('admin.profile', { user: user.toJSON() })
+  }
+
+  async updateUser({ params, request, response }) {
+    const { id } = params
+    const { role } = request.all()
+    if(!role) return response.redirect('back')
+    const user = await User.find(id)
+    if(!user) throw new NotFoundException()
+    user.role = role
+    await user.save()
+    return response.redirect('back')
+  }
 }
 
 module.exports = AdminController

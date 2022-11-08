@@ -8,7 +8,7 @@ class NoSubjectException extends LogicalException {
    */
   handle(error, { response, session }) {
     session.flash({ error: 'No or invalid search subject provided, redirecting to post search' })
-    return response.route('AdminController.search', {subject: 'posts'})
+    return response.status(400).route('AdminController.search', {subject: 'posts'})
   }
 }
 

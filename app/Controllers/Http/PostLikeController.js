@@ -14,14 +14,6 @@ const NotFoundException = use('App/Exceptions/NotFoundException');
  * Resourceful controller for interacting with likes
  */
 class PostLikeController {
-  /**
-   * Create/save a new like.
-   * POST likes
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
   async like({ params, response, session, auth }) {
     const { id } = params
     const like = new Like();
@@ -32,20 +24,10 @@ class PostLikeController {
     response.redirect('back')
   }
 
-  /**
-   * Delete a like with id.
-   * DELETE likes/:id
-   *
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Response} ctx.response
-   */
   async dislike({ params, request, response, session }) {
     const { id } = params
     const like = await Like.findBy('post_id', id)
-    if (!like) {
-      throw new NotFoundException()
-    }
+    if (!like) throw new NotFoundException()
     await like.delete()
     session.flash({ success: 'Unliking successful' })
     response.redirect('back');

@@ -3,6 +3,8 @@
 /** @typedef {import('@adonisjs/framework/src/Response')} Response */
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
+const NotAuthorizedException = use('App/Exceptions/NotAuthorizedException')
+
 class Admin {
   /**
    * @param {object} ctx
@@ -10,10 +12,9 @@ class Admin {
    * @param {Response} ctx.response
    * @param {Function} next
    */
-  async handle ({ request, auth, response, session }, next) {
-    if(auth.user.role !== 'admin'){
-      session.flash({error: 'You are not the Admin!'})
-      return response.redirect('back')
+  async handle({ auth, response, session }, next) {
+    if (auth.user.role !== 'admin' && auth.user.role !== 'moderator') {
+      throw new NotAuthorizedException()
     }
     // call next to advance the request
     await next()

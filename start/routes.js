@@ -15,7 +15,7 @@
 const Route = use('Route')
 
 Route.get('/', 'PostController.index').middleware('meta')
-Route.get('search', 'PostController.search').prefix('posts')
+Route.get('search', 'PostController.search').middleware('meta')
 
 Route.group(() => {
   Route.get('login', 'UserController.enter')
@@ -43,7 +43,7 @@ Route.group('comments', () => {
   Route.post('create', 'CommentController.store')
   Route.post(':id/like', 'CommentLikeController.like')
   Route.post(':id/unlike', 'CommentLikeController.dislike')
-  Route.post(':id/delete', 'CommentController.destroy')
+  Route.delete(':id', 'CommentController.destroy')
 })
   .prefix('comments')
   .middleware('auth')
@@ -60,7 +60,10 @@ Route.group('users', () => {
 
 Route.group('admin', () => {
   Route.get('/', 'AdminController.index')
-  Route.get('search', 'AdminController.search')
+  Route.get('posts', 'AdminController.search')
+  Route.get('users', 'AdminController.search')
+  Route.get('users/:id', 'AdminController.showUser')
+  Route.patch('users/:id', 'AdminController.updateUser')
 })
   .prefix('admin')
   .middleware(['auth', 'admin'])

@@ -27,11 +27,11 @@
           <div class="d-flex justify-content-end text-center py-1">
             <div class="px-3">
               <p class="mb-1 h5">{{user.posts.length}}</p>
-              <p class="small text-muted mb-0">Topics</p>
+              <p class="small text-muted mb-0">Posts</p>
             </div>
             <div>
               <p class="mb-1 h5">{{user.comments.length}}</p>
-              <p class="small text-muted mb-0">Posts</p>
+              <p class="small text-muted mb-0">Comments</p>
             </div>
             <div class="px-3">
               <p class="mb-1 h5">x</p>
@@ -61,8 +61,7 @@
           @each(post in user.posts)
             @include('includes.post_card')
           @else
-            <h4 class="text-center">There is no posts from you :(</h4>
-            <a class="text-center" href="/posts/create">Post something</a>
+            <h4 class="text-center">There is no posts from {{user.username}} :(</h4>
           @endeach
         </div>
       </div>

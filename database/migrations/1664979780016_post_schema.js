@@ -11,6 +11,7 @@ class PostSchema extends Schema {
       table.text('text').notNullable()
       table.string('img_path')
       table.integer('user_id').notNullable().references('id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE')
+      table.json('tags')
       table.timestamps()
     })
   }

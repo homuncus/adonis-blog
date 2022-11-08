@@ -28,7 +28,7 @@ $(function() {
     // Fixed width. Single select
     $('.select-fixed-single').select2({
         minimumResultsForSearch: Infinity,
-        width: 250
+        width: 125
     });
 
 
@@ -57,8 +57,8 @@ $(function() {
 
     // Custom menu and results color
     $('.select-custom-colors').select2({
-        containerCssClass: 'bg-indigo-400',
-        dropdownCssClass: 'bg-indigo-400'
+        containerCssClass: 'bg-blue-400',
+        dropdownCssClass: 'bg-blue-400'
     });
 
 

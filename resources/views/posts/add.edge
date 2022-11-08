@@ -2,7 +2,9 @@
 
 @section('body')
   @set('title', 'Create new post')
-
+  <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
   <div class="container card p-4 my-5">
     <h4>New post</h4>
     <form method="POST" enctype="multipart/form-data">
@@ -17,6 +19,17 @@
       <div class="form-group my-3">
         <label class="form-label mb-0" for="customFile">Image (not required)</label>
         <input type="file" class="form-control" id="customFile" accept=".jpg,.jpeg,.png" name="image"/>
+      </div>
+      <div class="form-group my-3">
+        <label>Tags</label>
+        <input name='tags' placeholder='Select tags from the list'>
+        <script>
+          var input = document.querySelector('input[name=tags]');
+          new Tagify(input, {
+              whitelist: ['Кікімори', 'Сітки', 'Волонтерство', 'Війна'],
+              userInput: false
+          })
+        </script>
       </div>
       <button type="submit" class="btn btn-success btn-rounded btn-lg" data-mdb-ripple-color="#5555ff"> post <i class="fas fa-arrow-right ms-1"></i></button>
     </form>

@@ -32,7 +32,7 @@
     <div class="container-xl px-4 mt-4">
       <!-- Account page navigation-->
       <nav class="nav nav-borders">
-        <a class="nav-link" href="." target="__blank"><i class="fas fa-arrow-left me-2"></i>Back</a>
+        <a class="nav-link" href="javascript:javascript:history.go(-1)" target="__blank"><i class="fas fa-arrow-left me-2"></i>Back</a>
         <a class="nav-link active ms-0" href="https://www.bootdey.com/snippets/view/bs5-edit-profile-account-details" target="__blank">Edit</a>
       </nav>
       <hr class="mt-0 mb-4">
@@ -60,7 +60,7 @@
               <div class="card mb-4">
                   <div class="card-header">Account Details</div>
                   <div class="card-body">
-                      <form action="./edit.general" method="POST">
+                      <form action="./general?_method=PATCH" method="POST">
                         {{ csrfField() }}
                           <!-- Form Group (username)-->
                           <div class="mb-3">

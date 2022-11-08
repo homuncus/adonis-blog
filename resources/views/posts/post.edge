@@ -60,10 +60,15 @@
                 <a type="button" class="btn btn-primary px-3 me-1" href="#leave-a-reply">
                   <i class="fas fa-comments"></i>
                 </a>
-                @if(auth.user.id === post.user_id || auth.user.role === 'admin')
+                @if(auth.user.id === post.user_id || auth.user.role === 'admin' || auth.user.role === 'moderator')
                 <button type="button" class="btn btn-primary" style="background-color: #e65a5a;" data-mdb-toggle="modal" data-mdb-target="#exampleModal">
                   <i class="fas fa-trash"></i>
                 </button>
+                @endif
+                @if(auth.user.id === post.user_id)
+                <a type="button" class="btn btn-primary px-3 me-1" href="/posts/{{post.id}}/edit">
+                  <i class="fas fa-pen"></i>
+                </a>
                 @endif
               </div>
             </div>
@@ -120,7 +125,7 @@
           <!--Section: Share buttons-->
 
           <!--Section: Comments-->
-          <section class="border-bottom mb-3 px-4">
+          <section class="border-bottom mb-3 px-4" id="comments">
             <p class="text-center"><strong>Comments: {{post.comments.length}}</strong></p>
             @each(comment in post.comments)
             <!-- Comment -->
@@ -133,8 +138,8 @@
               <div class="col-10 mb-4">
                 <div class="row">
                   <strong class="col-auto me-auto">{{comment.user.username}}</strong>
-                  @if(comment.user_id === auth.user.id)
-                    <form action="/comments/{{comment.id}}/delete" method="post" class="col-auto">
+                  @if(comment.user_id === auth.user.id || auth.user.role === 'admin' || auth.user.role === 'moderator')
+                    <form action="/comments/{{comment.id}}?_method=DELETE" method="post" class="col-auto">
                       {{ csrfField() }}
                       <button type="submit" class="btn shadow-0 border-start border-end"><i class="fas fa-trash fa-lg"></i></button>
                     </form>
@@ -142,6 +147,25 @@
                 </div>
                 <div class="text-truncate" style="">
                   {{comment.value}}
+                  <p>
+                    <section class="text-end">
+                    @if(comment.is_liked)
+                      <form action="/comments/{{comment.id}}/unlike" method="post">
+                        {{ csrfField() }}
+                        <button type="submit" class="btn shadow-0 fs-5 mb-2">
+                          <i class="fas fa-thumbs-up"></i> {{comment.likes.length}}
+                        </button>
+                      </form>
+                    @else
+                      <form action="/comments/{{comment.id}}/like" method="post">
+                        {{ csrfField() }}
+                        <button type="submit" class="btn shadow-0 fs-5 mb-2">
+                          <i class="far fa-thumbs-up"></i> {{comment.likes.length}}
+                        </button>
+                      </form>
+                    @endif
+                    </section>
+                  </p>
                 </div>
               </div>
             </div>

@@ -11,7 +11,7 @@
 	<!-- Main navbar -->
 	<div class="navbar navbar-default header-highlight">
 		<div class="navbar-header">
-			<a class="navbar-brand" href="index.html"><img src="assets/images/logo_light.png" alt=""></a>
+			<a class="navbar-brand" href="/admin"><img src="{{assetsUrl('admin/assets/images/logo_light.png')}}" alt=""></a>
 
 			<ul class="nav navbar-nav visible-xs-block">
 				<li><a data-toggle="collapse" data-target="#navbar-mobile"><i class="icon-tree5"></i></a></li>
@@ -29,16 +29,16 @@
 			<ul class="nav navbar-nav navbar-right">
 				<li class="dropdown language-switch">
 					<a class="dropdown-toggle" data-toggle="dropdown">
-						<img src="assets/images/flags/gb.png" class="position-left" alt="">
+						<img src="{{assetsUrl('admin/assets/images/flags/gb.png')}}" class="position-left" alt="">
 						English
 						<span class="caret"></span>
 					</a>
 
 					<ul class="dropdown-menu">
-						<li><a class="deutsch"><img src="assets/images/flags/de.png" alt=""> Deutsch</a></li>
-						<li><a class="ukrainian"><img src="assets/images/flags/ua.png" alt=""> Українська</a></li>
-						<li><a class="english"><img src="assets/images/flags/gb.png" alt=""> English</a></li>
-						<li><a class="espana"><img src="assets/images/flags/es.png" alt=""> España</a></li>
+						<li><a class="deutsch"><img src="{{assetsUrl('admin/assets/images/flags/de.png')}}" alt=""> Deutsch</a></li>
+						<li><a class="ukrainian"><img src="{{assetsUrl('admin/assets/images/flags/ua.png')}}" alt=""> Українська</a></li>
+						<li><a class="english"><img src="{{assetsUrl('admin/assets/images/flags/gb.png')}}" alt=""> English</a></li>
+						<li><a class="espana"><img src="{{assetsUrl('admin/assets/images/flags/es.png')}}" alt=""> España</a></li>
 					</ul>
 				</li>
 
@@ -50,10 +50,11 @@
 					</a>
 
 					<ul class="dropdown-menu dropdown-menu-right">
-						<li><a href="/users/{{auth.user.id}}}}"><i class="icon-user-plus"></i> My profile</a></li>
+						<li><a href="/admin/users/{{auth.user.id}}"><i class="icon-user-plus"></i> My profile</a></li>
 						{{--  <li><a href="#"><span class="badge bg-teal-400 pull-right">58</span> <i class="icon-comment-discussion"></i> Messages</a></li>  --}}
 						<li class="divider"></li>
 						<li><a href="/users/{{auth.user.id}}/edit"><i class="icon-cog5"></i> Account settings</a></li>
+						<li><a href="/"><i class="icon-user"></i> Back to user</a></li>
 						<li><a href="/logout"><i class="icon-switch2"></i> Logout</a></li>
 					</ul>
 				</li>
@@ -77,7 +78,7 @@
 					<div class="sidebar-user">
 						<div class="category-content">
 							<div class="media">
-								<a href="#" class="media-left"><img src="assets/images/placeholder.jpg" class="img-circle img-sm" alt=""></a>
+								<a href="/admin/users/{{auth.user.id}}" class="media-left"><img src="{{auth.user.avatar_url}}" class="img-circle img-sm" alt=""></a>
 								<div class="media-body">
 									<span class="media-heading text-semibold">{{auth.user.username}}</span>
 									<div class="text-size-mini text-muted">
@@ -88,7 +89,7 @@
 								<div class="media-right media-middle">
 									<ul class="icons-list">
 										<li>
-											<a href="#"><i class="icon-cog3"></i></a>
+											<a href="/users/{{auth.user.id}}/edit"><i class="icon-cog3"></i></a>
 										</li>
 									</ul>
 								</div>
@@ -110,8 +111,8 @@
 									<a href="#"><i class="icon-search4"></i> <span>Search</span></a>
 									<ul>
 										<li><a href="#">Topics</a></li>
-										<li><a href="/admin/search?subject=posts">Posts</a></li>
-										<li><a href="/admin/search?subject=users">Users</a></li>
+										<li><a href="/admin/posts">Posts</a></li>
+										<li><a href="/admin/users">Users</a></li>
 									</ul>
 								</li>
 							</ul>
@@ -131,7 +132,6 @@
 				<div class="content">
 
 					@!section('body')
-
 
 					<!-- Footer -->
 					<div class="footer text-muted">

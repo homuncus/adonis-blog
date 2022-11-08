@@ -10,7 +10,7 @@
         <h6 class="text-primary text-sm"> 
           <a href="#" class="text-primary">{{post.title}}</a>
         </h6>
-        <p class="mb-0 text-sm"><span class="op-6">Posted</span> <a class="text-black" href="#">? minutes</a> <span class="op-6">ago by</span> <a class="text-black" href="/profile/{{post.user.id}}">{{post.user.username}}</a></p>
+        <p class="mb-0 text-sm"><span class="op-6">Posted</span> <a class="text-black" href="#">{{post.pub_date}}</a> <span class="op-6">by</span> <a class="text-black" href="/users/{{post.user.id}}">{{post.user.username}}</a></p>
       </div>
       @endeach
     </div>

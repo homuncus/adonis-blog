@@ -2,17 +2,18 @@
 
 const { LogicalException } = require('@adonisjs/generic-exceptions')
 
-class NotFoundException extends LogicalException {
+class BadRequestException extends LogicalException {
   /**
    * Handle this exception by itself
    */
   handle(error, { response, view }) {
-    return response.status(404).send(
+    return response.status(400).send(
       view.render('error', {
-        status: 404,
-        message: 'Resource not found'
-      }))
+        status: 400,
+        message: 'Bad request'
+      })
+    )
   }
 }
 
-module.exports = NotFoundException
+module.exports = BadRequestException

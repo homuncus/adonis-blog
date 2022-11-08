@@ -1,0 +1,148 @@
+@layout('layouts.admin')
+
+@section('body')
+@set('title', 'Searching users')
+<!-- Page header -->
+<div class="page-header page-header-transparent">
+    <div class="page-header-content">
+        <div class="page-title">
+            <h4><i class="icon-arrow-left52 position-left"></i> <span class="text-semibold">Search</span> - Users Results</h4>
+
+            <ul class="breadcrumb position-right">
+                <li><a href="/admin">Home</a></li>
+                <li><a href="#">Search</a></li>
+                <li class="active">Users results</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- /page header -->
+
+
+<!-- Content area -->
+<div class="content">
+
+    <!-- Search field -->
+    <div class="panel panel-flat">
+        <div class="panel-heading">
+            <h5 class="panel-title">Website search results</h5>
+            <div class="heading-elements">
+                <ul class="icons-list">
+                    <li><a data-action="collapse"></a></li>
+                    <li><a data-action="close"></a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="panel-body">
+            <form action="" class="main-search">
+                <div class="input-group content-group">
+                    <div class="has-feedback has-feedback-left">
+                        <input name="query" type="text" class="form-control input-xlg" placeholder="Enter your search query here..." value="{{request.get().query ? request.get().query : ''}}">
+                        <div class="form-control-feedback">
+                            <i class="icon-search4 text-muted text-size-base"></i>
+                        </div>
+                    </div>
+
+                    <div class="input-group-btn">
+                        <button type="submit" class="btn btn-primary btn-xlg">Search</button>
+                    </div>
+                </div>
+
+                <div class="row search-option-buttons">
+                    <div class="col-sm-6">
+                        <ul class="list-inline list-inline-condensed no-margin-bottom">
+                            <li>
+                                <i class="icon-stack2 position-left"></i> Search field:
+                            </li>
+                            <li>
+                                <select name="attr" class="select select2-hidden-accessible" tabindex="-1" aria-hidden="true">
+                                    <option value="username">Name</option>
+                                    <option value="role">Role</option>
+                                </select>
+                            </li>
+                            
+                        </ul>
+                    </div>
+
+                    <div class="col-sm-6 text-right">
+                        <ul class="list-inline no-margin-bottom">
+                            <li><a href="#" class="btn btn-link btn-sm"><i class="icon-reload-alt position-left"></i> Refine your search</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- /search field -->
+
+
+    {{--  
+        <!-- Tabs -->
+    <ul class="nav nav-lg nav-tabs nav-tabs-bottom search-results-tabs">
+        <li class="active"><a href="search_basic.html"><i class="icon-display4 position-left"></i> Website</a></li>
+        <li><a href="search_users.html"><i class="icon-people position-left"></i> Users</a></li>
+        <li><a href="search_images.html"><i class="icon-image2 position-left"></i> Images</a></li>
+        <li><a href="search_videos.html"><i class="icon-file-play position-left"></i> Videos</a></li>
+        <li class="dropdown pull-right">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog3"></i> <span class="visible-xs-inline-block position-right">Options</span> <span class="caret"></span></a>
+            <ul class="dropdown-menu dropdown-menu-right">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else</a></li>
+                <li class="divider"></li>
+                <li><a href="#">One more line</a></li>
+            </ul>
+        </li>
+    </ul>
+    <!-- /tabs -->  
+    --}}
+
+
+<!-- Search results -->
+<div class="content-group">
+    <p class="text-muted text-size-small content-group">About {{items.length}} results ({{executionTime}} seconds)</p>
+    @if(items.length > 0)
+    <div class="search-results-list content-group row">
+        @each(user in items)
+            <div class="col-lg-3 col-sm-6">
+                <div class="thumbnail">
+                    <div class="thumb thumb-rounded">
+                        <img src="{{user.avatar_url}}" alt="">
+                        <div class="caption-overflow">
+                            <span>
+                                <a href="/admin/users/{{user.id}}" class="btn border-white text-white btn-flat btn-icon btn-rounded"><i class="icon-three-bars"></i></a>
+                                <a href="#" class="btn border-white text-white btn-flat btn-icon btn-rounded ml-5"><i class="icon-link2"></i></a>
+                            </span>
+                        </div>
+                    </div>
+                
+                    <div class="caption text-center">
+                        <h6 class="text-semibold no-margin">{{user.username}} <small class="display-block">{{ upperFirst(user.role) }}</small></h6>
+                        <ul class="icons-list mt-15">
+                            <li><a href="#" data-popup="tooltip" title="Google Drive"><i class="icon-google-drive"></i></a></li>
+                            <li><a href="#" data-popup="tooltip" title="Twitter"><i class="icon-twitter"></i></a></li>
+                            <li><a href="#" data-popup="tooltip" title="Github"><i class="icon-github"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        @endeach
+    </div>
+
+    <ul class="pagination pagination-flat text-center pagination-xs no-margin-bottom">
+        <li class="disabled"><a href="#">&larr;</a></li>
+        <li class="active"><a href="#">1</a></li>
+        <li><a href="#">2</a></li>
+        <li><a href="#">3</a></li>
+        <li><a href="#">4</a></li>
+        <li><span>...</span></li>
+        <li><a href="#">58</a></li>
+        <li><a href="#">59</a></li>
+        <li><a href="#">&rarr;</a></li>
+    </ul>
+    @else
+        <h3>No users found by {{request.get().attr}} "{{request.get().query}}"</h3>
+    @endif
+</div>
+@endsection
