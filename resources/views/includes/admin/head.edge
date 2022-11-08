@@ -1,20 +1,5 @@
-<!-- Global stylesheets -->
-<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
-{{ style('admin/assets/css/icons/icomoon/styles.css') }}
-{{ style('admin/assets/css/bootstrap.css') }}
-{{ style('admin/assets/css/core.css') }}
-{{ style('admin/assets/css/components.css') }}
-{{ style('admin/assets/css/colors.css') }}
-<!-- /global stylesheets -->
 
-<!-- Core JS files -->
-{{ script('admin/assets/js/plugins/loaders/pace.min.js') }}
-{{ script('admin/assets/js/core/libraries/jquery.min.js') }}
-{{ script('admin/assets/js/core/libraries/bootstrap.min.js') }}
-{{ script('admin/assets/js/plugins/loaders/blockui.min.js') }}
-<!-- /core JS files -->
-
-<!-- Theme JS files -->
+{{ script('admin/ckeditor/ckeditor.js') }}
 {{ script('admin/assets/js/plugins/visualization/d3/d3.min.js') }}
 {{ script('admin/assets/js/plugins/visualization/d3/d3_tooltip.js') }}
 {{ script('admin/assets/js/plugins/forms/styling/switchery.min.js') }}
@@ -33,4 +18,5 @@
 {{ script('admin/assets/js/plugins/notifications/bootbox.min.js') }}
 {{ script('admin/assets/js/plugins/notifications/sweet_alert.min.js') }}
 {{ script('admin/assets/js/pages/components_modals.js') }}
-<!-- /theme JS files -->
+{{ script('admin/assets/js/pages/editor_ckeditor.js') }}
+<style>.cke{visibility:hidden;}</style>

@@ -4,14 +4,14 @@
 @set('title', 'Profile edit')
   <section>
 
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!-- Modal for uplodaing new avatar -->
+    <div class="modal fade" id="avatarUploadModal" tabindex="-1" aria-labelledby="avatarUploadModalLabel" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
           <form action="./general?_method=PATCH" method="POST" enctype="multipart/form-data">
             {{ csrfField() }}
             <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Upload your new avatar</h5>
+              <h5 class="modal-title" id="avatarUploadModalLabel">Upload your new avatar</h5>
               <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -28,6 +28,30 @@
         </div>
       </div>
     </div>
+
+    @if(auth.user.role !== 'admin')
+    <!-- Modal for deleting user -->
+    <div class="modal fade" id="deleteUserModal" tabindex="-1" aria-labelledby="deleteUserModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form action=".?_method=DELETE" method="POST">
+            {{ csrfField() }}
+            <div class="modal-header">
+              <h5 class="modal-title" id="deleteUserModalLabel">Delete user {{ auth.user.username }}</h5>
+              <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              Are you sure?
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Dismiss</button>
+              <button type="submit" class="btn btn-danger">Delete</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    @endif
 
     <div class="container-xl px-4 mt-4">
       <!-- Account page navigation-->
@@ -49,7 +73,7 @@
                       <div class="small font-italic text-muted mb-4">JPG or PNG not larger than 2 MB</div>
                       <!-- Profile picture upload button-->
                       <!-- Button trigger modal -->
-                      <button type="button" class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#exampleModal">
+                      <button type="button" class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#avatarUploadModal">
                         Upload new avatar
                       </button>
                   </div>
@@ -131,11 +155,12 @@
           <div class="card mb-4">
             <div class="card-header">Delete Account</div>
             <div class="card-body">
-              <form action="?_method=DELETE" method="post">
-                {{ csrfField() }}
-                <p>Deleting your account is a permanent action and cannot be undone. If you are sure you want to delete your account, select the button below.</p>
-                <button class="btn btn-danger-soft text-danger" type="submit">I understand, delete my account</button>
-              </form>
+                @if(auth.user.role !== 'admin')
+                  <p>Deleting your account is a permanent action and cannot be undone. If you are sure you want to delete your account, select the button below.</p>
+                  <button type="button" class="btn btn-danger-soft text-danger" data-mdb-toggle="modal" data-mdb-target="#deleteUserModal">I understand, delete my account</button>
+                @else
+                  <p>You cannot delete administrator account</p>
+                @endif
             </div>
           </div>
         </div>

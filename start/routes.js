@@ -64,6 +64,7 @@ Route.group('admin', () => {
   Route.get('users', 'AdminController.search')
   Route.get('users/:id', 'AdminController.showUser')
   Route.patch('users/:id', 'AdminController.updateUser')
+  Route.post('users/:id/email', 'AdminController.email')
 })
   .prefix('admin')
   .middleware(['auth', 'admin'])

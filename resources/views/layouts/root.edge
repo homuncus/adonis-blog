@@ -1,18 +1,18 @@
 <!DOCTYPE html>
-<html>
+<html class="h-100">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ title }}</title>
     @include('includes/head')
   </head>
-  <body class="">
+  <body class="d-flex flex-column h-100">
     @include('includes/header')
     @include('includes/alerts')
 
     @!section('body')
 
-    <footer class="footer">
+    <footer class="footer mt-auto">
       @include('includes/footer')
     </footer>
   </body>

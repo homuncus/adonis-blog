@@ -74,6 +74,9 @@
             @if(auth.user.role == 'admin')
               (admin)
             @endif
+            @if(auth.user.role == 'moderator')
+              (moderator)
+            @endif
             </strong>
           </a>
         @else
@@ -177,7 +180,7 @@
               <a class="dropdown-item" href="/login">Login</a>
             @endloggedIn
           </li>
-          @if(auth.user.role == 'admin')
+          @if(auth.user.role === 'admin' || auth.user.role === 'moderator')
             <a class="dropdown-item" href="/admin">Admin panel</a>
           @endif
         </ul>

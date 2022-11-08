@@ -10,6 +10,9 @@ const User = use('App/Models/User')
 const NoSubjectException = use('App/Exceptions/NoSubjectException')
 const NotFoundException = use('App/Exceptions/NotFoundException')
 
+const Env = use('Env')
+const Mail = use('Mail')
+
 /**
  * Resourceful controller for interacting with admins
  */
@@ -63,11 +66,28 @@ class AdminController {
   async updateUser({ params, request, response }) {
     const { id } = params
     const { role } = request.all()
-    if(!role) return response.redirect('back')
+    if (!role) return response.redirect('back')
     const user = await User.find(id)
-    if(!user) throw new NotFoundException()
+    if (!user) throw new NotFoundException()
     user.role = role
     await user.save()
+    return response.redirect('back')
+  }
+
+  async email({ params, request, response, session, auth }) {
+    const { text } = request.all()
+    const { id } = params
+    const user = await User.find(id)
+    if(!user) throw new NotFoundException()
+    const time1 = new Date()
+    await Mail
+      .send('emails.admin_message', { text: text }, (message) => {
+        message.to(user.email)
+          .from(auth.user.email)
+          .subject('Message from the admin of volonteurs forum')
+      })
+    const time2 = new Date()
+    session.flash({ success: `Sent the message to ${user.email} in ${(time2 - time1)/1000} seconds` })
     return response.redirect('back')
   }
 }

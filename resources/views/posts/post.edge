@@ -138,7 +138,7 @@
               <div class="col-10 mb-4">
                 <div class="row">
                   <strong class="col-auto me-auto">{{comment.user.username}}</strong>
-                  @if(comment.user_id === auth.user.id || auth.user.role === 'admin' || auth.user.role === 'moderator')
+                  @if((comment.user_id === auth.user.id || auth.user.role === 'admin' || auth.user.role === 'moderator' && comment.user.role !== 'admin'))
                     <form action="/comments/{{comment.id}}?_method=DELETE" method="post" class="col-auto">
                       {{ csrfField() }}
                       <button type="submit" class="btn shadow-0 border-start border-end"><i class="fas fa-trash fa-lg"></i></button>

@@ -4,7 +4,27 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ title }}</title>
-    @include('includes.admin.head')
+	
+	<!-- Global stylesheets -->
+	<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
+	{{ style('admin/assets/css/icons/icomoon/styles.css') }}
+	{{ style('admin/assets/css/bootstrap.css') }}
+	{{ style('admin/assets/css/core.css') }}
+	{{ style('admin/assets/css/components.css') }}
+	{{ style('admin/assets/css/colors.css') }}
+	<!-- /global stylesheets -->
+
+	<!-- Core JS files -->
+	{{ script('admin/assets/js/plugins/loaders/pace.min.js') }}
+	{{ script('admin/assets/js/core/libraries/jquery.min.js') }}
+	{{ script('admin/assets/js/core/libraries/bootstrap.min.js') }}
+	{{ script('admin/assets/js/plugins/loaders/blockui.min.js') }}
+	<!-- /core JS files -->
+
+	<!-- Theme JS files -->
+	{{ script('admin/assets/js/core/app.js') }}
+    @!section('head')
+	<!-- /theme JS files -->
   </head>
   <body>
 
@@ -127,6 +147,18 @@
 
 			<!-- Main content -->
 			<div class="content-wrapper">
+				@if(flashMessage('success'))
+				<div class="alert alert-success alert-styled-left alert-arrow-left alert-bordered fixed-end">
+					<button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+					<span class="text-semibold">Well done!</span> {{{ flashMessage('success') }}}
+				</div>
+				@endif
+				@if(flashMessage('error'))
+				<div class="alert alert-danger alert-styled-left alert-bordered fixed-end">
+					<button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
+					<span class="text-semibold">Oh snap!</span> {{{ flashMessage('error') }}}
+				</div>
+				@endif
 
 				<!-- Content area -->
 				<div class="content">

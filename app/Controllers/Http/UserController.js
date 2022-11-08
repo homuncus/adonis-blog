@@ -60,7 +60,7 @@ class UserController {
     return response.redirect('/');
   }
 
-  async registration({ view }) {
+  async registration({ view, auth }) {
     await auth.logout()
     return view.render('auth.signup');
   }
@@ -174,7 +174,8 @@ class UserController {
     const { id } = params
     const user = await User.find(id)
     if(!user) throw new NotFoundException()
-    if (user.avatar_url !== Env.get('GUEST_AVATAR_URL')) {
+    if(user.role === 'admin') throw new NotAuthorizedException()
+    if (user.avatar_url !== Env.get('GUEST_AVATAR_URL')) {  //deleting user`s avatar image
       let img_filename = user.avatar_url.split('/').at(-1)
       let img_id = 'forum/avatars/' + img_filename.slice(0, img_filename.indexOf('.'))
       await cloudinary.v2.uploader.destroy(img_id, { invalidate: true, resource_type: 'image' })
