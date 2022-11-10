@@ -10,7 +10,7 @@ class NotAuthorizedException extends LogicalException {
     // session.flash({ error: 'You dont have rights to perform that action!' })
     return response.status(403).send(view.render('error', {
       status: 403,
-      message: 'You dont have rights to perform that action!'
+      message: 'You dont have rights to perform that action'
     }))
   }
 }

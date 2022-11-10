@@ -1,10 +1,5 @@
 'use strict'
 
-
-/** @typedef {import('@adonisjs/framework/src/Request')} Request */
-/** @typedef {import('@adonisjs/framework/src/Response')} Response */
-/** @typedef {import('@adonisjs/framework/src/View')} View */
-
 const Post = use('App/Models/Post')
 const User = use('App/Models/User')
 const NoSubjectException = use('App/Exceptions/NoSubjectException')
@@ -32,11 +27,10 @@ class AdminController {
       case 'posts':
         model = Post.query().with('user'); break
       case 'users':
-        model = User.query(); break
+        model = User.query().orderBy('role'); break
       default:
         throw new NoSubjectException()
     }
-
     const timeBefore = new Date()
     const items = query ?
       await model
@@ -78,16 +72,16 @@ class AdminController {
     const { text } = request.all()
     const { id } = params
     const user = await User.find(id)
-    if(!user) throw new NotFoundException()
+    if (!user) throw new NotFoundException()
     const time1 = new Date()
     await Mail
       .send('emails.admin_message', { text: text }, (message) => {
         message.to(user.email)
           .from(auth.user.email)
-          .subject('Message from the admin of volonteurs forum')
+          .subject(`Message from the ${auth.user.role} of volonteurs forum`)
       })
     const time2 = new Date()
-    session.flash({ success: `Sent the message to ${user.email} in ${(time2 - time1)/1000} seconds` })
+    session.flash({ success: `Sent the message to ${user.email} in ${(time2 - time1) / 1000} seconds` })
     return response.redirect('back')
   }
 }

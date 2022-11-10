@@ -81,7 +81,7 @@
                         <!-- Timeline -->
                         <div class="timeline timeline-left content-group">
                             <div class="timeline-container">
-                                @if(auth.user.id !== user.id && auth.user.role === 'admin')
+                                @if(auth.user.id !== user.id && (auth.user.role === 'admin' || auth.user.role === 'moderator'))
                                 <!-- Email send -->
                                 <div class="timeline-row">
                                     <div class="timeline-icon">

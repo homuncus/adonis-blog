@@ -15,7 +15,11 @@
           <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          Are you sure?
+          <p>Are you sure?</p>
+          <label class="form-group mt-3">
+            <input type="checkbox" checked="checked" name="share">
+            Alert users in comments
+          </label>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Dismiss</button>
@@ -39,7 +43,7 @@
         <div class="card px-0 col-md-8 mb-4">
           <!--Section: Post data-mdb-->
           <section class="border-bottom mb-4 card-header pt-4 pb-1 px-4">
-            <div class="row align-items-center mb-4 px-0">
+            <div class="row align-items-center mb-2 px-0">
               <div class="col-lg-6 text-center text-lg-start mb-3 m-lg-0 px-0">
                 <img src="{{post.user.avatar_url}}" class="rounded-5 shadow-1-strong me-2"
                   height="35" alt="Avatar" />
@@ -60,16 +64,23 @@
                 <a type="button" class="btn btn-primary px-3 me-1" href="#leave-a-reply">
                   <i class="fas fa-comments"></i>
                 </a>
-                @if(auth.user.id === post.user_id || auth.user.role === 'admin' || auth.user.role === 'moderator')
-                <button type="button" class="btn btn-primary" style="background-color: #e65a5a;" data-mdb-toggle="modal" data-mdb-target="#exampleModal">
-                  <i class="fas fa-trash"></i>
-                </button>
-                @endif
                 @if(auth.user.id === post.user_id)
                 <a type="button" class="btn btn-primary px-3 me-1" href="/posts/{{post.id}}/edit">
                   <i class="fas fa-pen"></i>
                 </a>
                 @endif
+                @if(auth.user.id === post.user_id || auth.user.role === 'admin' || auth.user.role === 'moderator')
+                <button type="button" class="btn btn-primary" style="background-color: #e65a5a;" data-mdb-toggle="modal" data-mdb-target="#exampleModal">
+                  <i class="fas fa-trash"></i>
+                </button>
+                @endif
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-auto">
+                @each(tag in post.tags)
+                  #{{ tag.value }} 
+                @endeach
               </div>
             </div>
           </section>
@@ -77,10 +88,10 @@
 
           <!--Section: Text-->
           <section class="py-4 px-4">
-            <p>{{post.text}}</p>
-
             <img src="{{post.img_path}}"
               class="img-fluid shadow-2-strong rounded-5 mb-4" alt="" />
+            <p>{{post.text}}</p>
+
           </section>
           <!--Section: Text-->
 

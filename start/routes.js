@@ -21,7 +21,10 @@ Route.group(() => {
   Route.get('login', 'UserController.enter')
   Route.post('login', 'UserController.login')
   Route.get('signup', 'UserController.registration')
-  Route.post('signup', 'UserController.signup')  
+  Route.post('signup', 'UserController.signup') 
+  Route.post('restore', 'UserController.restore')
+  Route.get('reset/:id', 'UserController.reset')
+  Route.patch('reset/:id', 'UserController.update')
 }).middleware('guest')
 Route.get('logout', 'UserController.logout')
 // Route.group(()=>{

@@ -1,5 +1,10 @@
 @layout('layouts.admin')
 
+@section('head')
+{{ script('admin/assets/js/plugins/forms/selects/select2.min.js') }}
+{{ script('admin/assets/js/pages/form_select2.js') }}
+@endsection
+
 @section('body')
 @set('title', 'Searching posts')
 <!-- Page header -->

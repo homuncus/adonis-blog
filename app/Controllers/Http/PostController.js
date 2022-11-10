@@ -7,8 +7,8 @@ const Comment = use('App/Models/Comment')
 const NotFoundException = use('App/Exceptions/NotFoundException')
 
 const cloudinary = use('App/Services/CloudinaryService');
-const Helpers = use('Helpers')
-const Database = use('Database')
+const Mail = use('Mail')
+const Env = use('Env')
 
 /**
  * Resourceful controller for interacting with posts
@@ -36,12 +36,13 @@ class PostController {
   }
 
   async store({ request, response, session, auth }) {
-    const { title, text, tags } = request.all()
+    const { title, text, tags, share } = request.all()
     const img = request.file('image', {
       types: ['image'],
       size: '2mb'
     })
-
+    console.log(share);
+    const time1 = new Date()
     const post = new Post()
     // await img.move(Helpers.tmpPath('uploads'), {
     // name: `${new Date().getTime()}.${file.subtype}`
@@ -65,9 +66,26 @@ class PostController {
     post.tags = tags
     post.user_id = auth.user.id
     await post.save()
-    session.flash({ success: 'Sucessfully created a post' })
+    const users = await User.all()
+    console.log(users);
+    if (share) {
+      //send the notification
+      const users = await User.query().where('subscribed', true).fetch()
+      await Mail
+        .send('emails.post_created', { post: post.toJSON() }, message => {
+          message.from(Env.get('MAIL_USERNAME'))
+          users.rows.forEach(user => {
+            message.to(user.email)
+          })
+          message.subject('A new forum post requires your attention!')
+        })
+    }
+    const time2 = new Date()
+    session.flash({
+      success: `Sucessfully created a post ${share ? 'and shared it among users ' : ''} in ${(time2 - time1) / 1000} seconds`,
+    })
 
-    return response.redirect('/');
+    return response.route('PostController.show', {id: post.id});
   }
 
   async show({ params, view, request, auth }) {
@@ -80,8 +98,8 @@ class PostController {
       .with('comments.user')
       .with('comments.likes')
       .first()
-    if(!post) throw new NotFoundException()
-    post.is_liked = post.getRelated('likes').rows.filter(like => 
+    if (!post) throw new NotFoundException()
+    post.is_liked = post.getRelated('likes').rows.filter(like =>
       like.user_id === auth.user.id
     ).length > 0
     post.getRelated('comments').rows.forEach(comment => {
@@ -90,7 +108,7 @@ class PostController {
         like.user_id === auth.user.id
       ).length > 0
     })
-    return view.render('posts.post', { 
+    return view.render('posts.post', {
       post: post.toJSON(),
       meta: request.meta
     })
@@ -147,10 +165,10 @@ class PostController {
       extnames: ['png', 'jpg', 'jpeg']
     })
     const post = await Post.find(id)
-    if(!post) throw new NotFoundException()
+    if (!post) throw new NotFoundException()
     if (title) post.title = title
     if (text) post.text = text
-    if(tags) post.tags = tags
+    if (tags) post.tags = tags
     if (img) {
       // await img.move(Helpers.tmpPath('uploads'), {
       //   name: `${new Date().getTime()}.${file.subtype}`
@@ -171,19 +189,45 @@ class PostController {
       post.img_path = cloudinaryResponse.secure_url
     }
     await post.save()
-    session.flash({success: `Updated post ${post.title}`})
+    session.flash({ success: `Updated post ${post.title}` })
     return response.redirect('/')
   }
 
-  async destroy({ params, response }) {
+  async destroy({ params, request, response, session, auth }) {
     const { id } = params;
-    const post = await Post.find(id)
+    const { share } = request.all()
+    const post = await Post
+      .query()
+      .with('comments.user')
+      .where('id', id)
+      .first()
     if (!post) throw new NotFoundException()
-    const imgFileName = post.img_path.split('/').at(-1)
-    const imgId = `forum/uploads/${imgFileName.slice(0, imgFileName.indexOf('.'))}`
-    await cloudinary.v2.uploader.destroy(imgId, { invalidate: true, resource_type: 'image' })
+    const time1 = new Date()
+    if (post.img_path) {
+      const imgFileName = post.img_path.split('/').at(-1)
+      const imgId = `forum/uploads/${imgFileName.slice(0, imgFileName.indexOf('.'))}`
+      await cloudinary.v2.uploader.destroy(imgId, { invalidate: true, resource_type: 'image' })
+    }
     await post.delete()
-    return response.redirect('back')
+
+    if (share && post.getRelated('comments').rows.length) {
+      await Mail
+        .send('emails.post_deleted', { post: post.toJSON() }, message => {
+          message.from(Env.get('EMAIL_USERNAME'))
+          post
+            .getRelated('comments')
+            .rows.forEach(comment => {
+              let user = comment.getRelated('user')
+              if (user.id !== auth.user.id)
+                message.to(user.email)
+            })
+          message.subject('Post you participated in was deleted')
+        })
+    }
+
+    const time2 = new Date()
+    session.flash({ success: `Successfully deleted the post in ${(time2 - time1) / 1000} seconds` })
+    return response.redirect('/')
   }
 }
 

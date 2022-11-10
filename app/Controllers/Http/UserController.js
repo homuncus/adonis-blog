@@ -12,9 +12,11 @@ const Post = use('App/Models/Post')
 const cloudinary = use('App/Services/CloudinaryService');
 const Hash = use('Hash')
 const Env = use('Env')
+const Mail = use('Mail')
 
 const NotFoundException = use('App/Exceptions/NotFoundException')
 const NotAuthorizedException = use('App/Exceptions/NotAuthorizedException')
+const BadRequestException = use('App/Exceptions/BadRequestException')
 
 /**
  * Resourceful controller for interacting with users
@@ -82,19 +84,67 @@ class UserController {
       session.flash({ error: 'There is such user' });
       return response.redirect('back');
     }
-    await User.create({
+    const user = await User.create({
       username: username,
       email: email,
       password: password
     })
     session.flash({ success: 'Registration successful' })
 
+    await Mail
+      .send('emails.registered', user, message => {
+        message.from(Env.get('MAIL_USERNAME'))
+          .to(user.email)
+          .subject('Welcome to the Forum!')
+      })
+
     return response.redirect('/login');
+  }
+
+  async restore({ request, response, session }) {
+    const { email } = request.all()
+    if (!email) throw new BadRequestException()
+    const user = await User.findBy('email', email)
+    if (!user) {
+      session.flash({ error: 'There is no such user' })
+      return response.redirect('back')
+    }
+    await Mail.send('emails.password_restore', { id: user.id },
+      message => {
+        message.from(Env.get('MAIL_USERNAME'))
+          .to(email)
+          .subject('Password reset')
+      })
+    session.flash({ success: `Password reset link was sent to ${email}` })
+    return response.redirect('back');
+  }
+
+  async reset({ params, view }) {
+    const { id } = params
+    const user = await User.find(id)
+    if (!user) return new NotFoundException()
+    return view.render('auth.reset', {id: user.id})
+  }
+
+  async update({ params, request, response, session }) {
+    const {id} = params
+    const { password, confirmpassword } = request.all()
+    const user = await User.find(id)
+    if(!user) throw new NotFoundException()
+    if(password !== confirmpassword) {
+      session.flash({error: 'Passwords are not equal'})
+      return response.redirect('back')
+    }
+    user.password = password
+    await user.save()
+    session.flash({success: 'Password was successfully changed'})
+    return response.route('UserController.enter')
   }
 
   async edit({ params, response, view, auth, session }) {
     const { id } = params
     const user = await User.find(id)
+    if (!user) throw new NotFoundException()
     if (auth.user.id == id)
       return view.render('profile.edit', { user: user.toJSON() })
     throw new NotAuthorizedException()
@@ -107,7 +157,7 @@ class UserController {
     }
     const { oldpassword, newpassword, newpasswordconfirm } = request.all()
     const user = await User.find(id)
-    if(!user) throw new NotFoundException()
+    if (!user) throw new NotFoundException()
     if (await Hash.verify(oldpassword, user.password)) {
       session.flash({ error: 'Invalid user password' })
       return response.redirect('back')
@@ -128,14 +178,15 @@ class UserController {
     if (id != auth.user.id) {
       throw new NotAuthorizedException()
     }
-    const { username, email, description } = request.all()
+    const { username, email, description, subscribed } = request.all()
     const avatar = request.file('avatar', {
       types: ['image'],
       size: '512kb',
       extnames: ['png', 'jpg', 'jpeg']
     })
     const user = await User.find(id)
-    if(!user) throw new NotFoundException()
+    if (!user) throw new NotFoundException()
+    user.subscribed = !!subscribed
     if (username && username !== user.username) {
       user.username = username
       await user.save()
@@ -173,8 +224,8 @@ class UserController {
   async destroy({ params, request, response, session, auth }) {
     const { id } = params
     const user = await User.find(id)
-    if(!user) throw new NotFoundException()
-    if(user.role === 'admin') throw new NotAuthorizedException()
+    if (!user) throw new NotFoundException()
+    if (user.role === 'admin') throw new NotAuthorizedException()
     if (user.avatar_url !== Env.get('GUEST_AVATAR_URL')) {  //deleting user`s avatar image
       let img_filename = user.avatar_url.split('/').at(-1)
       let img_id = 'forum/avatars/' + img_filename.slice(0, img_filename.indexOf('.'))

@@ -23,6 +23,34 @@
           }
         }
     </style>
+
+    <!-- Modal for entering password restore address -->
+    <div class="modal fade" id="passwordRestoreModal" tabindex="-1" aria-labelledby="passwordRestoreModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <form action="./restore" method="POST">
+            {{ csrfField() }}
+            <div class="modal-header">
+              <h5 class="modal-title" id="passwordRestoreModalLabel">Restore password</h5>
+              <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <p>Enter the email address we will send your password on</p>
+              <div class="form-outline mb-3">
+                <input type="email" id="emailInput" class="form-control form-control-lg"
+                  placeholder="Enter email" name="email" required/>
+                <label class="form-label" for="emailInput">Email</label>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Dismiss</button>
+              <button type="submit" class="btn btn-primary">Send</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
     <div class="container-fluid vh-100">
       <div class="row d-flex justify-content-center align-items-center h-custom">
         <div class="col-md-9 col-lg-6 col-xl-5">
@@ -73,7 +101,7 @@
                   Remember me
                 </label>
               </div>
-              <a href="/" class="text-body">Forgot password?</a>
+              <a href="/" class="text-body" data-mdb-toggle="modal" data-mdb-target="#passwordRestoreModal">Forgot password?</a>
             </div>
   
             <div class="text-center text-lg-start mt-4 pt-2">

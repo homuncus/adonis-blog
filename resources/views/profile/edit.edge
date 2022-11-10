@@ -86,37 +86,47 @@
                   <div class="card-body">
                       <form action="./general?_method=PATCH" method="POST">
                         {{ csrfField() }}
-                          <!-- Form Group (username)-->
-                          <div class="mb-3">
-                              <label class="small mb-1" for="inputUsername">Username (how your name will appear to other users on the site)</label>
-                              <input class="form-control" id="inputUsername" name="username" type="text" placeholder="Enter your username" value="{{user.username}}">
-                          </div>
-                          <!-- Form Group (email address)-->
-                          <div class="mb-3">
-                              <label class="small mb-1" for="inputEmailAddress">Email address</label>
-                              <input class="form-control" id="inputEmailAddress" name="email" type="email" placeholder="Enter your email address" value="{{user.email}}">
-                          </div>
-                          <div class="mb-3">
-                            <label class="small mb-1" for="inputAbout">About you</label>
-                            <textarea class="form-control" id="inputAbout" name="description" type="text" placeholder="Enter information about yourself">{{user.description ? user.description : ""}}</textarea>
+                        <!-- Form Group (username)-->
+                        <div class="mb-3">
+                            <label class="small mb-1" for="inputUsername">Username (how your name will appear to other users on the site)</label>
+                            <input class="form-control" id="inputUsername" name="username" type="text" placeholder="Enter your username" value="{{user.username}}">
                         </div>
-                          {{--  
-                            <!-- Form Row-->
-                          <div class="row gx-3 mb-3">
-                              <!-- Form Group (phone number)-->
-                              <div class="col-md-6">
-                                  <label class="small mb-1" for="inputPhone">Phone number</label>
-                                  <input class="form-control" id="inputPhone" type="tel" placeholder="Enter your phone number" value="555-123-4567">
-                              </div>
-                              <!-- Form Group (birthday)-->
-                              <div class="col-md-6">
-                                  <label class="small mb-1" for="inputBirthday">Birthday</label>
-                                  <input class="form-control" id="inputBirthday" type="text" name="birthday" placeholder="Enter your birthday" value="06/10/1988">
-                              </div>
-                          </div>  
-                          --}}
-                          <!-- Save changes button-->
-                          <button class="btn btn-primary" type="submit">Save changes</button>
+                        <!-- Form Group (email address)-->
+                        <div class="mb-3">
+                            <label class="small mb-1" for="inputEmailAddress">Email address</label>
+                            <input class="form-control" id="inputEmailAddress" name="email" type="email" placeholder="Enter your email address" value="{{user.email}}">
+                        </div>
+                        <div class="mb-3">
+                          <label class="small mb-1" for="inputAbout">About you</label>
+                          <textarea class="form-control" id="inputAbout" name="description" type="text" placeholder="Enter information about yourself">{{user.description ? user.description : ""}}</textarea>
+                        </div>
+                        {{--  
+                          <!-- Form Row-->
+                        <div class="row gx-3 mb-3">
+                            <!-- Form Group (phone number)-->
+                            <div class="col-md-6">
+                                <label class="small mb-1" for="inputPhone">Phone number</label>
+                                <input class="form-control" id="inputPhone" type="tel" placeholder="Enter your phone number" value="555-123-4567">
+                            </div>
+                            <!-- Form Group (birthday)-->
+                            <div class="col-md-6">
+                                <label class="small mb-1" for="inputBirthday">Birthday</label>
+                                <input class="form-control" id="inputBirthday" type="text" name="birthday" placeholder="Enter your birthday" value="06/10/1988">
+                            </div>
+                        </div>  
+                        --}}
+                        <div class="mb-3">
+                          <label class="form-group">
+                            <input type="checkbox" 
+                            @if(user.to_alert)
+                              checked
+                            @endif
+                            name="subscribed">
+                            Subscribe to e-mail notifications
+                          </label>
+                        </div>
+                        <!-- Save changes button-->
+                        <button class="btn btn-primary" type="submit">Save changes</button>
                       </form>
                   </div>
               </div>

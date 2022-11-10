@@ -23,12 +23,12 @@ class ExceptionHandler extends BaseExceptionHandler {
    */
   async handle (error, { response, session, view }) {
     if(error.status === 401){
-      return response.status(401).send(
-        view.render('error', {
-          status: 401,
-          message: 'Invalid session; Please log in'
-        })
-      )
+      return response.status(401).route('UserController.enter')
+        // view.render('error', {
+        //   status: 401,
+        //   message: 'Invalid session; Please log in'
+        // })
+      // )
     }
     // if(error.status === 403){
     //   session.flash({error: 'You must be authenticated to perform that action'})
