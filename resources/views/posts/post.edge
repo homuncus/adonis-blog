@@ -87,10 +87,12 @@
           <!--Section: Post data-mdb-->
 
           <!--Section: Text-->
-          <section class="py-4 px-4">
+          <section class="pb-4 px-4">
+            @if(post.img_path)
             <img src="{{post.img_path}}"
               class="img-fluid shadow-2-strong rounded-5 mb-4" alt="" />
-            <p>{{post.text}}</p>
+            @endif
+            <p>{{{ post.text }}}</p>
 
           </section>
           <!--Section: Text-->

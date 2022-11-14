@@ -4,7 +4,7 @@
 <p>New post created:</p>
 <h2><strong>{{ post.title }}</strong></h2>
 <img src="{{ post.img_path }}" alt="Post image">
-<p>{{ post.text }}</p>
+<p>{{{ post.text }}}</p>
 <b>
 @each(tag in post.tags)
     <span>#{{ tag.value }}</span>

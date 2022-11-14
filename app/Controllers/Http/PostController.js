@@ -65,10 +65,8 @@ class PostController {
     post.text = text
     post.tags = tags
     post.user_id = auth.user.id
-    await post.save()
-    const users = await User.all()
-    console.log(users);
-    if (share) {
+    await post.save()  
+    if (share) {   //comment in case of accidental email sending
       //send the notification
       const users = await User.query().where('subscribed', true).fetch()
       await Mail

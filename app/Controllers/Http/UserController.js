@@ -68,7 +68,7 @@ class UserController {
   }
 
   async signup({ request, response, session }) {
-    const { username, email, password, confirmpassword } = request.all();
+    const { username, email, password, confirmpassword, subscribed } = request.all();
 
     if (!username || !email || !password || !confirmpassword) {
       session.flash({ error: 'Please fill all the fields' });
@@ -80,23 +80,24 @@ class UserController {
       return response.redirect('back');
     }
 
-    if (await User.findBy('email', email)) {
+    if (await User.findBy('email', email) || await User.findBy('username', username)) {
       session.flash({ error: 'There is such user' });
       return response.redirect('back');
     }
     const user = await User.create({
       username: username,
       email: email,
-      password: password
+      password: password,
+      subscribed: !!subscribed
     })
     session.flash({ success: 'Registration successful' })
 
-    await Mail
-      .send('emails.registered', user, message => {
-        message.from(Env.get('MAIL_USERNAME'))
-          .to(user.email)
-          .subject('Welcome to the Forum!')
-      })
+    // await Mail   //comment in case of accidental email sending
+    //   .send('emails.registered', user, message => {
+    //     message.from(Env.get('MAIL_USERNAME'))
+    //       .to(user.email)
+    //       .subject('Welcome to the Forum!')
+    //   })
 
     return response.redirect('/login');
   }

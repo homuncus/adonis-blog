@@ -1,6 +1,8 @@
 @layout('layouts.root')
 
 @section('body')
+  {{ script('admin/ckeditor/ckeditor.js') }}
+  {{ script('admin/assets/js/pages/editor_ckeditor.js') }}
   @set('title', 'Create new post')
   <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
   <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
@@ -13,12 +15,12 @@
         <input type="text" id="typeText" class="form-control" name="title" required style="height:2.3rem" value="{{post.title}}"/>
         <label class="form-label" >Title (required)</label>
       </div>
-      <div class="form-outline hover-shadow">
-        <textarea class="form-control" id="textAreaExample" rows="4" name="text" placeholder="Text (required)" required>{{ post.text }}</textarea>
+      <div class="content-group hover-shadow">
+        <textarea name="text" id="editor-full" rows="4" cols="4" placeholder="Text (required)" required>{{ post.text }}</textarea>
       </div>
       <div class="form-group my-3">
-        <label class="form-label mb-0" for="customFile">Image (not required)</label>
-        <input type="file" class="form-control" id="customFile" accept=".jpg,.jpeg,.png" name="image"/>
+        <label class="form-label mb-0" for="customFile">Front image (not required)</label>
+        <input type="file" class="form-control" id="customFile" accept=".jpg,.jpeg,.png" name="image" value="{{post.img_path}}"/>
       </div>
       <div class="form-group my-3">
         <label>Tags</label>

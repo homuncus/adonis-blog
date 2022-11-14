@@ -5,9 +5,11 @@ const User = use('App/Models/User')
 const NoSubjectException = use('App/Exceptions/NoSubjectException')
 const NotFoundException = use('App/Exceptions/NotFoundException')
 
-const Env = use('Env')
+const fs = require('fs')
 const Mail = use('Mail')
-
+const PDF = use('PDF')
+const Drive = use('Drive')
+const Helpers = use('Helpers')
 /**
  * Resourceful controller for interacting with admins
  */
@@ -83,6 +85,20 @@ class AdminController {
     const time2 = new Date()
     session.flash({ success: `Sent the message to ${user.email} in ${(time2 - time1) / 1000} seconds` })
     return response.redirect('back')
+  }
+
+  async generatePdfStatistic({ response, auth }) {
+    const content = [
+      { text: 'Statistics', bold: true, alignment: 'center' },
+      
+    ]
+    const fileName = Helpers.tmpPath(`pdf/${new Date().getTime()}_${auth.user.username}.pdf`)
+    const stream = fs.createWriteStream(fileName);
+    PDF.create(content, stream)
+    await new Promise(resolve => {  //wait for ~10ms, because pdf-adonis is poorly implemented
+      setTimeout(resolve, 10)
+    })
+    return response.download(fileName)
   }
 }
 
