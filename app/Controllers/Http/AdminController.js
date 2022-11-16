@@ -8,7 +8,7 @@ const NotFoundException = use('App/Exceptions/NotFoundException')
 const fs = require('fs')
 const Mail = use('Mail')
 const PDF = use('PDF')
-const Drive = use('Drive')
+const Env = use('Env')
 const Helpers = use('Helpers')
 /**
  * Resourceful controller for interacting with admins
@@ -79,23 +79,52 @@ class AdminController {
     await Mail
       .send('emails.admin_message', { text: text }, (message) => {
         message.to(user.email)
-          .from(auth.user.email)
-          .subject(`Message from the ${auth.user.role} of volonteurs forum`)
+          .subject(`Message from the ${auth.user.role} of Volonteurs Forum`)
       })
     const time2 = new Date()
     session.flash({ success: `Sent the message to ${user.email} in ${(time2 - time1) / 1000} seconds` })
     return response.redirect('back')
   }
 
+  async mailing({ view, auth }) {
+    const users = await User
+      .query()
+      .where('id', '!=', auth.user.id)
+      .orderBy('role')
+      .fetch()
+    const receievers = {
+      admins: users.rows.filter(user => user.role === 'admin'),
+      moderators: users.rows.filter(user => user.role === 'moderator'),
+      users: users.rows.filter(user => user.role === 'user')
+    }
+    return view.render('admin.mailing', { data: receievers })
+  }
+
+  async emailMany({ request, response, auth, session }) {
+    const { users, message } = request.all()
+    const emails = typeof users === 'string' ? [users] : users  //check if it`s one user or multiple
+    const time1 = new Date()
+    await Mail
+      .send('emails.admin_message', { text: message }, message => {
+        emails.forEach(async email => {
+          message.to(email)
+        })
+        message.subject('Mailing from the Forum')
+      })
+    const time2 = new Date()
+    session.flash({ success: `Successfully emailed users in ${(time2 - time1) / 1000} seconds` })
+    return response.redirect('back')
+  }
+
   async generatePdfStatistic({ response, auth }) {
     const content = [
       { text: 'Statistics', bold: true, alignment: 'center' },
-      
+
     ]
     const fileName = Helpers.tmpPath(`pdf/${new Date().getTime()}_${auth.user.username}.pdf`)
     const stream = fs.createWriteStream(fileName);
     PDF.create(content, stream)
-    await new Promise(resolve => {  //wait for ~10ms, because pdf-adonis is poorly implemented
+    await new Promise(resolve => {  //manually wait for ~10ms, because pdf-adonis was poorly implemented
       setTimeout(resolve, 10)
     })
     return response.download(fileName)

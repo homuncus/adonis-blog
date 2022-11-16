@@ -352,9 +352,18 @@ $(function() {
     //
 
     // Reacting to external value changes
-    $(".select-access-multiple-value").select2();
+    //$(".select-access-multiple-value").select2();
     $(".change-to-ca").click(function() { $(".select-access-multiple-value").val("CA").trigger("change"); });
     $(".change-to-ak-co").click(function() { $(".select-access-multiple-value").val(["AK","CO"]).trigger("change"); });
+    $(".change-to-all").click(function() {
+        const vals = []
+        $("#select option").each(function(index) {
+            vals.push($(this).val())
+            console.log(`${index}: ${vals}`);
+        })
+        $(".select-access-multiple-value").val(vals).trigger('change')
+    })
+    $(".change-to-null").click(function() { $(".select-access-multiple-value").val([]).trigger('change') })
 
 
     // Open/close menu

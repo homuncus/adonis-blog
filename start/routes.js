@@ -69,6 +69,8 @@ Route.group('admin', () => {
   Route.patch('users/:id', 'AdminController.updateUser')
   Route.post('users/:id/email', 'AdminController.email')
   Route.get('stats/download', 'AdminController.generatePdfStatistic')
+  Route.get('mailing', 'AdminController.mailing')
+  Route.post('mailing', 'AdminController.emailMany')
 })
   .prefix('admin')
   .middleware(['auth', 'admin'])

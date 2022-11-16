@@ -41,7 +41,6 @@ class PostController {
       types: ['image'],
       size: '2mb'
     })
-    console.log(share);
     const time1 = new Date()
     const post = new Post()
     // await img.move(Helpers.tmpPath('uploads'), {
@@ -101,7 +100,6 @@ class PostController {
       like.user_id === auth.user.id
     ).length > 0
     post.getRelated('comments').rows.forEach(comment => {
-      console.log(comment);
       comment.is_liked = comment.getRelated('likes').rows.filter(like =>
         like.user_id === auth.user.id
       ).length > 0

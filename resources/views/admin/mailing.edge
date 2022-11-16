@@ -1,0 +1,69 @@
+@layout('layouts.admin')
+
+@section('head')
+  {{ script('admin/assets/js/core/libraries/jquery_ui/interactions.min.js') }}
+  {{ script('admin/assets/js/plugins/forms/selects/select2.min.js') }}
+  {{ script('admin/assets/js/plugins/forms/styling/uniform.min.js') }}
+  {{ script('admin/assets/js/pages/form_select2.js') }}
+  {{ script('admin/ckeditor/ckeditor.js') }}
+  {{ script('admin/assets/js/pages/editor_ckeditor.js') }}
+@endsection
+
+@section('body')
+@set('title', 'Mail many users')
+<!-- Header content -->
+<div class="page-header-content">
+  <div class="page-title">
+      <h4><i class="icon-arrow-left52 position-left"></i> <span class="text-semibold">Mailing</span></h4>
+
+      <ul class="breadcrumb position-right">
+        <li><a href="/">Home</a></li>
+        <li class="active">Mailing</li>
+      </ul>
+  </div>
+</div>
+<!-- /header content -->
+<div class="content">
+  <form action="" method="POST">
+    {{ csrfField() }}
+    <div class="content-group">
+      <label for="editor-full">Message</label>
+      <textarea name="message" id="editor-full" rows="4" cols="4" required></textarea>
+    </div>
+    <div class="form-group">
+      <div class="d-flex">
+        <label for="select">People, who will receive the e-mail</label>
+      </div>
+      <select id="select" multiple="multiple" data-placeholder="Select people..." class="select-access-multiple-value select-icons" name="users" required>
+        @if(data.admins.length)
+          <optgroup label="Admin">
+              @each(user in data.admins)
+                <option value="{{ user.email }}" data-icon="user-tie">{{ user.username }}</option>
+              @endeach
+          </optgroup>
+        @endif
+        @if(data.moderators.length)
+          <optgroup label="Moderators">
+              @each(user in data.moderators)
+                <option value="{{ user.email }}" data-icon="pencil4">{{ user.username }}</option>
+              @endeach
+          </optgroup>
+        @endif
+        @if(data.users.length)
+          <optgroup label="Users">
+              @each(user in data.users)
+                <option value="{{ user.email }}" data-icon="user">{{ user.username }}</option>
+              @endeach
+          </optgroup>
+        @endif
+      </select>
+      <button type="button" class="btn btn-link change-to-all"><i class="icon-reply-all"></i> Select all users</button>
+      <button type="button" class="btn btn-link text-danger change-to-null"><i class="icon-cancel-circle2"></i> Clear</button>
+    </div>
+    
+    <div class="text-end form-group">
+      <button type="submit" class="btn bg-teal-400">Send <i class="icon-arrow-right14 position-right"></i></button>
+    </div>
+  </form>
+</div>
+@endsection
