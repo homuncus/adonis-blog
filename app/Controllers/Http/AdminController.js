@@ -118,8 +118,21 @@ class AdminController {
 
   async generatePdfStatistic({ response, auth }) {
     const content = [
-      { text: 'Statistics', bold: true, alignment: 'center' },
-
+      { text: 'Statistics', bold: true, fontSize: 22, alignment: 'center' },
+      { text: `Number of users: ${await User.getCount()}` },
+      { text: `Number of posts: ${await Post.getCount()}` },
+      { text: `New users for last month: 
+        ${await User
+          .query()
+          .where('created_at', '<', new Date())
+          .getCount()}`
+      },
+      { text: `New posts for last month: 
+        ${await Post
+          .query()
+          .where('created_at', '<', new Date())
+          .getCount()}`
+      },
     ]
     const fileName = Helpers.tmpPath(`pdf/${new Date().getTime()}_${auth.user.username}.pdf`)
     const stream = fs.createWriteStream(fileName);
