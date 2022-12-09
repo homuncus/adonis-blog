@@ -14,14 +14,14 @@ const Env = use('Env')
  * Resourceful controller for interacting with posts
  */
 class PostController {
-  async index({ request, response, view }) {
+  async index({ request, response, view, auth }) {
     const posts = await Post.query()
       .with('comments')
       .with('likes')
       .with('user')
       .orderBy('created_at')
       .fetch()
-
+    console.log(await auth.user.can('Delete users'));
     // const admin = await User.findBy('role', 'admin')
     // console.log(posts.rows);
     return view.render('index', {
@@ -192,13 +192,13 @@ class PostController {
   async destroy({ params, request, response, session, auth }) {
     const { id } = params;
     const { share } = request.all()
+    const time1 = new Date()
     const post = await Post
       .query()
       .with('comments.user')
       .where('id', id)
       .first()
     if (!post) throw new NotFoundException()
-    const time1 = new Date()
     if (post.img_path) {
       const imgFileName = post.img_path.split('/').at(-1)
       const imgId = `forum/uploads/${imgFileName.slice(0, imgFileName.indexOf('.'))}`

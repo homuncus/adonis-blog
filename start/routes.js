@@ -28,7 +28,7 @@ Route.group(() => {
 }).middleware('guest')
 Route.get('logout', 'UserController.logout')
 // Route.group(()=>{
-
+  
 Route.group('posts', () => {
   Route.get('create', 'PostController.create')
   Route.post('create', 'PostController.store')

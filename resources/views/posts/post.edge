@@ -3,7 +3,7 @@
 @section('body')
 @set('title', 'Post: ' + post.title)
 
-@if(auth.user.id === post.user_id || auth.user.role === 'admin')
+@if(auth.user.id === post.user_id || auth.user.role === 'admin' || auth.user.role === 'moderator')
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog">

@@ -7,7 +7,7 @@ const Hash = use('Hash')
 const Model = use('Model')
 
 class User extends Model {
-  static boot () {
+  static boot() {
     super.boot()
 
     /**
@@ -31,16 +31,29 @@ class User extends Model {
    *
    * @return {Object}
    */
-  tokens () {
+  tokens() {
     return this.hasMany('App/Models/Token')
   }
-  posts(){
+  posts() {
     return this.hasMany('App/Models/Post')
   }
-  comments(){
+  comments() {
     return this.hasMany('App/Models/Comment')
   }
-  
+  role() {
+    return this.belongsTo('App/Models/Role')
+  }
+  async hasRole(roleName) {
+    return (await this.role().fetch().name) === roleName
+  }
+  async can(permissionName) { //hasPermission
+    return !!(await this
+      .role()
+      .with('permissions')
+      .fetch())
+      .getRelated('permissions')
+      .rows.find(val => val.name.toLowerCase() === permissionName.toLowerCase())
+  }
 }
 
 module.exports = User

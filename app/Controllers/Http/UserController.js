@@ -28,6 +28,7 @@ class UserController {
   async show({ params, view, auth }) {
     const { id } = params
     const user = await User.find(id)
+    if(!user) throw new NotFoundException()
     await user.load('comments')
     user.posts = (await user
       .posts()
@@ -50,13 +51,13 @@ class UserController {
   async login({ auth, request, response, session }) {
     const { email, password, remember } = request.all();
     if (!email || !password) {
-      session.flash({ error: 'Please provide email <strong>and</strong> password' })
+      session.flash({ error: 'Please provide email <strong>and</strong> password' }).flashExcept(['password'])
       return response.redirect('back')
     }
     try {
       await auth.remember(!!remember).attempt(email, password);
     } catch (err) {
-      session.flash({ error: err.message })
+      session.flash({ error: 'Wrong email or password, please try again' }).flashExcept(['password'])
       return response.redirect('back')
     }
     return response.redirect('/');
@@ -81,10 +82,10 @@ class UserController {
     }
 
     if (await User.findBy('email', email) || await User.findBy('username', username)) {
-      session.flash({ error: 'There is such user' });
+      session.flash({ error: 'There is user with such email or username' });
       return response.redirect('back');
     }
-    const user = await User.create({
+    await User.create({
       username: username,
       email: email,
       password: password,

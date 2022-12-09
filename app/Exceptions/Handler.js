@@ -55,8 +55,10 @@ class ExceptionHandler extends BaseExceptionHandler {
    * @return {void}
    */
   async report (error, { request }) {
-    if(error.status >= 500)
+    if(error.status >= 500){
+      console.log(new Date().toLocaleDateString());
       Logger.error(error, error);
+    }
   }
 }
 

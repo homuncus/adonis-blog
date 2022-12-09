@@ -35,7 +35,7 @@
               <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-              <p>Enter the email address we will send your password on</p>
+              <p>Enter the email address we will send the restoration link on</p>
               <div class="form-outline mb-3">
                 <input type="email" id="emailInput" class="form-control form-control-lg"
                   placeholder="Enter email" name="email" required/>
@@ -82,7 +82,7 @@
             <!-- Email input -->
             <div class="form-outline mb-4">
               <input type="email" id="form3Example3" class="form-control form-control-lg"
-                placeholder="Enter a valid email address" name="email"/>
+                placeholder="Enter a valid email address" name="email" value="{{ old('email', '') }}"/>
               <label class="form-label" for="form3Example3">Email address</label>
             </div>
 
@@ -96,7 +96,11 @@
             <div class="d-flex justify-content-between align-items-center">
               <!-- Checkbox -->
               <div class="form-check mb-0">
-                <input class="form-check-input me-2" type="checkbox" value="" id="form2Example3" name="remember" />
+                <input class="form-check-input me-2" type="checkbox" id="form2Example3" name="remember"
+                @if(flashMessage('remember'))
+                  checked
+                @endif
+                />
                 <label class="form-check-label" for="form2Example3">
                   Remember me
                 </label>

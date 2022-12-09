@@ -100,7 +100,7 @@ class AdminController {
     return view.render('admin.mailing', { data: receievers })
   }
 
-  async emailMany({ request, response, auth, session }) {
+  async emailMany({ request, response, session }) {
     const { users, message } = request.all()
     const emails = typeof users === 'string' ? [users] : users  //check if it`s one user or multiple
     const time1 = new Date()
@@ -117,18 +117,19 @@ class AdminController {
   }
 
   async generatePdfStatistic({ response, auth }) {
+    const time1 = new Date()
     const content = [
-      { text: 'Statistics', bold: true, fontSize: 22, alignment: 'center' },
+      { text: 'Statistics', bold: true, fontSize: 24, alignment: 'center' },
       { text: `Number of users: ${await User.getCount()}` },
       { text: `Number of posts: ${await Post.getCount()}` },
-      { text: `New users for last month: 
-        ${await User
+      {
+        text: `New users for last month: ${await User
           .query()
           .where('created_at', '<', new Date())
           .getCount()}`
       },
-      { text: `New posts for last month: 
-        ${await Post
+      {
+        text: `New posts for last month: ${await Post
           .query()
           .where('created_at', '<', new Date())
           .getCount()}`
@@ -137,8 +138,9 @@ class AdminController {
     const fileName = Helpers.tmpPath(`pdf/${new Date().getTime()}_${auth.user.username}.pdf`)
     const stream = fs.createWriteStream(fileName);
     PDF.create(content, stream)
+    const time2 = new Date()
     await new Promise(resolve => {  //manually wait for ~10ms, because pdf-adonis was poorly implemented
-      setTimeout(resolve, 10)
+      setTimeout(resolve, time2 - time1 + 10)
     })
     return response.download(fileName)
   }

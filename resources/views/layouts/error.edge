@@ -5,8 +5,24 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>{{ title }}</title>
+	<!-- Global stylesheets -->
+	<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
+	{{ style('admin/assets/css/icons/icomoon/styles.css') }}
+	{{ style('admin/assets/css/bootstrap.css') }}
+	{{ style('admin/assets/css/core.css') }}
+	{{ style('admin/assets/css/components.css') }}
+	{{ style('admin/assets/css/colors.css') }}
+	<!-- /global stylesheets -->
 
-	@include('includes.admin.head')
+	<!-- Core JS files -->
+	{{ script('admin/assets/js/plugins/loaders/pace.min.js') }}
+	{{ script('admin/assets/js/core/libraries/jquery.min.js') }}
+	{{ script('admin/assets/js/core/libraries/bootstrap.min.js') }}
+	{{ script('admin/assets/js/plugins/loaders/blockui.min.js') }}
+	<!-- /core JS files -->
+
+	{{ script('admin/assets/js/core/app.js') }}
+
 </head>
 
 <body>
