@@ -19,6 +19,9 @@ class User extends Model {
         userInstance.password = await Hash.make(userInstance.password)
       }
     })
+    this.addHook('afterFetch', async userInstance => {
+      
+    })
   }
 
   /**
@@ -46,6 +49,15 @@ class User extends Model {
   async hasRole(roleName) {
     return (await this.role().fetch().name) === roleName
   }
+  /**
+   * Checks if there is a row in `permission_role` table
+   * using user's role and `permissionName` argument. It is
+   * advised to take `permissionName` from `permission` config
+   * module via `use('Config').get('permission')`
+   * @param {string} permissionName 
+   * 
+   * @returns {Boolean}
+   */
   async can(permissionName) { //hasPermission
     return !!(await this
       .role()

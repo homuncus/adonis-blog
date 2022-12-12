@@ -5,8 +5,10 @@ const User = use('App/Models/User')
 /** @type {typeof import('@adonisjs/../../app/Models/Comment')} */
 const Comment = use('App/Models/Comment')
 const NotFoundException = use('App/Exceptions/NotFoundException')
+const NotAuthorizedException = use('App/Exceptions/NotAuthorizedException')
 
 const cloudinary = use('App/Services/CloudinaryService');
+const Access = use('Config').get('permission')
 const Mail = use('Mail')
 const Env = use('Env')
 
@@ -21,9 +23,7 @@ class PostController {
       .with('user')
       .orderBy('created_at')
       .fetch()
-    console.log(await auth.user.can('Delete users'));
     // const admin = await User.findBy('role', 'admin')
-    // console.log(posts.rows);
     return view.render('index', {
       posts: posts.toJSON(),
       // admin: admin.toJSON(),
@@ -64,7 +64,7 @@ class PostController {
     post.text = text
     post.tags = tags
     post.user_id = auth.user.id
-    await post.save()  
+    await post.save()
     if (share) {   //comment in case of accidental email sending
       //send the notification
       const users = await User.query().where('subscribed', true).fetch()
@@ -82,7 +82,7 @@ class PostController {
       success: `Sucessfully created a post ${share ? 'and shared it among users ' : ''} in ${(time2 - time1) / 1000} seconds`,
     })
 
-    return response.route('PostController.show', {id: post.id});
+    return response.route('PostController.show', { id: post.id });
   }
 
   async show({ params, view, request, auth }) {
@@ -149,10 +149,12 @@ class PostController {
   async edit({ params, request, response, view }) {
     const { id } = params
     const post = await Post.find(id)
+    // if (auth.user.id !== post.user_id && !await auth.user.can(Access.REDACT_POSTS))
+    //   throw new NotAuthorizedException()
     return view.render('posts/edit', { post: post.toJSON() })
   }
 
-  async update({ params, request, response, session }) {
+  async update({ params, request, response, session, auth }) {
     const { id } = params
     const { title, text, tags } = request.all()
     const img = request.file('img', {
@@ -162,6 +164,8 @@ class PostController {
     })
     const post = await Post.find(id)
     if (!post) throw new NotFoundException()
+    // if (auth.user.id !== post.user_id && !await auth.user.can(Access.REDACT_POSTS))
+    //   throw new NotAuthorizedException()
     if (title) post.title = title
     if (text) post.text = text
     if (tags) post.tags = tags
@@ -199,6 +203,8 @@ class PostController {
       .where('id', id)
       .first()
     if (!post) throw new NotFoundException()
+    if (auth.user.id !== post.user_id /* && !await auth.user.can(Access.DELETE_POSTS) */)
+      throw new NotAuthorizedException()
     if (post.img_path) {
       const imgFileName = post.img_path.split('/').at(-1)
       const imgId = `forum/uploads/${imgFileName.slice(0, imgFileName.indexOf('.'))}`

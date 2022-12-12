@@ -7,7 +7,7 @@ class Role extends Model {
     static boot() {
         super.boot()
         this.addHook('beforeSave', roleInstance => {
-            if(!roleInstance.slug){
+            if (!roleInstance.slug) {
                 roleInstance.slug = roleInstance.name
                     .trim()
                     .replace(' ', '-')
@@ -18,6 +18,9 @@ class Role extends Model {
     permissions() {
         return this.belongsToMany('App/Models/Permission')
             .pivotModel('App/Models/PermissionRole')
+    }
+    users() {
+        return this.hasMany('App/Models/User')
     }
 }
 

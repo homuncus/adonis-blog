@@ -19,37 +19,38 @@ const Role = use('App/Models/Role')
 /** @type {import('@adonisjs/../../app/Models/PermissionRole')} */
 const PermissionRole = use('App/Models/PermissionRole')
 
+const Access = use('Config').get('permission')
+
 class DatabaseSeeder {
   async run() {
 
-    const permissions = [ //create permissions
-      'Delete posts',
-      'Redact posts',
-      'Create users',
-      'Delete users',
-      'Change user role',
-      'Mail users'
-    ]
-    await Permission.createMany(permissions.map(permissionName => {
-      return { name: permissionName }
-    }))
+    const permissions = []
+    for (const permission in Access){
+      permissions.push(Access[permission])
+    }
+    await Permission.createMany(  //push properties in database according to config file
+      permissions.map(permissionName => {
+        return { name: permissionName }
+      })
+    )
 
     const roles = [ //create start roles
       'Administrator',
       'Moderator',
-      'User'
     ]
-    await Role.createMany(roles.map(roleName => {
-      return { name: roleName }
-    }))
+    await Role.createMany(
+      roles.map(roleName => {
+        return { name: roleName }
+      })
+    )
 
     const permissionRoles = [];
     for (let i = 1; i <= permissions.length; i++) { //give all permissions to administrator 
       permissionRoles.push({ role_id: 1, permission_id: i })
     }
 
-    let moderatorPermissions = [1, 2, 3, 4, 6]
-    moderatorPermissions.forEach(async id => {
+    let moderatorPermissions = [1, 2, 3, 4, 6, 7, 8]
+    moderatorPermissions.forEach(id => {
       permissionRoles.push({ role_id: 2, permission_id: id })
     })
 

@@ -7,7 +7,7 @@ class PermissionSchema extends Schema {
   up () {
     this.create('permissions', (table) => {
       table.increments()
-      table.string('name', 80).notNullable()
+      table.string('name', 80).notNullable().unique()
       table.timestamps()
     })
   }

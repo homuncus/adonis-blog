@@ -4,12 +4,14 @@ const Post = use('App/Models/Post')
 const User = use('App/Models/User')
 const NoSubjectException = use('App/Exceptions/NoSubjectException')
 const NotFoundException = use('App/Exceptions/NotFoundException')
+const NotAuthorizedException = use('App/Exceptions/NotAuthorizedException')
 
 const fs = require('fs')
 const Mail = use('Mail')
 const PDF = use('PDF')
 const Env = use('Env')
 const Helpers = use('Helpers')
+const Access = use('Config').get('permission')
 /**
  * Resourceful controller for interacting with admins
  */
@@ -59,22 +61,29 @@ class AdminController {
     return view.render('admin.profile', { user: user.toJSON() })
   }
 
-  async updateUser({ params, request, response }) {
+  async updateUser({ params, request, response, auth }) {
     const { id } = params
     const { role } = request.all()
     if (!role) return response.redirect('back')
     const user = await User.find(id)
     if (!user) throw new NotFoundException()
+    // if (!await auth.user.can(Access.CHANGE_USER_ROLE))
+    //   throw new NotAuthorizedException()
     user.role = role
     await user.save()
     return response.redirect('back')
   }
 
   async email({ params, request, response, session, auth }) {
+
+    // if (!await auth.user.can(Access.MAIL_USERS))
+    //   throw new NotAuthorizedException()
+
     const { text } = request.all()
     const { id } = params
     const user = await User.find(id)
     if (!user) throw new NotFoundException()
+
     const time1 = new Date()
     await Mail
       .send('emails.admin_message', { text: text }, (message) => {
@@ -87,6 +96,10 @@ class AdminController {
   }
 
   async mailing({ view, auth }) {
+
+    // if (!await auth.user.can(Access.MAIL_USERS))
+    // throw new NotAuthorizedException()
+
     const users = await User
       .query()
       .where('id', '!=', auth.user.id)
@@ -101,6 +114,10 @@ class AdminController {
   }
 
   async emailMany({ request, response, session }) {
+
+    // if (!await auth.user.can(Access.MAIL_USERS))
+    //   throw new NotAuthorizedException()
+
     const { users, message } = request.all()
     const emails = typeof users === 'string' ? [users] : users  //check if it`s one user or multiple
     const time1 = new Date()
@@ -137,7 +154,7 @@ class AdminController {
     ]
     const fileName = Helpers.tmpPath(`pdf/${new Date().getTime()}_${auth.user.username}.pdf`)
     const stream = fs.createWriteStream(fileName);
-    PDF.create(content, stream)
+    /*await*/ PDF.create(content, stream)
     const time2 = new Date()
     await new Promise(resolve => {  //manually wait for ~10ms, because pdf-adonis was poorly implemented
       setTimeout(resolve, time2 - time1 + 10)

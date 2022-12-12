@@ -14,7 +14,7 @@ class UserSchema extends Schema {
       table.string('avatar_url').notNullable().defaultTo(Env.get('GUEST_AVATAR_URL'))
       table.string('description')
       table.boolean('subscribed').notNullable().defaultTo(true)
-      table.integer('role_id').notNullable().defaultTo(1).references('id').inTable('roles')
+      table.integer('role_id').nullable().references('id').inTable('roles')
       table.timestamps()
     })
   }

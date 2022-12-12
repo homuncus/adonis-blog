@@ -13,6 +13,7 @@ const cloudinary = use('App/Services/CloudinaryService');
 const Hash = use('Hash')
 const Env = use('Env')
 const Mail = use('Mail')
+const Access = use('Config').get('permission')
 
 const NotFoundException = use('App/Exceptions/NotFoundException')
 const NotAuthorizedException = use('App/Exceptions/NotAuthorizedException')
@@ -128,20 +129,20 @@ class UserController {
     return view.render('auth.reset', {id: user.id})
   }
 
-  async update({ params, request, response, session }) {
-    const {id} = params
-    const { password, confirmpassword } = request.all()
-    const user = await User.find(id)
-    if(!user) throw new NotFoundException()
-    if(password !== confirmpassword) {
-      session.flash({error: 'Passwords are not equal'})
-      return response.redirect('back')
-    }
-    user.password = password
-    await user.save()
-    session.flash({success: 'Password was successfully changed'})
-    return response.route('UserController.enter')
-  }
+  // async update({ params, request, response, session }) {
+  //   const {id} = params
+  //   const { password, confirmpassword } = request.all()
+  //   const user = await User.find(id)
+  //   if(!user) throw new NotFoundException()
+  //   if(password !== confirmpassword) {
+  //     session.flash({error: 'Passwords are not equal'})
+  //     return response.redirect('back')
+  //   }
+  //   user.password = password
+  //   await user.save()
+  //   session.flash({success: 'Password was successfully changed'})
+  //   return response.route('UserController.enter')
+  // }
 
   async edit({ params, response, view, auth, session }) {
     const { id } = params
@@ -160,7 +161,9 @@ class UserController {
     const { oldpassword, newpassword, newpasswordconfirm } = request.all()
     const user = await User.find(id)
     if (!user) throw new NotFoundException()
-    if (await Hash.verify(oldpassword, user.password)) {
+    if (auth.user.id !== user.id)
+      throw new NotAuthorizedException()
+    if (!await Hash.verify(oldpassword, user.password)) {
       session.flash({ error: 'Invalid user password' })
       return response.redirect('back')
     }
@@ -187,7 +190,11 @@ class UserController {
       extnames: ['png', 'jpg', 'jpeg']
     })
     const user = await User.find(id)
+
     if (!user) throw new NotFoundException()
+    if (auth.user.id !== user.id /* && !await auth.user.can(Access.REDACT_USERS) */)
+      throw new NotAuthorizedException()
+
     user.subscribed = !!subscribed
     if (username && username !== user.username) {
       user.username = username
@@ -210,7 +217,14 @@ class UserController {
         let img_id = 'forum/avatars/' + img_filename.slice(0, img_filename.indexOf('.'))
         await cloudinary.v2.uploader.destroy(img_id, { invalidate: true, resource_type: 'image' })
       }
-      const cloudinaryResponse = await cloudinary.v2.uploader.upload(avatar.tmpPath, { folder: 'forum/avatars', width: 512, height: 512, crop: "fill" });
+      const cloudinaryResponse = await cloudinary.v2
+      .uploader
+      .upload(avatar.tmpPath, { 
+        folder: 'forum/avatars', 
+        width: 512, 
+        height: 512, 
+        crop: "fill" 
+      });
       user.avatar_url = cloudinaryResponse.secure_url
       await user.save()
       session.flash({ success: 'successfully changed the avatar' })
@@ -227,15 +241,17 @@ class UserController {
     const { id } = params
     const user = await User.find(id)
     if (!user) throw new NotFoundException()
-    if (user.role === 'admin') throw new NotAuthorizedException()
+    if (user.role === 'admin') throw new BadRequestException()
+    if (auth.user.id !== user.id /* && !await auth.user.can(Access.DELETE_USERS) */)
+      throw new NotAuthorizedException()
     if (user.avatar_url !== Env.get('GUEST_AVATAR_URL')) {  //deleting user`s avatar image
       let img_filename = user.avatar_url.split('/').at(-1)
       let img_id = 'forum/avatars/' + img_filename.slice(0, img_filename.indexOf('.'))
       await cloudinary.v2.uploader.destroy(img_id, { invalidate: true, resource_type: 'image' })
     }
-    await auth.logout()
+    if (auth.user.id === user.id) await auth.logout()
     await user.delete()
-    session.flash({ success: 'Your account has been successfully deleted' })
+    session.flash({ success: 'The account has been successfully deleted' })
     return response.redirect('/login')
   }
 }

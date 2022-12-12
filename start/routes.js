@@ -13,6 +13,7 @@
 
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
+const Access = use('Config').get('permission')
 
 Route.get('/', 'PostController.index').middleware('meta')
 Route.get('search', 'PostController.search').middleware('meta')
@@ -66,13 +67,13 @@ Route.group('admin', () => {
   Route.get('posts', 'AdminController.search')
   Route.get('users', 'AdminController.search')
   Route.get('users/:id', 'AdminController.showUser')
-  Route.patch('users/:id', 'AdminController.updateUser')
-  Route.post('users/:id/email', 'AdminController.email')
+  Route.patch('users/:id', 'AdminController.updateUser').middleware(`access:${Access.CHANGE_USER_ROLE}`)
+  Route.post('users/:id/email', 'AdminController.email').middleware(`access:${Access.MAIL_USERS}`)
   Route.get('stats/download', 'AdminController.generatePdfStatistic')
-  Route.get('mailing', 'AdminController.mailing')
-  Route.post('mailing', 'AdminController.emailMany')
+  Route.get('mailing', 'AdminController.mailing').middleware(`access:${Access.MAIL_USERS}`)
+  Route.post('mailing', 'AdminController.emailMany').middleware(`access:${Access.MAIL_USERS}`)
 })
   .prefix('admin')
-  .middleware(['auth', 'admin'])
+  .middleware(['auth', 'access'])
 
 // }).middleware('auth')

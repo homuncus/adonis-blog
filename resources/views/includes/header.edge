@@ -71,12 +71,7 @@
               loading="lazy"
             />
             <strong class="d-none d-sm-block ms-1">{{auth.user.username}} 
-            @if(auth.user.role == 'admin')
-              (admin)
-            @endif
-            @if(auth.user.role == 'moderator')
-              (moderator)
-            @endif
+            ({{ auth.user.can(Access.DELETE_USERS) }})
             </strong>
           </a>
         @else
