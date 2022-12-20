@@ -7,6 +7,9 @@ class PermissionRole extends Model {
     static get table() {
         return 'permission_role'
     }
+    role() {
+        return this.belongsTo('App/Models/Role')
+    }
 }
 
 module.exports = PermissionRole

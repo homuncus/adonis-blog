@@ -6,12 +6,12 @@
  * `routes.js`
  */
 module.exports = {
-    DELETE_POSTS: 'delete posts',
-    REDACT_POSTS: 'redact posts',
-    CREATE_USERS: 'create users',
-    DELETE_USERS: 'delete users',
-    CHANGE_USER_ROLE: 'change user role',
-    MAIL_USERS: 'mail users',
-    REDACT_COMMENTS: 'redact comments',
-    DELETE_COMMENTS: 'delete comments'
+    DELETE_POSTS: 1,
+    REDACT_POSTS: 2,
+    CREATE_USERS: 3,
+    DELETE_USERS: 4,
+    CHANGE_USER_ROLE: 5,
+    MAIL_USERS: 6,
+    REDACT_COMMENTS: 7,
+    DELETE_COMMENTS: 8,
 }

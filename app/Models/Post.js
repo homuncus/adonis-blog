@@ -30,6 +30,16 @@ class Post extends Model {
     comments() {
         return this.hasMany('App/Models/Comment')
     }
+
+    //getters
+    static get computed() {
+        return ['creationDate']
+    }
+
+    getCreationDate({ created_at }) {
+        return moment(created_at).format('Do MMM, YYYY')
+    }
+    
 }
 
 module.exports = Post

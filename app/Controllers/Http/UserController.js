@@ -241,7 +241,6 @@ class UserController {
     const { id } = params
     const user = await User.find(id)
     if (!user) throw new NotFoundException()
-    if (user.role === 'admin') throw new BadRequestException()
     if (auth.user.id !== user.id /* && !await auth.user.can(Access.DELETE_USERS) */)
       throw new NotAuthorizedException()
     if (user.avatar_url !== Env.get('GUEST_AVATAR_URL')) {  //deleting user`s avatar image

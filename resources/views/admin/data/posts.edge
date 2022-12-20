@@ -1,0 +1,73 @@
+@layout('layouts.admin')
+
+@section('head')
+{{ script('admin/assets/js/plugins/forms/selects/select2.min.js') }}
+{{ script('admin/assets/js/pages/form_select2.js') }}
+@endsection
+
+@section('body')
+@set('title', 'Searching posts')
+<!-- Page header -->
+<div class="page-header page-header-transparent">
+    <div class="page-header-content">
+        <div class="page-title">
+            <h4><i class="icon-arrow-left52 position-left"></i> <span class="text-semibold">Data</span> - Posts</h4>
+
+            <ul class="breadcrumb position-right">
+                <li><a href="/admin">Home</a></li>
+                <li class="active">Posts</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- /page header -->
+
+
+<!-- Content area -->
+<div class="content">
+
+    <!-- Search field -->
+    <div class="panel panel-flat">
+        <div class="panel-heading">
+            <h5 class="panel-title">Posts table</h5>
+        </div>
+
+        <div class="panel-body">
+            <table id="posts-table" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Creation Date</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Id</th>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Creation Date</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <!-- /search field -->
+
+<!-- Search results -->
+</div>
+<script>
+    $('#posts-table').DataTable( {
+        processing: true,
+        serverSide: true,
+        ajax: '/api/posts',
+        columns: [
+            { data: 'id', name: 'posts.id' },
+            { data: 'title', name: 'posts.title' },
+            { data: 'username', name: 'users.username' },
+            { data: 'creationDate', name: 'posts.created_at' },
+        ],
+    } );
+</script>
+@endsection

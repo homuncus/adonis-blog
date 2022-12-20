@@ -13,7 +13,7 @@
 
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
-const Access = use('Config').get('permission')
+const Access = use('Access')
 
 Route.get('/', 'PostController.index').middleware('meta')
 Route.get('search', 'PostController.search').middleware('meta')
@@ -64,8 +64,9 @@ Route.group('users', () => {
 
 Route.group('admin', () => {
   Route.get('/', 'AdminController.index')
-  Route.get('posts', 'AdminController.search')
-  Route.get('users', 'AdminController.search')
+  Route.get('posts', 'AdminController.posts')
+  Route.get('users', 'AdminController.users')
+  Route.get('roles', 'AdminController.roles')
   Route.get('users/:id', 'AdminController.showUser')
   Route.patch('users/:id', 'AdminController.updateUser').middleware(`access:${Access.CHANGE_USER_ROLE}`)
   Route.post('users/:id/email', 'AdminController.email').middleware(`access:${Access.MAIL_USERS}`)
@@ -74,6 +75,14 @@ Route.group('admin', () => {
   Route.post('mailing', 'AdminController.emailMany').middleware(`access:${Access.MAIL_USERS}`)
 })
   .prefix('admin')
+  .middleware(['auth', 'access'])
+
+Route.group('api', () => {
+  Route.get('users', 'ApiController.getUsers')
+  Route.get('posts', 'ApiController.getPosts')
+  Route.get('roles', 'ApiController.getRoles')
+})
+  .prefix('api')
   .middleware(['auth', 'access'])
 
 // }).middleware('auth')

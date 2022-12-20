@@ -12,6 +12,7 @@
 	{{ style('admin/assets/css/core.css') }}
 	{{ style('admin/assets/css/components.css') }}
 	{{ style('admin/assets/css/colors.css') }}
+	{{ style('https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css') }}
 	<!-- /global stylesheets -->
 
 	<!-- Core JS files -->
@@ -19,6 +20,7 @@
 	{{ script('admin/assets/js/core/libraries/jquery.min.js') }}
 	{{ script('admin/assets/js/core/libraries/bootstrap.min.js') }}
 	{{ script('admin/assets/js/plugins/loaders/blockui.min.js') }}
+	{{ script('https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js') }}
 	<!-- /core JS files -->
 
 	<!-- Theme JS files -->
@@ -127,39 +129,35 @@
 								<!-- Main -->
 								<li class="navigation-header"><span>Main</span> <i class="icon-menu" title="Main pages"></i></li>
 								<li 
-								@if(url.at(-1) === '/')
-								  class="active"
-								@endif
-								><a href="/admin"><i class="icon-home4"></i> <span>Dashboard</span></a></li>
-								<li
-								@if(url.search('search') !== -1)
-								  class="active"
-								@endif
-								>
-									<a href="#"><i class="icon-search4"></i> <span>Search</span></a>
-									<ul>
-										<li
-										@if(url.search('topics') !== -1)
-										  class="active"
-										@endif
-										><a href="#">Topics</a></li>
-										<li
-										@if(url.search('posts') !== -1)
-										  class="active"
-										@endif
-										><a href="/admin/posts">Posts</a></li>
-										<li
-										@if(url.search('users') !== -1)
-										  class="active"
-										@endif
-										><a href="/admin/users">Users</a></li>
-									</ul>
+									@if(url.at(-1) === '/')
+									class="active"
+									@endif
+									><a href="/admin"><i class="icon-home4"></i> Dashboard</a>
 								</li>
 								<li
-								@if(url.search('mailing') !== -1)
-								  class="active"
-								@endif
-								><a href="/admin/mailing"><i class="icon-mailbox"></i> <span>Mailing</span></a></li>
+									@if(url.search('posts') !== -1)
+									class="active"
+									@endif
+									><a href="/admin/posts"><i class="icon-quotes-right"></i> Posts</a>
+								</li>
+								<li
+									@if(url.search('users') !== -1)
+									class="active"
+									@endif
+									><a href="/admin/users"><i class="icon-user"></i>Users</a>
+								</li>
+								<li
+									@if(url.search('roles') !== -1)
+									class="active"
+									@endif
+									><a href="/admin/roles"><i class="icon-user-check"></i> <span>Roles</span></a>
+								</li>
+								<li
+									@if(url.search('mailing') !== -1)
+									class="active"
+									@endif
+									><a href="/admin/mailing"><i class="icon-mailbox"></i> <span>Mailing</span></a>
+								</li>
 							</ul>
 						</div>
 					</div>

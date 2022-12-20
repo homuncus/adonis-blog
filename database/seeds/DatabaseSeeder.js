@@ -14,25 +14,14 @@
 const Factory = use('Factory')
 const User = use('App/Models/User')
 const Post = use('App/Models/Post')
-const Permission = use('App/Models/Permission')
 const Role = use('App/Models/Role')
 /** @type {import('@adonisjs/../../app/Models/PermissionRole')} */
 const PermissionRole = use('App/Models/PermissionRole')
 
-const Access = use('Config').get('permission')
+const Access = use('Access')
 
 class DatabaseSeeder {
   async run() {
-
-    const permissions = []
-    for (const permission in Access){
-      permissions.push(Access[permission])
-    }
-    await Permission.createMany(  //push properties in database according to config file
-      permissions.map(permissionName => {
-        return { name: permissionName }
-      })
-    )
 
     const roles = [ //create start roles
       'Administrator',
@@ -44,9 +33,9 @@ class DatabaseSeeder {
       })
     )
 
-    const permissionRoles = [];
-    for (let i = 1; i <= permissions.length; i++) { //give all permissions to administrator 
-      permissionRoles.push({ role_id: 1, permission_id: i })
+    const permissionRoles = []
+    for (const permission in Access) {  //give all permissions to administrator
+      permissionRoles.push({ role_id: 1, permission_id: Access[permission] })
     }
 
     let moderatorPermissions = [1, 2, 3, 4, 6, 7, 8]
@@ -67,7 +56,7 @@ class DatabaseSeeder {
       username: 'Ludmula',
       email: 'asd@gmail.com',
       password: 'qwer',
-      role_id: 3
+      role_id: 2
     })
 
     await Post.create({

@@ -11,43 +11,48 @@ const Mail = use('Mail')
 const PDF = use('PDF')
 const Env = use('Env')
 const Helpers = use('Helpers')
-const Access = use('Config').get('permission')
+const Access = use('Access')
 /**
  * Resourceful controller for interacting with admins
  */
 class AdminController {
 
-  async index({ request, response, view }) {
-
+  async index({ request, response, view, auth }) {
     return view.render('admin.index')
   }
 
-  async search({ request, response, view, session }) {
-    const { attr, query } = request.all()
-    const subject = request.url().split('/').at(-1)
-    var model;
-    switch (subject) {
-      // TODO: case 'topics':
-      case 'posts':
-        model = Post.query().with('user'); break
-      case 'users':
-        model = User.query().orderBy('role'); break
-      default:
-        throw new NoSubjectException()
-    }
-    const timeBefore = new Date()
-    const items = query ?
-      await model
-        .where(attr, 'LIKE', `%${query}%`)
-        .fetch()
-      :
-      await model.fetch()
-    const timeAfter = new Date()
+  async users({ request, view }) {
+    // var model;
+    // switch (subject) {
+    //   // TODO: case 'topics':
+    //   case 'posts':
+    //     model = Post.query().with('user'); break
+    //   case 'users':
+    //     model = User.query().orderBy('role_id'); break
+    //   default:
+    //     throw new NoSubjectException()
+    // }
+    // const timeBefore = new Date()
+    // const items = query ?
+    //   await model
+    //     .where(attr, 'LIKE', `%${query}%`)
+    //     .fetch()
+    //   :
+    //   await model.fetch()
+    // const timeAfter = new Date()
+    return view.render(`admin.data.users`)
+  }
 
-    return view.render(`admin.search.${subject}`, {
-      items: items.toJSON(),
-      executionTime: (timeAfter - timeBefore) / 1000
-    })
+  async roles({ request, view }) {
+    const permissions = []
+    for (const permission in Access) {
+      permissions.push(Access[permission])
+    }
+    return view.render(`admin.data.roles`, { permissions: permissions })
+  }
+
+  async posts({ request, view }) {
+    return view.render(`admin.data.posts`)
   }
 
   async showUser({ params, view }) {
@@ -63,13 +68,13 @@ class AdminController {
 
   async updateUser({ params, request, response, auth }) {
     const { id } = params
-    const { role } = request.all()
-    if (!role) return response.redirect('back')
+    const { roleId } = request.all()
+    if (!roleId) return response.redirect('back')
     const user = await User.find(id)
     if (!user) throw new NotFoundException()
     // if (!await auth.user.can(Access.CHANGE_USER_ROLE))
     //   throw new NotAuthorizedException()
-    user.role = role
+    user.role_id = roleId
     await user.save()
     return response.redirect('back')
   }

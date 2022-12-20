@@ -24,7 +24,8 @@ const providers = [
   '@adonisjs/mail/providers/MailProvider',
   'adonis-pdf/providers/PDFProvider',
   '@adonisjs/drive/providers/DriveProvider',
-  path.join(__dirname, '..', 'providers', 'ViewProvider')
+  path.join(__dirname, '..', 'providers', 'ViewProvider'),
+  path.join(__dirname, '..', 'providers', 'AccessProvider')
 ]
 
 /*

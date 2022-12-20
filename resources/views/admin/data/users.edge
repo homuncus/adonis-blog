@@ -1,0 +1,98 @@
+@layout('layouts.admin')
+
+@section('head')
+
+@endsection
+
+@section('body')
+@set('title', 'Searching users')
+<!-- Page header -->
+<div class="page-header page-header-transparent">
+    <div class="page-header-content">
+        <div class="page-title">
+            <h4><i class="icon-arrow-left52 position-left"></i> <span class="text-semibold">Data</span> - Users</h4>
+
+            <ul class="breadcrumb position-right">
+                <li><a href="/admin">Home</a></li>
+                <li class="active">Users</li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- /page header -->
+
+
+<!-- Content area -->
+<div class="content">
+
+    <!-- Search field -->
+    <div class="panel panel-flat">
+        <div class="panel-heading">
+            <h5 class="panel-title">Users table</h5>
+        </div>
+
+        <div class="panel-body">
+            <table id="users-table" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Username</th>
+                        <th>E-mail</th>
+                        <th>Role</th>
+                        <th>Registration Date</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    <tr>
+                        <th>Id</th>
+                        <th>Username</th>
+                        <th>E-mail</th>
+                        <th>Role</th>
+                        <th>Registration Date</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+    <!-- /search field -->
+
+
+    {{--  
+        <!-- Tabs -->
+    <ul class="nav nav-lg nav-tabs nav-tabs-bottom search-results-tabs">
+        <li class="active"><a href="search_basic.html"><i class="icon-display4 position-left"></i> Website</a></li>
+        <li><a href="search_users.html"><i class="icon-people position-left"></i> Users</a></li>
+        <li><a href="search_images.html"><i class="icon-image2 position-left"></i> Images</a></li>
+        <li><a href="search_videos.html"><i class="icon-file-play position-left"></i> Videos</a></li>
+        <li class="dropdown pull-right">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog3"></i> <span class="visible-xs-inline-block position-right">Options</span> <span class="caret"></span></a>
+            <ul class="dropdown-menu dropdown-menu-right">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else</a></li>
+                <li class="divider"></li>
+                <li><a href="#">One more line</a></li>
+            </ul>
+        </li>
+    </ul>
+    <!-- /tabs -->  
+    --}}
+
+
+<!-- Search results -->
+</div>
+<script>
+    $('#users-table').DataTable( {
+        processing: true,
+        serverSide: true,
+        ajax: '/api/users',
+        columns: [
+            { data: 'id', name: 'users.id' },
+            { data: 'username', name: 'users.username' },
+            { data: 'email', name: 'users.email' },
+            { data: 'name', name: 'roles.name' },
+            { data: 'creationDate', name: 'users.created_at' },
+        ],
+    } );
+</script>
+@endsection

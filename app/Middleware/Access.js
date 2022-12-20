@@ -7,13 +7,9 @@ const NotAuthorizedException = use('App/Exceptions/NotAuthorizedException')
 const User = use('App/Models/User')
 
 class Access {
-  /**
-   * @param {object} ctx
-   * @param {Request} ctx.request
-   * @param {Function} next
-   */
+
   async handle ({ request, auth }, next, args) {
-    const can = args ? 
+    const can = args.length  ? 
     await auth.user
       .can(args[0])
       :
