@@ -1,22 +1,22 @@
-'use strict'
-
 /** @type {import('@adonisjs/lucid/src/Schema')} */
 const Schema = use('Schema')
 
 class PermissionRoleSchema extends Schema {
-  up () {
+  up() {
     this.create('permission_role', (table) => {
       table.increments()
       table.integer('role_id')
         .notNullable()
         .references('id')
         .inTable('roles')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE')
       table.integer('permission_id').notNullable()
       table.timestamps()
     })
   }
 
-  down () {
+  down() {
     this.drop('permission_role')
   }
 }

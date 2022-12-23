@@ -1,8 +1,5 @@
-/** @type {typeof import('@adonisjs/../../app/Models/Post')} */
 const Post = use('App/Models/Post')
-/** @type {typeof import('@adonisjs/../../app/Models/User')} */
 const User = use('App/Models/User')
-/** @type {typeof import('@adonisjs/../../app/Models/Comment')} */
 const Comment = use('App/Models/Comment')
 const NotFoundException = use('App/Exceptions/NotFoundException')
 const NotAuthorizedException = use('App/Exceptions/NotAuthorizedException')
@@ -11,12 +8,15 @@ const cloudinary = use('App/Services/CloudinaryService');
 const Access = use('Config').get('permission')
 const Mail = use('Mail')
 const Env = use('Env')
+const DataTable = use('App/Services/DataTable')
 
 /**
  * Resourceful controller for interacting with posts
  */
 class PostController {
-  async index({ request, response, view, auth }) {
+  async index({
+    request, response, view, auth
+  }) {
     const posts = await Post.query()
       .with('comments')
       .with('likes')
@@ -31,12 +31,45 @@ class PostController {
     })
   }
 
+  async ajaxIndex({ view }) { // index 2.0
+    return view.render('admin.data.posts')
+  }
+
+  async ajaxShow({ params }) {
+    const { id } = params
+    const post = await Post.find(id)
+    Post.tags = JSON.stringify(Post.tags)
+    return post.toJSON()
+  }
+
+  async data({ request, response }) {
+    const data = request.get();
+
+    const query = Post
+      .query()
+      .select([
+        'posts.id',
+        'posts.title',
+        'users.username',
+        'posts.created_at'
+      ])
+      .innerJoin('users', 'users.id', 'posts.user_id')
+
+    const datatable = new DataTable(query, ['posts.title', 'users.username'], data);
+    const datatableResponse = await datatable.result();
+    return datatableResponse;
+  }
+
   async create({ view }) {
     return view.render('posts/add');
   }
 
-  async store({ request, response, session, auth }) {
-    const { title, text, tags, share } = request.all()
+  async store({
+    request, response, session, auth
+  }) {
+    const {
+      title, text, tags, share
+    } = request.all()
     const img = request.file('image', {
       types: ['image'],
       size: '2mb'
@@ -65,13 +98,13 @@ class PostController {
     post.tags = tags
     post.user_id = auth.user.id
     await post.save()
-    if (share) {   //comment in case of accidental email sending
-      //send the notification
+    if (share) { // comment in case of accidental email sending
+      // send the notification
       const users = await User.query().where('subscribed', true).fetch()
       await Mail
-        .send('emails.post_created', { post: post.toJSON() }, message => {
+        .send('emails.post_created', { post: post.toJSON() }, (message) => {
           message.from(Env.get('MAIL_USERNAME'))
-          users.rows.forEach(user => {
+          users.rows.forEach((user) => {
             message.to(user.email)
           })
           message.subject('A new forum post requires your attention!')
@@ -85,7 +118,9 @@ class PostController {
     return response.route('PostController.show', { id: post.id });
   }
 
-  async show({ params, view, request, auth }) {
+  async show({
+    params, view, request, auth
+  }) {
     const { id } = params
     const post = await Post
       .query()
@@ -96,13 +131,9 @@ class PostController {
       .with('comments.likes')
       .first()
     if (!post) throw new NotFoundException()
-    post.is_liked = post.getRelated('likes').rows.filter(like =>
-      like.user_id === auth.user.id
-    ).length > 0
-    post.getRelated('comments').rows.forEach(comment => {
-      comment.is_liked = comment.getRelated('likes').rows.filter(like =>
-        like.user_id === auth.user.id
-      ).length > 0
+    post.is_liked = post.getRelated('likes').rows.filter((like) => like.user_id === auth.user.id).length > 0
+    post.getRelated('comments').rows.forEach((comment) => {
+      comment.is_liked = comment.getRelated('likes').rows.filter((like) => like.user_id === auth.user.id).length > 0
     })
     return view.render('posts.post', {
       post: post.toJSON(),
@@ -114,22 +145,21 @@ class PostController {
     const {
       tag, title, time, user
     } = request.all()
-    let queryToDisplay = [];
-    let query = Post.query();
+    const queryToDisplay = [];
+    const query = Post.query();
     if (tag) {
-      // query.raw(`SELECT * FROM posts CROSS APPLY OPENJSON(tags,'$.value') WHERE value = '${tag}'`)
       queryToDisplay.push(tag);
     }
     if (title) {
-      query = query.where('title', 'like', `%${title}%`)
+      query.where('title', 'like', `%${title}%`)
       queryToDisplay.push(title);
     }
     if (time) {
-      query = query.where(`datediff(day, created_at, ${time})`, 0)
+      query.whereRaw(`datediff(day, created_at, ${time}) = '0'`)
       queryToDisplay.push(time)
     }
     if (user) {
-      query = query.where('user_id', user)
+      query.where('user_id', user)
       queryToDisplay.push((await User.find(user)).username)
     }
 
@@ -146,7 +176,9 @@ class PostController {
     })
   }
 
-  async edit({ params, request, response, view }) {
+  async edit({
+    params, request, response, view
+  }) {
     const { id } = params
     const post = await Post.find(id)
     // if (auth.user.id !== post.user_id && !await auth.user.can(Access.REDACT_POSTS))
@@ -154,7 +186,9 @@ class PostController {
     return view.render('posts/edit', { post: post.toJSON() })
   }
 
-  async update({ params, request, response, session, auth }) {
+  async update({
+    params, request, response, session, auth
+  }) {
     const { id } = params
     const { title, text, tags } = request.all()
     const img = request.file('img', {
@@ -189,11 +223,13 @@ class PostController {
       post.img_path = cloudinaryResponse.secure_url
     }
     await post.save()
-    session.flash({ success: `Updated post ${post.title}` })
-    return response.redirect('/')
+    session.flash({ success: `Updated post "${post.title}"` })
+    return response.redirect('back')
   }
 
-  async destroy({ params, request, response, session, auth }) {
+  async destroy({
+    params, request, response, session, auth
+  }) {
     const { id } = params;
     const { share } = request.all()
     const time1 = new Date()
@@ -203,8 +239,9 @@ class PostController {
       .where('id', id)
       .first()
     if (!post) throw new NotFoundException()
-    if (auth.user.id !== post.user_id /* && !await auth.user.can(Access.DELETE_POSTS) */)
+    if (auth.user.id !== post.user_id /* && !await auth.user.can(Access.DELETE_POSTS) */) {
       throw new NotAuthorizedException()
+    }
     if (post.img_path) {
       const imgFileName = post.img_path.split('/').at(-1)
       const imgId = `forum/uploads/${imgFileName.slice(0, imgFileName.indexOf('.'))}`
@@ -214,14 +251,13 @@ class PostController {
 
     if (share && post.getRelated('comments').rows.length) {
       await Mail
-        .send('emails.post_deleted', { post: post.toJSON() }, message => {
+        .send('emails.post_deleted', { post: post.toJSON() }, (message) => {
           message.from(Env.get('EMAIL_USERNAME'))
           post
             .getRelated('comments')
-            .rows.forEach(comment => {
-              let user = comment.getRelated('user')
-              if (user.id !== auth.user.id)
-                message.to(user.email)
+            .rows.forEach((comment) => {
+              const user = comment.getRelated('user')
+              if (user.id !== auth.user.id) { message.to(user.email) }
             })
           message.subject('Post you participated in was deleted')
         })

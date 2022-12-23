@@ -1,5 +1,3 @@
-'use strict'
-
 const BaseExceptionHandler = use('BaseExceptionHandler')
 const Logger = use('Logger')
 
@@ -21,13 +19,13 @@ class ExceptionHandler extends BaseExceptionHandler {
    *
    * @return {void}
    */
-  async handle (error, { response, session, view }) {
-    if(error.status === 401){
+  async handle(error, { response, session, view }) {
+    if (error.status === 401) {
       return response.status(401).route('UserController.enter')
-        // view.render('error', {
-        //   status: 401,
-        //   message: 'Invalid session; Please log in'
-        // })
+      // view.render('error', {
+      //   status: 401,
+      //   message: 'Invalid session; Please log in'
+      // })
       // )
     }
     // if(error.status === 403){
@@ -54,9 +52,8 @@ class ExceptionHandler extends BaseExceptionHandler {
    *
    * @return {void}
    */
-  async report (error, { request }) {
-    if(error.status >= 500){
-      console.log(new Date().toLocaleDateString());
+  async report(error, { request }) {
+    if (error.status >= 500) {
       Logger.error(error, error);
     }
   }

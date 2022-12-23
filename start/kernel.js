@@ -41,7 +41,7 @@ const namedMiddleware = {
   auth: 'Adonis/Middleware/Auth',
   admin: 'App/Middleware/Admin',
   guest: 'Adonis/Middleware/AllowGuestOnly',
-  meta: 'App/Middleware/Meta', //for sidebar
+  meta: 'App/Middleware/Meta', // for sidebar
   access: 'App/Middleware/Access',
 }
 

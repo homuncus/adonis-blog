@@ -1,19 +1,13 @@
-'use strict'
-
-/** @typedef {import('@adonisjs/framework/src/Request')} Request */
-/** @typedef {import('@adonisjs/framework/src/Response')} Response */
-/** @typedef {import('@adonisjs/framework/src/View')} View */
-
-/** @type {typeof import('@adonisjs/../../app/Models/User')} */
 const User = use('App/Models/User')
-/** @type {typeof import('@adonisjs/../../app/Models/Post')} */
 const Post = use('App/Models/Post')
+const Role = use('App/Models/Role')
 
-const cloudinary = use('App/Services/CloudinaryService');
+const cloudinary = use('App/Services/CloudinaryService')
 const Hash = use('Hash')
 const Env = use('Env')
 const Mail = use('Mail')
 const Access = use('Config').get('permission')
+const DataTable = use('App/Services/DataTable')
 
 const NotFoundException = use('App/Exceptions/NotFoundException')
 const NotAuthorizedException = use('App/Exceptions/NotAuthorizedException')
@@ -23,13 +17,65 @@ const BadRequestException = use('App/Exceptions/BadRequestException')
  * Resourceful controller for interacting with users
  */
 class UserController {
-  async index({ request, response, view }) {
+  async index({ view }) {
+    const roles = await Role.all()
+    return view.render('admin.data.users', { roles: roles.toJSON() })
+  }
+
+  async data({ request, response }) {
+    const data = request.get();
+
+    const query = User
+      .query()
+      .select([
+        'users.id',
+        'users.username',
+        'users.email',
+        'roles.name',
+        'users.created_at'
+      ])
+      .leftJoin('roles', 'roles.id', 'users.role_id')
+
+    const datatable = new DataTable(query, ['users.username', 'users.email', 'roles.name'], data);
+    const datatableResponse = await datatable.result();
+    return datatableResponse;
+  }
+
+  async ajaxShow({ params, response }) {
+    const { id } = params
+    const user = await User.query()
+      .with('role')
+      .where('id', id)
+      .first()
+    return user.toJSON()
+  }
+
+  async create({ request, response, session }) {
+    const {
+      username, email, roleId, password, confirmPassword
+    } = request.all()
+    if (password !== confirmPassword) {
+      session.flash({ error: 'Passwords are not equal!' })
+      return response.redirect('back')
+    }
+    try {
+      await User.create({
+        username,
+        email,
+        role_id: roleId,
+        password,
+      })
+    } catch (e) {
+      session.flash({ error: e.message })
+    }
+    return response.redirect('back')
   }
 
   async show({ params, view, auth }) {
     const { id } = params
+
     const user = await User.find(id)
-    if(!user) throw new NotFoundException()
+    if (!user) throw new NotFoundException()
     await user.load('comments')
     user.posts = (await user
       .posts()
@@ -39,61 +85,83 @@ class UserController {
       .with('comments')
       .with('likes')
       .fetch()).toJSON()
-    if (id == auth.user.id)
-      return view.render('profile/private', { user: user.toJSON() })
-    return view.render('profile/public', { user: user.toJSON() })
+    return view.render(`profile/${auth.user.id === parseInt(id, 10)
+      ? 'private' : 'public'}`, { user: user.toJSON() })
   }
 
-  async enter({ request, response, view, auth }) {
+  async update({
+    params, request, response, session
+  }) {
+    const { id } = params
+    const { name, roleId } = request.post()
+    await User.query()
+      .where('id', id)
+      .update({
+        username: name,
+        role_id: roleId
+      })
+    session.flash({ success: 'Updated the user' })
+    return response.redirect('back')
+  }
+
+  async enter({
+    request, response, view, auth
+  }) {
     await auth.logout()
-    return view.render('auth/login');
+    return view.render('auth/login')
   }
 
-  async login({ auth, request, response, session }) {
-    const { email, password, remember } = request.all();
+  async login({
+    auth, request, response, session
+  }) {
+    const { email, password, remember } = request.all()
     if (!email || !password) {
       session.flash({ error: 'Please provide email <strong>and</strong> password' }).flashExcept(['password'])
       return response.redirect('back')
     }
     try {
-      await auth.remember(!!remember).attempt(email, password);
+      await auth.remember(!!remember).attempt(email, password)
     } catch (err) {
-      session.flash({ error: 'Wrong email or password, please try again' }).flashExcept(['password'])
+      session.flash({ error: err.message }).flashExcept(['password'])
       return response.redirect('back')
     }
-    return response.redirect('/');
+    return response.redirect('/')
   }
 
   async registration({ view, auth }) {
     await auth.logout()
-    return view.render('auth.signup');
+    return view.render('auth.signup')
   }
 
-  async signup({ request, response, session }) {
-    const { username, email, password, confirmpassword, subscribed } = request.all();
+  async signup({
+    request, response, session, auth
+  }) {
+    const {
+      username, email, password, confirmpassword, subscribed
+    } = request.all()
 
     if (!username || !email || !password || !confirmpassword) {
-      session.flash({ error: 'Please fill all the fields' });
-      return response.redirect('back');
+      session.flash({ error: 'Please fill all the fields' })
+      return response.redirect('back')
     }
 
     if (password !== confirmpassword) {
-      session.flash({ error: 'Passwords are not equal' });
-      return response.redirect('back');
+      session.flash({ error: 'Passwords are not equal' })
+      return response.redirect('back')
     }
 
     if (await User.findBy('email', email) || await User.findBy('username', username)) {
-      session.flash({ error: 'There is user with such email or username' });
-      return response.redirect('back');
+      session.flash({ error: 'There is user with such email or username' })
+      return response.redirect('back')
     }
     await User.create({
-      username: username,
-      email: email,
-      password: password,
+      username,
+      email,
+      password,
       subscribed: !!subscribed
     })
     session.flash({ success: 'Registration successful' })
-
+    await auth.attempt(email, password)
     // await Mail   //comment in case of accidental email sending
     //   .send('emails.registered', user, message => {
     //     message.from(Env.get('MAIL_USERNAME'))
@@ -101,7 +169,7 @@ class UserController {
     //       .subject('Welcome to the Forum!')
     //   })
 
-    return response.redirect('/login');
+    return response.redirect('/')
   }
 
   async restore({ request, response, session }) {
@@ -112,21 +180,24 @@ class UserController {
       session.flash({ error: 'There is no such user' })
       return response.redirect('back')
     }
-    await Mail.send('emails.password_restore', { id: user.id },
-      message => {
+    await Mail.send(
+      'emails.password_restore',
+      { id: user.id },
+      (message) => {
         message.from(Env.get('MAIL_USERNAME'))
           .to(email)
           .subject('Password reset')
-      })
+      }
+    )
     session.flash({ success: `Password reset link was sent to ${email}` })
-    return response.redirect('back');
+    return response.redirect('back')
   }
 
   async reset({ params, view }) {
     const { id } = params
     const user = await User.find(id)
     if (!user) return new NotFoundException()
-    return view.render('auth.reset', {id: user.id})
+    return view.render('auth.reset', { id: user.id })
   }
 
   // async update({ params, request, response, session }) {
@@ -144,25 +215,29 @@ class UserController {
   //   return response.route('UserController.enter')
   // }
 
-  async edit({ params, response, view, auth, session }) {
+  async edit({
+    params, response, view, auth, session
+  }) {
     const { id } = params
     const user = await User.find(id)
     if (!user) throw new NotFoundException()
-    if (auth.user.id == id)
+    if (auth.user.id === parseInt(id, 10)) {
       return view.render('profile.edit', { user: user.toJSON() })
+    }
     throw new NotAuthorizedException()
   }
 
-  async updatePrivate({ params, request, response, session, auth }) {
+  async updatePrivate({
+    params, request, response, session, auth
+  }) {
     const { id } = params
-    if (id != auth.user.id) {
+    if (parseInt(id, 10) !== auth.user.id) {
       throw new NotAuthorizedException()
     }
     const { oldpassword, newpassword, newpasswordconfirm } = request.all()
     const user = await User.find(id)
     if (!user) throw new NotFoundException()
-    if (auth.user.id !== user.id)
-      throw new NotAuthorizedException()
+    if (auth.user.id !== user.id) { throw new NotAuthorizedException() }
     if (!await Hash.verify(oldpassword, user.password)) {
       session.flash({ error: 'Invalid user password' })
       return response.redirect('back')
@@ -178,12 +253,16 @@ class UserController {
     return response.redirect('back')
   }
 
-  async updateGeneral({ params, request, response, session, auth }) {
+  async updateGeneral({
+    params, request, response, session, auth
+  }) {
     const { id } = params
-    if (id != auth.user.id) {
+    if (parseInt(id, 10) !== auth.user.id) {
       throw new NotAuthorizedException()
     }
-    const { username, email, description, subscribed } = request.all()
+    const {
+      username, email, description, subscribed
+    } = request.all()
     const avatar = request.file('avatar', {
       types: ['image'],
       size: '512kb',
@@ -192,8 +271,9 @@ class UserController {
     const user = await User.find(id)
 
     if (!user) throw new NotFoundException()
-    if (auth.user.id !== user.id /* && !await auth.user.can(Access.REDACT_USERS) */)
+    if (auth.user.id !== user.id /* && !await auth.user.can(Access.REDACT_USERS) */) {
       throw new NotAuthorizedException()
+    }
 
     user.subscribed = !!subscribed
     if (username && username !== user.username) {
@@ -213,18 +293,18 @@ class UserController {
     }
     if (avatar) {
       if (user.avatar_url !== Env.get('GUEST_AVATAR_URL')) {
-        let img_filename = user.avatar_url.split('/').at(-1)
-        let img_id = 'forum/avatars/' + img_filename.slice(0, img_filename.indexOf('.'))
-        await cloudinary.v2.uploader.destroy(img_id, { invalidate: true, resource_type: 'image' })
+        const imgFilename = user.avatar_url.split('/').at(-1)
+        const imgId = `forum/avatars/${imgFilename.slice(0, imgFilename.indexOf('.'))}`
+        await cloudinary.v2.uploader.destroy(imgId, { invalidate: true, resource_type: 'image' })
       }
       const cloudinaryResponse = await cloudinary.v2
-      .uploader
-      .upload(avatar.tmpPath, { 
-        folder: 'forum/avatars', 
-        width: 512, 
-        height: 512, 
-        crop: "fill" 
-      });
+        .uploader
+        .upload(avatar.tmpPath, {
+          folder: 'forum/avatars',
+          width: 512,
+          height: 512,
+          crop: 'fill'
+        })
       user.avatar_url = cloudinaryResponse.secure_url
       await user.save()
       session.flash({ success: 'successfully changed the avatar' })
@@ -233,25 +313,37 @@ class UserController {
   }
 
   async logout({ auth, response }) {
-    await auth.logout();
-    return response.redirect('/login');
+    await auth.logout()
+    return response.redirect('/login')
   }
 
-  async destroy({ params, request, response, session, auth }) {
+  async destroy({
+    params, request, response, session, auth
+  }) {
     const { id } = params
     const user = await User.find(id)
     if (!user) throw new NotFoundException()
-    if (auth.user.id !== user.id /* && !await auth.user.can(Access.DELETE_USERS) */)
+    if (auth.user.id !== user.id /* && !await auth.user.can(Access.DELETE_USERS) */) {
       throw new NotAuthorizedException()
-    if (user.avatar_url !== Env.get('GUEST_AVATAR_URL')) {  //deleting user`s avatar image
-      let img_filename = user.avatar_url.split('/').at(-1)
-      let img_id = 'forum/avatars/' + img_filename.slice(0, img_filename.indexOf('.'))
-      await cloudinary.v2.uploader.destroy(img_id, { invalidate: true, resource_type: 'image' })
+    }
+    if (user.avatar_url !== Env.get('GUEST_AVATAR_URL')) { // deleting user`s avatar image
+      const imgFilename = user.avatar_url.split('/').at(-1)
+      const imgId = `forum/avatars/${imgFilename.slice(0, imgFilename.indexOf('.'))}`
+      await cloudinary.v2.uploader.destroy(imgId, { invalidate: true, resource_type: 'image' })
     }
     if (auth.user.id === user.id) await auth.logout()
     await user.delete()
     session.flash({ success: 'The account has been successfully deleted' })
     return response.redirect('/login')
+  }
+
+  async delete({ params, session, response }) {
+    const { id } = params
+    await User.query()
+      .where('id', id)
+      .delete()
+    session.flash({ success: 'Deleted user' })
+    return response.redirect('back')
   }
 }
 

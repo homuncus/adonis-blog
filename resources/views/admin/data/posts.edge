@@ -1,12 +1,18 @@
 @layout('layouts.admin')
 
 @section('head')
-{{ script('admin/assets/js/plugins/forms/selects/select2.min.js') }}
-{{ script('admin/assets/js/pages/form_select2.js') }}
+{{ script('admin/assets/js/plugins/uploaders/fileinput.min.js') }}
+{{ script('admin/assets/js/pages/uploader_bootstrap.js') }}
+{{ script('assets/js/posts/modals.js') }}
+{{ script('admin/ckeditor/ckeditor.js') }}
+{{ script('admin/assets/js/pages/editor_ckeditor.js') }}
+{{ script('https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.min.js') }}
+{{ script('https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.polyfills.min.js') }}
+{{ style('https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css') }}
 @endsection
 
 @section('body')
-@set('title', 'Searching posts')
+@set('title', 'Posts')
 <!-- Page header -->
 <div class="page-header page-header-transparent">
     <div class="page-header-content">
@@ -26,10 +32,79 @@
 <!-- Content area -->
 <div class="content">
 
+    <div id="post-modal" class="modal fade">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-indigo-600">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h5 id="modal-title" class="modal-title">Create post</h5>
+                </div>
+                <form action="/admin/posts" method="POST">
+                    {{ csrfField() }}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Enter post title:</label>
+                            <input id="postTitle" type="text" name="title" class="form-control" placeholder="How will this affect LeBron's legacy?" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Text:</label>
+                            <textarea name="text" id="editor-full" rows="4" cols="4" placeholder="Text (required)" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Tags: </label>
+                            <input name='tags' placeholder='Select tags from the list'>
+                            <script>
+                              const input = document.querySelector('input[name=tags]');
+                              new Tagify(input, {
+                                  userInput: true
+                              })
+                            </script>
+                        </div>
+                        <div class="form-group">
+                            <input name="image" type="file" class="file-input-custom">
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-flat bg-indigo-600">Confirm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="post-delete" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h5 id="modal-title" class="modal-title">Delete post</h5>
+                </div>
+                <form action="/admin/posts" method="POST">
+                    {{ csrfField() }}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Are you sure? </label>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-flat bg-danger">Delete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Search field -->
     <div class="panel panel-flat">
         <div class="panel-heading">
             <h5 class="panel-title">Posts table</h5>
+            <div class="heading-elements">
+                <button id="create-post" class="btn btn-flat bg-indigo-600" data-toggle="modal" data-target="#post-modal"><i class="icon-plus-circle2 position-left"></i> Create Post</button>
+            </div>
         </div>
 
         <div class="panel-body">
@@ -40,6 +115,7 @@
                         <th>Title</th>
                         <th>Author</th>
                         <th>Creation Date</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tfoot>
@@ -48,6 +124,7 @@
                         <th>Title</th>
                         <th>Author</th>
                         <th>Creation Date</th>
+                        <th>Actions</th>
                     </tr>
                 </tfoot>
             </table>
@@ -55,19 +132,9 @@
     </div>
     <!-- /search field -->
 
-<!-- Search results -->
+    <!-- Search results -->
 </div>
-<script>
-    $('#posts-table').DataTable( {
-        processing: true,
-        serverSide: true,
-        ajax: '/api/posts',
-        columns: [
-            { data: 'id', name: 'posts.id' },
-            { data: 'title', name: 'posts.title' },
-            { data: 'username', name: 'users.username' },
-            { data: 'creationDate', name: 'posts.created_at' },
-        ],
-    } );
-</script>
+
+{{ script('assets/js/posts/index.js') }}
+
 @endsection

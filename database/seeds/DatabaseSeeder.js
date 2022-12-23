@@ -1,5 +1,3 @@
-'use strict'
-
 /*
 |--------------------------------------------------------------------------
 | DatabaseSeeder
@@ -22,24 +20,22 @@ const Access = use('Access')
 
 class DatabaseSeeder {
   async run() {
-
-    const roles = [ //create start roles
+    const roles = [ // create start roles
       'Administrator',
       'Moderator',
     ]
     await Role.createMany(
-      roles.map(roleName => {
-        return { name: roleName }
-      })
+      roles.map((roleName) => ({ name: roleName }))
     )
 
     const permissionRoles = []
-    for (const permission in Access) {  //give all permissions to administrator
+    // eslint-disable-next-line guard-for-in
+    for (const permission in Access) { // give all permissions to administrator
       permissionRoles.push({ role_id: 1, permission_id: Access[permission] })
     }
 
-    let moderatorPermissions = [1, 2, 3, 4, 6, 7, 8]
-    moderatorPermissions.forEach(id => {
+    const moderatorPermissions = [1, 2, 3, 4, 6, 7, 8]
+    moderatorPermissions.forEach((id) => {
       permissionRoles.push({ role_id: 2, permission_id: id })
     })
 
@@ -60,12 +56,11 @@ class DatabaseSeeder {
     })
 
     await Post.create({
-      title: 'sosiska',
-      text: 'asd',
+      title: 'Baller',
+      text: 'Baller',
       user_id: 1,
       img_path: 'https://res.cloudinary.com/de74cryl0/image/upload/v1667423621/forum/uploads/qpv8fckgimekjrggcmtv.jpg'
     })
-
   }
 }
 

@@ -1,3 +1,4 @@
+/* eslint-disable */
 /* ------------------------------------------------------------------------------
 *
 *  # Modal dialogs and extensions
@@ -43,12 +44,10 @@ $(function() {
     // Modal callbacks
     // ------------------------------
 
-    // onShow callback
-    $('#onshow_callback').on('click', function() {
-        $('#modal_default').on('show.bs.modal', function() {
-            alert('onShow callback fired.')
-        });
-    });
+    
+    // post onShow callbacks
+    
+    //------------
 
     // onShown callback
     $('#onshown_callback').on('click', function() {

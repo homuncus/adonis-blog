@@ -1,11 +1,8 @@
-'use strict'
-
-const { ServiceProvider } = require('@adonisjs/fold')
+const { ServiceProvider } = require('@adonisjs/fold');
 
 class AccessProvider extends ServiceProvider {
-
-  register () {
-    this.app.bind('Access', () => this.app.use('Config').get('permission'))
+  register() {
+    this.app.bind('Access', () => this.app.use('Config').get('permissions'));
   }
 
   /**
@@ -16,9 +13,9 @@ class AccessProvider extends ServiceProvider {
    *
    * @return {void}
    */
-  boot () {
+  boot() {
     //
   }
 }
 
-module.exports = AccessProvider
+module.exports = AccessProvider;

@@ -22,14 +22,13 @@ Route.group(() => {
   Route.get('login', 'UserController.enter')
   Route.post('login', 'UserController.login')
   Route.get('signup', 'UserController.registration')
-  Route.post('signup', 'UserController.signup') 
+  Route.post('signup', 'UserController.signup')
   Route.post('restore', 'UserController.restore')
   Route.get('reset/:id', 'UserController.reset')
   Route.patch('reset/:id', 'UserController.update')
 }).middleware('guest')
 Route.get('logout', 'UserController.logout')
 // Route.group(()=>{
-  
 Route.group('posts', () => {
   Route.get('create', 'PostController.create')
   Route.post('create', 'PostController.store')
@@ -53,6 +52,7 @@ Route.group('comments', () => {
   .middleware('auth')
 
 Route.group('users', () => {
+  Route.post('/', 'UserController.signup')
   Route.get(':id', 'UserController.show')
   Route.get(':id/edit', 'UserController.edit')
   Route.patch(':id/general', 'UserController.updateGeneral')
@@ -62,13 +62,42 @@ Route.group('users', () => {
   .prefix('users')
   .middleware('auth')
 
+Route.group('roles_admin', () => {
+  Route.get('/', 'RoleController.index')
+  Route.get('data', 'RoleController.data')
+  Route.get(':id', 'RoleController.show')
+  Route.post('/', 'RoleController.create').middleware(`access:${Access.CREATE_ROLES}`)
+  Route.patch(':id', 'RoleController.update').middleware(`access:${Access.REDACT_ROLES}`)
+  Route.delete(':id', 'RoleController.destroy').middleware(`access:${Access.DELETE_ROLES}`)
+})
+  .prefix('admin/roles')
+  .middleware(['auth', 'access'])
+
+Route.group('users_admin', () => {
+  Route.get('/', 'UserController.index')
+  Route.get('data', 'UserController.data')
+  Route.get(':id', 'UserController.ajaxShow')
+  Route.post('/', 'UserController.create').middleware(`access:${Access.CREATE_USERS}`)
+  Route.patch(':id', 'UserController.update').middleware(`access:${Access.REDACT_USERS}`)
+  Route.delete(':id', 'Usercontroller.delete').middleware(`access:${Access.DELETE_USERS}`)
+})
+  .prefix('admin/users')
+  .middleware(['auth', 'access'])
+
+Route.group('posts_admin', () => {
+  Route.get('/', 'PostController.ajaxIndex')
+  Route.get('data', 'PostController.data')
+  Route.get(':id', 'PostController.ajaxShow')
+  Route.post('/', 'PostController.store')
+  Route.patch(':id', 'PostController.update')
+  Route.delete(':id', 'PostController.destroy')
+})
+  .prefix('admin/posts')
+  .middleware(['auth', 'access'])
+
 Route.group('admin', () => {
   Route.get('/', 'AdminController.index')
-  Route.get('posts', 'AdminController.posts')
-  Route.get('users', 'AdminController.users')
-  Route.get('roles', 'AdminController.roles')
-  Route.get('users/:id', 'AdminController.showUser')
-  Route.patch('users/:id', 'AdminController.updateUser').middleware(`access:${Access.CHANGE_USER_ROLE}`)
+  Route.patch('users/:id', 'AdminController.updateUser').middleware(`access:${Access.REDACT_USERS}`)
   Route.post('users/:id/email', 'AdminController.email').middleware(`access:${Access.MAIL_USERS}`)
   Route.get('stats/download', 'AdminController.generatePdfStatistic')
   Route.get('mailing', 'AdminController.mailing').middleware(`access:${Access.MAIL_USERS}`)
@@ -77,12 +106,12 @@ Route.group('admin', () => {
   .prefix('admin')
   .middleware(['auth', 'access'])
 
-Route.group('api', () => {
-  Route.get('users', 'ApiController.getUsers')
-  Route.get('posts', 'ApiController.getPosts')
-  Route.get('roles', 'ApiController.getRoles')
-})
-  .prefix('api')
-  .middleware(['auth', 'access'])
+// Route.group('api', () => {
+//   Route.get('users', 'ApiController.getUsers')
+//   Route.get('posts', 'ApiController.getPosts')
+//   Route.get('roles', 'ApiController.getRoles')
+// })
+//   .prefix('api')
+//   .middleware(['auth', 'access'])
 
 // }).middleware('auth')

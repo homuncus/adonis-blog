@@ -1,11 +1,13 @@
 @layout('layouts.admin')
 
 @section('head')
-
+{{ script('assets/js/users/modals.js') }}
+{{ script('admin/assets/js/plugins/forms/selects/select2.min.js') }}
+{{ script('admin/assets/js/pages/form_select2.js') }}
 @endsection
 
 @section('body')
-@set('title', 'Searching users')
+@set('title', 'Users')
 <!-- Page header -->
 <div class="page-header page-header-transparent">
     <div class="page-header-content">
@@ -24,11 +26,75 @@
 
 <!-- Content area -->
 <div class="content">
+    <div id="user-modal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-indigo-600">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h5 id="modal-title" class="modal-title">Create user</h5>
+                </div>
+                <form action="/admin/users" method="POST">
+                    {{ csrfField() }}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Enter user name:</label>
+                            <input id="userName" type="text" name="name" class="form-control"
+                                placeholder="Baller, Saul Goodman..." required>
+                        </div>
+                        <div class="form-group">
+                            <label>Select user role:</label>
+                            <select class="select" name="roleId" id="role-select">
+                                <option value="">No role (normal user)</option>
+                                @each(role in roles)
+                                    <option value="{{role.id}}">{{role.name}}</option>
+                                @endeach
+                            </select>
+                        </div>
+                        <div id="user-registers">
+
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-flat bg-indigo-600">Confirm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="user-delete" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h5 id="modal-title" class="modal-title">Delete user</h5>
+                </div>
+                <form action="/admin/users" method="POST">
+                    {{ csrfField() }}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Are you sure? </label>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-flat bg-danger">Delete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Search field -->
     <div class="panel panel-flat">
         <div class="panel-heading">
             <h5 class="panel-title">Users table</h5>
+            <div class="heading-elements">
+                <button id="create-user" class="btn btn-flat bg-indigo-600" data-toggle="modal" data-target="#user-modal"><i class="icon-plus-circle2 position-left"></i> Create User</button>
+            </div>
         </div>
 
         <div class="panel-body">
@@ -40,6 +106,7 @@
                         <th>E-mail</th>
                         <th>Role</th>
                         <th>Registration Date</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tfoot>
@@ -49,6 +116,7 @@
                         <th>E-mail</th>
                         <th>Role</th>
                         <th>Registration Date</th>
+                        <th>Actions</th>
                     </tr>
                 </tfoot>
             </table>
@@ -57,15 +125,16 @@
     <!-- /search field -->
 
 
-    {{--  
-        <!-- Tabs -->
+    {{--
+    <!-- Tabs -->
     <ul class="nav nav-lg nav-tabs nav-tabs-bottom search-results-tabs">
         <li class="active"><a href="search_basic.html"><i class="icon-display4 position-left"></i> Website</a></li>
         <li><a href="search_users.html"><i class="icon-people position-left"></i> Users</a></li>
         <li><a href="search_images.html"><i class="icon-image2 position-left"></i> Images</a></li>
         <li><a href="search_videos.html"><i class="icon-file-play position-left"></i> Videos</a></li>
         <li class="dropdown pull-right">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog3"></i> <span class="visible-xs-inline-block position-right">Options</span> <span class="caret"></span></a>
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-cog3"></i> <span
+                    class="visible-xs-inline-block position-right">Options</span> <span class="caret"></span></a>
             <ul class="dropdown-menu dropdown-menu-right">
                 <li><a href="#">Action</a></li>
                 <li><a href="#">Another action</a></li>
@@ -75,24 +144,11 @@
             </ul>
         </li>
     </ul>
-    <!-- /tabs -->  
+    <!-- /tabs -->
     --}}
 
 
-<!-- Search results -->
+    <!-- Search results -->
 </div>
-<script>
-    $('#users-table').DataTable( {
-        processing: true,
-        serverSide: true,
-        ajax: '/api/users',
-        columns: [
-            { data: 'id', name: 'users.id' },
-            { data: 'username', name: 'users.username' },
-            { data: 'email', name: 'users.email' },
-            { data: 'name', name: 'roles.name' },
-            { data: 'creationDate', name: 'users.created_at' },
-        ],
-    } );
-</script>
+{{ script('assets/js/users/index.js') }}
 @endsection

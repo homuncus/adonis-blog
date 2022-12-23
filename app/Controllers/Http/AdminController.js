@@ -1,5 +1,3 @@
-'use strict'
-
 const Post = use('App/Models/Post')
 const User = use('App/Models/User')
 const NoSubjectException = use('App/Exceptions/NoSubjectException')
@@ -7,6 +5,7 @@ const NotFoundException = use('App/Exceptions/NotFoundException')
 const NotAuthorizedException = use('App/Exceptions/NotAuthorizedException')
 
 const fs = require('fs')
+
 const Mail = use('Mail')
 const PDF = use('PDF')
 const Env = use('Env')
@@ -16,8 +15,9 @@ const Access = use('Access')
  * Resourceful controller for interacting with admins
  */
 class AdminController {
-
-  async index({ request, response, view, auth }) {
+  async index({
+    request, response, view, auth
+  }) {
     return view.render('admin.index')
   }
 
@@ -40,19 +40,7 @@ class AdminController {
     //   :
     //   await model.fetch()
     // const timeAfter = new Date()
-    return view.render(`admin.data.users`)
-  }
-
-  async roles({ request, view }) {
-    const permissions = []
-    for (const permission in Access) {
-      permissions.push(Access[permission])
-    }
-    return view.render(`admin.data.roles`, { permissions: permissions })
-  }
-
-  async posts({ request, view }) {
-    return view.render(`admin.data.posts`)
+    return view.render('admin.data.users')
   }
 
   async showUser({ params, view }) {
@@ -66,7 +54,9 @@ class AdminController {
     return view.render('admin.profile', { user: user.toJSON() })
   }
 
-  async updateUser({ params, request, response, auth }) {
+  async updateUser({
+    params, request, response, auth
+  }) {
     const { id } = params
     const { roleId } = request.all()
     if (!roleId) return response.redirect('back')
@@ -79,8 +69,9 @@ class AdminController {
     return response.redirect('back')
   }
 
-  async email({ params, request, response, session, auth }) {
-
+  async email({
+    params, request, response, session, auth
+  }) {
     // if (!await auth.user.can(Access.MAIL_USERS))
     //   throw new NotAuthorizedException()
 
@@ -91,7 +82,7 @@ class AdminController {
 
     const time1 = new Date()
     await Mail
-      .send('emails.admin_message', { text: text }, (message) => {
+      .send('emails.admin_message', { text }, (message) => {
         message.to(user.email)
           .subject(`Message from the ${auth.user.role} of Volonteurs Forum`)
       })
@@ -101,37 +92,29 @@ class AdminController {
   }
 
   async mailing({ view, auth }) {
-
     // if (!await auth.user.can(Access.MAIL_USERS))
     // throw new NotAuthorizedException()
 
     const users = await User
       .query()
       .where('id', '!=', auth.user.id)
-      .orderBy('role')
+      .orderBy('role_id')
       .fetch()
-    const receievers = {
-      admins: users.rows.filter(user => user.role === 'admin'),
-      moderators: users.rows.filter(user => user.role === 'moderator'),
-      users: users.rows.filter(user => user.role === 'user')
-    }
-    return view.render('admin.mailing', { data: receievers })
+    return view.render('admin.mailing', { users })
   }
 
   async emailMany({ request, response, session }) {
-
     // if (!await auth.user.can(Access.MAIL_USERS))
     //   throw new NotAuthorizedException()
-
     const { users, message } = request.all()
-    const emails = typeof users === 'string' ? [users] : users  //check if it`s one user or multiple
+    const emails = [].concat(users) // check if it`s one user or multiple
     const time1 = new Date()
     await Mail
-      .send('emails.admin_message', { text: message }, message => {
-        emails.forEach(async email => {
-          message.to(email)
+      .send('emails.admin_message', { text: message }, (mail) => {
+        emails.forEach(async (email) => {
+          mail.to(email)
         })
-        message.subject('Mailing from the Forum')
+        mail.subject('Mailing from the Forum')
       })
     const time2 = new Date()
     session.flash({ success: `Successfully emailed users in ${(time2 - time1) / 1000} seconds` })
@@ -141,7 +124,9 @@ class AdminController {
   async generatePdfStatistic({ response, auth }) {
     const time1 = new Date()
     const content = [
-      { text: 'Statistics', bold: true, fontSize: 24, alignment: 'center' },
+      {
+        text: 'Statistics', bold: true, fontSize: 24, alignment: 'center'
+      },
       { text: `Number of users: ${await User.getCount()}` },
       { text: `Number of posts: ${await Post.getCount()}` },
       {
@@ -159,9 +144,10 @@ class AdminController {
     ]
     const fileName = Helpers.tmpPath(`pdf/${new Date().getTime()}_${auth.user.username}.pdf`)
     const stream = fs.createWriteStream(fileName);
-    /*await*/ PDF.create(content, stream)
+    /* await */ PDF.create(content, stream)
     const time2 = new Date()
-    await new Promise(resolve => {  //manually wait for ~10ms, because pdf-adonis was poorly implemented
+    // manually wait for ~10ms, because pdf-adonis was poorly implemented
+    await new Promise((resolve) => {
       setTimeout(resolve, time2 - time1 + 10)
     })
     return response.download(fileName)

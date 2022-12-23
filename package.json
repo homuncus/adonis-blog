@@ -28,6 +28,7 @@
     "@adonisjs/mail": "^3.1.0",
     "@adonisjs/session": "^1.0.27",
     "@adonisjs/shield": "^1.0.8",
+    "@adonisjs/validator": "^5.1.0",
     "adonis-pdf": "^0.0.22",
     "cloudinary": "^1.32.0",
     "moment": "^2.29.4",
@@ -35,5 +36,10 @@
   },
   "autoload": {
     "App": "./app"
+  },
+  "devDependencies": {
+    "eslint": "^8.30.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0"
   }
 }

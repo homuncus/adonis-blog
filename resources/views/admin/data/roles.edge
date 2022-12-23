@@ -1,9 +1,13 @@
 @layout('layouts.admin')
 
 @section('head')
+{{ script('admin/assets/js/core/libraries/jquery_ui/interactions.min.js') }}
 {{ script('admin/assets/js/plugins/forms/selects/select2.min.js') }}
 {{ script('admin/assets/js/pages/form_select2.js') }}
-
+{{ script('assets/js/roles/modals.js') }}
+{{ script('admin/assets/js/plugins/forms/styling/switchery.min.js') }}
+{{ script('admin/assets/js/plugins/forms/styling/switch.min.js') }}
+{{ script('admin/assets/js/pages/form_checkboxes_radios.js') }}
 @endsection
 
 @section('body')
@@ -27,10 +31,99 @@
 <!-- Content area -->
 <div class="content">
 
+    <div id="role-modal" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-indigo-600">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h5 id="modal-title" class="modal-title">Create role</h5>
+                </div>
+                <form action="/admin/roles" method="POST">
+                    {{ csrfField() }}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Enter role name:</label>
+                            <input id="roleName" type="text" name="name" class="form-control" placeholder="HR, Sales manager..." required>
+                        </div>
+                        <div class="form-group">
+                            <label>Select role permissions:</label>
+                            <div class="row border-left border-right border-indigo-300" id="permissions_select">
+                                <div class="col-lg-4">
+                                    @each((id, key) in permissions)
+                                        @if(id % 3 === 1)
+                                            <label>
+                                                <input type="checkbox" name="permissions" value="{{id}}" class="switchery" data-switchery="true">
+                                                {{ lowerCase(key) }}
+                                            </label>
+                                        @endif
+                                    @endeach
+                                </div>
+                                <div class="col-lg-4">
+                                    @each((id, key) in permissions)
+                                        @if(id % 3 === 2)
+                                            <label>
+                                                <input type="checkbox" name="permissions" value="{{id}}" class="switchery" data-switchery="true">
+                                                {{ lowerCase(key) }}
+                                            </label>
+                                        @endif
+                                    @endeach
+                                </div>
+                                <div class="col-lg-4">
+                                    @each((id, key) in permissions)
+                                        @if(id % 3 === 0)
+                                            <label>
+                                                <input type="checkbox" name="permissions" value="{{id}}" class="switchery" data-switchery="true">
+                                                {{ lowerCase(key) }}
+                                            </label>
+                                        @endif
+                                    @endeach
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-link select-all-permissions"><i class="icon-reply-all position-left"></i> Select all permissions</button>
+                            <button type="button" class="btn btn-link text-danger switch-off-all-permissions"><i class="icon-cancel-circle2 position-left"></i> Clear</button>
+                        </div>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-flat bg-indigo-600">Confirm</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="role-delete" class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger">
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                    <h5 id="modal-title" class="modal-title">Delete role</h5>
+                </div>
+                <form action="/admin/roles" method="POST">
+                    {{ csrfField() }}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Are you sure? </label>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-flat bg-danger">Delete</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Search field -->
     <div class="panel panel-flat">
         <div class="panel-heading">
             <h5 class="panel-title">Roles table</h5>
+            <div class="heading-elements">
+                <button id="create-role" class="btn btn-flat bg-indigo-600" data-toggle="modal" data-target="#role-modal"><i class="icon-plus-circle2 position-left"></i> Create Role</button>
+            </div>
         </div>
 
         <div class="panel-body">
@@ -39,6 +132,7 @@
                     <tr>
                         <th>Id</th>
                         <th>Name</th>
+                        <th>Actions</th>
                         {{--  <th>Permissions</th>  --}}
                     </tr>
                 </thead>
@@ -46,6 +140,7 @@
                     <tr>
                         <th>Id</th>
                         <th>Name</th>
+                        <th>Actions</th>
                         {{--  <th>Permissions</th>  --}}
                     </tr>
                 </tfoot>
@@ -56,18 +151,7 @@
     <!-- /search field -->
 <!-- Search results -->
 </div>
-<script>
 
-    $('#roles-table').DataTable({
-        processing: true,
-        serverSide: true,
-        ajax: '/api/roles',
-        columns: [
-            { data: 'id', name: 'roles.id' },
-            { data: 'name', name: 'roles.name' },
-            // { data: 'permissions', name: 'STRING_AGG(permission_role.permission_id, ", ")' },
-        ],
-        // order: [[1, 'asc']],
-    });
-</script>
+{{ script('assets/js/roles/index.js') }}
+
 @endsection
