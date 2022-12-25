@@ -7,4 +7,4 @@
 - [done] (10m) Identation should be the same in all files
 - [done?] + (40m) Setup eslint. Goal no red lines
 - [?] + (2h) Docker-compose
-- [in_progress] + (5h) Route validation. Avoid validations directly in controllers
+- [done] + (5h) Route validation. Avoid validations directly in controllers

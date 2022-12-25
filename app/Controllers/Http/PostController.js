@@ -133,6 +133,7 @@ class PostController {
     if (!post) throw new NotFoundException()
     post.is_liked = post.getRelated('likes').rows.filter((like) => like.user_id === auth.user.id).length > 0
     post.getRelated('comments').rows.forEach((comment) => {
+      // eslint-disable-next-line no-param-reassign
       comment.is_liked = comment.getRelated('likes').rows.filter((like) => like.user_id === auth.user.id).length > 0
     })
     return view.render('posts.post', {
