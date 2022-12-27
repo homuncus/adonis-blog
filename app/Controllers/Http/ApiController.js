@@ -35,10 +35,6 @@ class ApiController {
     const post = await Post.find(id)
     return response.json(post)
   }
-
-  async getRoles({ request, response }) {
-
-  }
 }
 
 module.exports = ApiController

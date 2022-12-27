@@ -8,11 +8,10 @@ const User = use('App/Models/User')
 class Access {
   async handle({ request, auth }, next, args) {
     const granted = args.length
-      ? auth.user
-        .can(parseInt(args[0], 10)) : !!await auth.user
-        .role().fetch()
+      ? auth.user.can(parseInt(args[0], 10)) : !!auth.user.isSuper()
 
     if (!granted) throw new NotAuthorizedException()
+    request.granted = true
     await next()
   }
 }

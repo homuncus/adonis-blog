@@ -115,10 +115,6 @@ class UserController {
     auth, request, response, session
   }) {
     const { email, password, remember } = request.all()
-    if (!email || !password) {
-      session.flash({ error: 'Please provide email <strong>and</strong> password' }).flashExcept(['password'])
-      return response.redirect('back')
-    }
     try {
       await auth.remember(!!remember).attempt(email, password)
     } catch (err) {
@@ -137,23 +133,9 @@ class UserController {
     request, response, session, auth
   }) {
     const {
-      username, email, password, confirmpassword, subscribed
+      username, email, password, confirmPassword, subscribed
     } = request.all()
 
-    if (!username || !email || !password || !confirmpassword) {
-      session.flash({ error: 'Please fill all the fields' })
-      return response.redirect('back')
-    }
-
-    if (password !== confirmpassword) {
-      session.flash({ error: 'Passwords are not equal' })
-      return response.redirect('back')
-    }
-
-    if (await User.findBy('email', email) || await User.findBy('username', username)) {
-      session.flash({ error: 'There is user with such email or username' })
-      return response.redirect('back')
-    }
     await User.create({
       username,
       email,
@@ -174,12 +156,13 @@ class UserController {
 
   async restore({ request, response, session }) {
     const { email } = request.all()
-    if (!email) throw new BadRequestException()
+
     const user = await User.findBy('email', email)
     if (!user) {
       session.flash({ error: 'There is no such user' })
       return response.redirect('back')
     }
+
     await Mail.send(
       'emails.password_restore',
       { id: user.id },
@@ -196,53 +179,37 @@ class UserController {
   async reset({ params, view }) {
     const { id } = params
     const user = await User.find(id)
-    if (!user) return new NotFoundException()
+    if (!user) throw new NotFoundException()
     return view.render('auth.reset', { id: user.id })
   }
 
-  // async update({ params, request, response, session }) {
-  //   const {id} = params
-  //   const { password, confirmpassword } = request.all()
-  //   const user = await User.find(id)
-  //   if(!user) throw new NotFoundException()
-  //   if(password !== confirmpassword) {
-  //     session.flash({error: 'Passwords are not equal'})
-  //     return response.redirect('back')
-  //   }
-  //   user.password = password
-  //   await user.save()
-  //   session.flash({success: 'Password was successfully changed'})
-  //   return response.route('UserController.enter')
-  // }
-
   async edit({
-    params, response, view, auth, session
+    params, request, view, auth
   }) {
     const { id } = params
     const user = await User.find(id)
     if (!user) throw new NotFoundException()
-    if (auth.user.id === parseInt(id, 10)) {
-      return view.render('profile.edit', { user: user.toJSON() })
+    if (auth.user.id !== parseInt(id, 10) && !request.granted) {
+      throw new NotAuthorizedException()
     }
-    throw new NotAuthorizedException()
+    return view.render('profile.edit', { user: user.toJSON() })
   }
 
   async updatePrivate({
     params, request, response, session, auth
   }) {
     const { id } = params
-    if (parseInt(id, 10) !== auth.user.id) {
+    if (parseInt(id, 10) !== auth.user.id && !request.granted) {
       throw new NotAuthorizedException()
     }
     const { oldpassword, newpassword, newpasswordconfirm } = request.all()
     const user = await User.find(id)
     if (!user) throw new NotFoundException()
-    if (auth.user.id !== user.id) { throw new NotAuthorizedException() }
     if (!await Hash.verify(oldpassword, user.password)) {
       session.flash({ error: 'Invalid user password' })
       return response.redirect('back')
     }
-    if (newpassword !== newpasswordconfirm || !newpassword) {
+    if (newpassword !== newpasswordconfirm || !newpassword) { // todo in validator
       session.flash({ error: 'Passwords are not equal or empty' })
       return response.redirect('back')
     }
@@ -271,7 +238,7 @@ class UserController {
     const user = await User.find(id)
 
     if (!user) throw new NotFoundException()
-    if (auth.user.id !== user.id /* && !await auth.user.can(Access.REDACT_USERS) */) {
+    if (auth.user.id !== user.id && !request.granted) {
       throw new NotAuthorizedException()
     }
 

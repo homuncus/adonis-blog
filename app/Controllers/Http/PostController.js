@@ -38,7 +38,6 @@ class PostController {
   async ajaxShow({ params }) {
     const { id } = params
     const post = await Post.find(id)
-    Post.tags = JSON.stringify(Post.tags)
     return post.toJSON()
   }
 
@@ -178,12 +177,13 @@ class PostController {
   }
 
   async edit({
-    params, request, response, view
+    params, request, view, auth
   }) {
     const { id } = params
     const post = await Post.find(id)
-    // if (auth.user.id !== post.user_id && !await auth.user.can(Access.REDACT_POSTS))
-    //   throw new NotAuthorizedException()
+    if (auth.user.id !== post.user_id && !request.granted) {
+      throw new NotAuthorizedException()
+    }
     return view.render('posts/edit', { post: post.toJSON() })
   }
 
@@ -199,10 +199,11 @@ class PostController {
     })
     const post = await Post.find(id)
     if (!post) throw new NotFoundException()
-    // if (auth.user.id !== post.user_id && !await auth.user.can(Access.REDACT_POSTS))
-    //   throw new NotAuthorizedException()
-    if (title) post.title = title
-    if (text) post.text = text
+    if (auth.user.id !== post.user_id && !request.granted) {
+      throw new NotAuthorizedException()
+    }
+    post.title = title
+    post.text = text
     if (tags) post.tags = tags
     if (img) {
       // await img.move(Helpers.tmpPath('uploads'), {
@@ -240,7 +241,7 @@ class PostController {
       .where('id', id)
       .first()
     if (!post) throw new NotFoundException()
-    if (auth.user.id !== post.user_id /* && !await auth.user.can(Access.DELETE_POSTS) */) {
+    if (auth.user.id !== post.user_id && !request.granted) {
       throw new NotAuthorizedException()
     }
     if (post.img_path) {

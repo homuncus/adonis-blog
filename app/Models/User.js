@@ -83,9 +83,9 @@ class User extends Model {
 
   /**
    * Checks if there is a row in `permission_role` table
-   * using user's role and `permissionName` argument. It is
-   * advised to take `permissionName` from `permission` config
-   * module via `use('Config').get('permission')`
+   * using user's role and `permission` argument. It is
+   * advised to take `permission` from `permissions` config
+   * module via `use('Access')`
    * @param {string} permission
    *
    * @returns {Boolean}
@@ -94,6 +94,10 @@ class User extends Model {
     return this
       ._permissions
       .includes(permission)
+  }
+
+  isSuper() {
+    return !!this._permissions
   }
 
   // getters
