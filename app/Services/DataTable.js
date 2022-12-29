@@ -25,10 +25,9 @@ module.exports = class DataTable {
     } = this.data
     const collection = await this
       .query
-      .paginate(start + 1, length)
-
+      .paginate(start / length + 1, length)
     return new DataTableData(
-      parseInt(draw, 10),
+      draw,
       collection
     )
   }

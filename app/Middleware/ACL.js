@@ -1,9 +1,7 @@
-const NotAuthorizedException = use('App/Exceptions/NotAuthorizedException')
-const User = use('App/Models/User')
 const ACL = use('App/Services/ACL')
 
-class Access {
-  async handle({ request, auth, view }, next, args) {
+class Acl {
+  async handle({ auth, view }, next) {
     const role = await auth.user
       .role()
       .with('permissions')
@@ -24,13 +22,8 @@ class Access {
       ACL: new ACL(permissions)
     })
 
-    const granted = args.length
-      ? permissions.includes(parseInt(args[0], 10)) : !!permissions
-
-    if (!granted) throw new NotAuthorizedException()
-    request.granted = true
     await next()
   }
 }
 
-module.exports = Access
+module.exports = Acl

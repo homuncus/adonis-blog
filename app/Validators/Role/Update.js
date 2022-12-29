@@ -1,14 +1,14 @@
 class RoleUpdate {
   get rules() {
     return {
-      name: 'required|unique:role',
+      name: 'required',
     }
   }
 
   get messages() {
     return {
       'name.required': 'Please provide role name',
-      'name.unique': 'There is such role name'
+      // 'name.unique': 'There is such role name'
     }
   }
 }

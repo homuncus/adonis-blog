@@ -1,3 +1,5 @@
+// import { render as _render } from '@adonisjs/framework/src/View'
+
 $('#roles-table').DataTable({
   processing: true,
   serverSide: true,
@@ -14,10 +16,13 @@ $('#roles-table').DataTable({
             <button type="button" class="btn btn-sm btn-icon dropdown-toggle" data-toggle="dropdown">
               <i class="icon-menu7"></i> &nbsp;<span class="caret"></span>
             </button>
-
             <ul class="dropdown-menu dropdown-menu-right">
+              @if(auth.user.can(Access().REDACT_ROLES))
               <li><a class="edit-role" data-role-id="${row.id}" data-toggle="modal" data-target="#role-modal"><i class="icon-pencil3"></i> Edit</a></li>
+              @endif
+              @if(auth.user.can(Access().DELETE_ROLES))
               <li><a class="delete-role" data-role-id="${row.id}" data-toggle="modal" data-target="#role-delete"><i class="icon-trash"></i> Delete</a></li>
+              @endif
             </ul>
           </div>
         `;

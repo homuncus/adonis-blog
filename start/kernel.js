@@ -41,6 +41,7 @@ const namedMiddleware = {
   guest: 'Adonis/Middleware/AllowGuestOnly',
   meta: 'App/Middleware/Meta', // for sidebar
   access: 'App/Middleware/Access',
+  acl: 'App/Middleware/ACL',
 }
 
 /*

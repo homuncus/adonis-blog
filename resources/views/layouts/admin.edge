@@ -152,12 +152,14 @@
 									@endif
 									><a href="/admin/roles"><i class="icon-user-check"></i> <span>Roles</span></a>
 								</li>
+								@if(ACL.has(Access.MAIL_USERS))
 								<li
 									@if(url.search('mailing') !== -1)
 									class="active"
 									@endif
 									><a href="/admin/mailing"><i class="icon-mailbox"></i> <span>Mailing</span></a>
 								</li>
+								@endif
 							</ul>
 						</div>
 					</div>

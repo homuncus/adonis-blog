@@ -36,14 +36,14 @@ class User extends Model {
         userInstance.password = await Hash.make(userInstance.password)
       }
     })
-    this.addHook('afterFetch', async (userInstances) => {
-      userInstances.forEach(async (instance) => {
-        await this.addPermissions(instance)
-      })
-    })
-    this.addHook('afterFind', async (userInstance) => {
-      await this.addPermissions(userInstance)
-    })
+    // this.addHook('afterFetch', async (userInstances) => {
+    //   userInstances.forEach(async (instance) => {
+    //     await this.addPermissions(instance)
+    //   })
+    // })
+    // this.addHook('afterFind', async (userInstance) => {
+    //   await this.addPermissions(userInstance)
+    // })
     // this.addHook('afterPaginate', async (userInstances, meta) => {
     //   userInstances.forEach(async instance => {
     //     await this.addPermissions(instance)

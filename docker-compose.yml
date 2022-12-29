@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15.1-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=kostyadb
+      - POSTGRES_PASSWORD=1488
+      - POSTGRES_DB=forum
+    ports:
+      - '5432:5432'
+    volumes: 
+      - db:/var/lib/postgresql/data
+      - /createdb.sql
+  api:
+    build:
+      context: ./
+    depends_on:
+      - db
+    ports:
+      - 3333:3333
+    env_file:
+      - .env
+    links:
+      - db
+    volumes:
+      - './:/src'
+volumes:
+  db:
+    driver: local

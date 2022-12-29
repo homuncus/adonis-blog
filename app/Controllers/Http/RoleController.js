@@ -19,8 +19,6 @@ class RoleController {
         'roles.id',
         'roles.name'
       ])
-      .innerJoin('permission_role', 'roles.id', 'permission_role.role_id')
-      .groupByRaw('roles.id');
 
     const datatable = new DataTable(query, ['roles.name'], data);
     const datatableResponse = await datatable.result();
@@ -72,7 +70,6 @@ class RoleController {
   }) {
     const { id } = params
     const { name, permissions } = request.post()
-
     const role = await Role.find(id)
     if (!role) throw new NotFoundException()
 
