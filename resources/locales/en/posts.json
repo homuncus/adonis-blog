@@ -1,0 +1,18 @@
+{
+    "page": "Data",
+    "subject": "Posts",
+    "tableName": "Posts table",
+    "create": "Create Post",
+    "delete": "Delete post",
+    
+    "titlePromt": "Enter post title:",
+    "titlePlaceholder": "How will this affect LeBron's legacy?",
+    "textPromt": "Text",
+    "textPlaceholder": "Text (required)",
+    "tagsPromt": "Tags",
+    "tagsPlaceholder": "Enter tags separated by enter button",
+    
+    "title": "Title",
+    "author": "Author",
+    "creationDate": "Creation Date"
+}

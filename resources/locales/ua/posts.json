@@ -1,0 +1,18 @@
+{
+    "page": "Дані",
+    "subject": "Дописи",
+    "tableName": "Таблиця дописів",
+    "create": "Створити пост",
+    "delete": "Видалити пост",
+    
+    "titlePromt": "Введіть заголовок поста",
+    "titlePlaceholder": "Як це вплине на спадщину Ле Брона?",
+    "textPromt": "Наповнення",
+    "textPlaceholder": "Текст (обовязково)",
+    "tagsPromt": "Теги",
+    "tagsPlaceholder": "Вводьте теги, відділяючи клавішею Enter",
+    
+    "title": "Заголовок",
+    "author": "Автор",
+    "creationDate": "Дата створення"
+}

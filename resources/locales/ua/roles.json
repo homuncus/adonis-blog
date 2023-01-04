@@ -1,0 +1,15 @@
+{
+    "page": "Дані",
+    "subject": "Ролі",
+    "tableName": "Таблиця ролей",
+    "create": "Створити роль",
+    "delete": "Видалити роль",
+    
+    "namePromt": "Введіть назву ролі",
+    "namePlaceholder": "Злодій, Менеджер по продажам...",
+    "permissionsPromt": "Виберіть дозволи ролі",
+    "allPermissions": "Вибрати всі дозволи",
+    "clearPermissions": "Очистити",
+    
+    "name": "Назва"
+}

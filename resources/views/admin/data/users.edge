@@ -7,16 +7,16 @@
 @endsection
 
 @section('body')
-@set('title', 'Users')
+@set('title', __('users.subject'))
 <!-- Page header -->
 <div class="page-header page-header-transparent">
     <div class="page-header-content">
         <div class="page-title">
-            <h4><i class="icon-arrow-left52 position-left"></i> <span class="text-semibold">Data</span> - Users</h4>
+            <h4><i class="icon-arrow-left52 position-left"></i> <span class="text-semibold">{{ __('users.page') }}</span> - {{ __('users.subject') }}</h4>
 
             <ul class="breadcrumb position-right">
-                <li><a href="/admin">Home</a></li>
-                <li class="active">Users</li>
+                <li><a href="/admin">{{ __('breadcrumbs.home') }}</a></li>
+                <li class="active">{{ __('breadcrumbs.users') }}</li>
             </ul>
         </div>
     </div>
@@ -31,20 +31,26 @@
             <div class="modal-content">
                 <div class="modal-header bg-indigo-600">
                     <button type="button" class="close" data-dismiss="modal">×</button>
-                    <h5 id="modal-title" class="modal-title">Create user</h5>
+                    <h5 id="modal-title" class="modal-title">{{ __('users.create') }}</h5>
                 </div>
                 <form action="/admin/users" method="POST">
                     {{ csrfField() }}
                     <div class="modal-body">
-                        <div class="form-group">
-                            <label>Enter user name:</label>
-                            <input id="userName" type="text" name="name" class="form-control"
-                                placeholder="Baller, Saul Goodman..." required>
+                        <div class="form-group has-feedback
+                        @if(hasErrorFor('username'))
+                        has-error
+                        @endif
+                        ">
+                            <label>{{ __('users.namePromt') }}:</label>
+                            <input id="userName" type="text" name="username" class="form-control"
+                                placeholder="{{ __('users.namePlaceholder') }}" value="{{ old('username', '') }}" required>
+                            {{ elIf('<span class="help-block">$self</span>', getErrorFor('username'), hasErrorFor('username')) }}
+
                         </div>
                         <div class="form-group">
-                            <label>Select user role:</label>
+                            <label>{{ __('users.rolePromt') }}:</label>
                             <select class="select" name="roleId" id="role-select">
-                                <option value="">No role (normal user)</option>
+                                <option value="">{{ __('users.noRole') }}</option>
                                 @each(role in roles)
                                     <option value="{{role.id}}">{{role.name}}</option>
                                 @endeach
@@ -56,8 +62,8 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-flat bg-indigo-600">Confirm</button>
+                        <button type="button" class="btn btn-link" data-dismiss="modal">{{ __('tables.close') }}</button>
+                        <button type="submit" class="btn btn-flat bg-indigo-600">{{ __('tables.confirm') }}</button>
                     </div>
                 </form>
             </div>
@@ -69,19 +75,19 @@
             <div class="modal-content">
                 <div class="modal-header bg-danger">
                     <button type="button" class="close" data-dismiss="modal">×</button>
-                    <h5 id="modal-title" class="modal-title">Delete user</h5>
+                    <h5 id="modal-title" class="modal-title">{{ __('users.delete') }}</h5>
                 </div>
                 <form action="/admin/users" method="POST">
                     {{ csrfField() }}
                     <div class="modal-body">
                         <div class="form-group">
-                            <label>Are you sure? </label>
+                            <label>{{ __('tables.areYouSure') }} </label>
                         </div>
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-flat bg-danger">Delete</button>
+                        <button type="button" class="btn btn-link" data-dismiss="modal">{{ __('tables.cancel') }}</button>
+                        <button type="submit" class="btn btn-flat bg-danger">{{ __('tables.delete') }}</button>
                     </div>
                 </form>
             </div>
@@ -91,9 +97,9 @@
     <!-- Search field -->
     <div class="panel panel-flat">
         <div class="panel-heading">
-            <h5 class="panel-title">Users table</h5>
+            <h5 class="panel-title">{{ __('users.tableName') }}</h5>
             <div class="heading-elements">
-                <button id="create-user" class="btn btn-flat bg-indigo-600" data-toggle="modal" data-target="#user-modal"><i class="icon-plus-circle2 position-left"></i> Create User</button>
+                <button id="create-user" class="btn btn-flat bg-indigo-600" data-toggle="modal" data-target="#user-modal"><i class="icon-plus-circle2 position-left"></i> {{ __('users.create') }}</button>
             </div>
         </div>
 
@@ -102,21 +108,21 @@
                 <thead>
                     <tr>
                         <th>Id</th>
-                        <th>Username</th>
-                        <th>E-mail</th>
-                        <th>Role</th>
-                        <th>Registration Date</th>
-                        <th>Actions</th>
+                        <th>{{ __('users.username') }}</th>
+                        <th>{{ __('users.email') }}</th>
+                        <th>{{ __('users.role') }}</th>
+                        <th>{{ __('users.regDate') }}</th>
+                        <th>{{ __('tables.actions') }}</th>
                     </tr>
                 </thead>
                 <tfoot>
                     <tr>
                         <th>Id</th>
-                        <th>Username</th>
-                        <th>E-mail</th>
-                        <th>Role</th>
-                        <th>Registration Date</th>
-                        <th>Actions</th>
+                        <th>{{ __('users.username') }}</th>
+                        <th>{{ __('users.email') }}</th>
+                        <th>{{ __('users.role') }}</th>
+                        <th>{{ __('users.regDate') }}</th>
+                        <th>{{ __('tables.actions') }}</th>
                     </tr>
                 </tfoot>
             </table>

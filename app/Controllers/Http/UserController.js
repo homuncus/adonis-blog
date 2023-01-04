@@ -93,11 +93,11 @@ class UserController {
     params, request, response, session
   }) {
     const { id } = params
-    const { name, roleId } = request.post()
+    const { username, roleId } = request.post()
     await User.query()
       .where('id', id)
       .update({
-        username: name,
+        username,
         role_id: roleId
       })
     session.flash({ success: 'Updated the user' })

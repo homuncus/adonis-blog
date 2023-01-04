@@ -1,0 +1,13 @@
+{
+    "DELETE_POSTS": "Delete posts",
+    "REDACT_POSTS": "Redact posts",
+    "CREATE_USERS": "Create users",
+    "DELETE_USERS": "Delete users",
+    "REDACT_USERS": "Redact users",
+    "MAIL_USERS": "Mail users",
+    "REDACT_COMMENTS": "Redact comments",
+    "DELETE_COMMENTS": "Delete comments",
+    "CREATE_ROLES": "Create roles",
+    "REDACT_ROLES": "Redact roles",
+    "DELETE_ROLES": "Delete roles"
+}

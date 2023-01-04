@@ -1,0 +1,15 @@
+{
+    "page": "Data",
+    "subject": "Roles",
+    "tableName": "Roles table",
+    "create": "Create Role",
+    "delete": "Delete role",
+    
+    "namePromt": "Enter role name:",
+    "namePlaceholder": "HR, Sales manager...",
+    "permissionsPromt": "Select role permissions",
+    "allPermissions": "Select all permissions",
+    "clearPermissions": "Clear",
+    
+    "name": "Name"
+}

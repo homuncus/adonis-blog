@@ -1,9 +1,9 @@
 /**
  * Module with all app permissions available
  *
- * To add a new permission, simply add a new attribute
+ * To add a new permission, simply add a new attribute here
  * and then add middleware on corresponding route in
- * `routes.js`
+ * `routes.js`. For views, use ACL global
  */
 module.exports = {
   DELETE_POSTS: 1,

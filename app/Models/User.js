@@ -8,22 +8,6 @@ const moment = require('moment')
 const Role = use('App/Models/Role')
 
 class User extends Model {
-  static async addPermissions(instance) {
-    const role = await instance
-      .role()
-      .with('permissions')
-      .first()
-    if (!role) {
-      instance.roleName = 'User'
-      return
-    }
-    const permissions = role
-      .getRelated('permissions')
-      .rows.map((row) => row.permission_id)
-    instance._permissions = permissions
-    instance.roleName = role.name
-  }
-
   static async boot() {
     super.boot()
 
@@ -36,19 +20,6 @@ class User extends Model {
         userInstance.password = await Hash.make(userInstance.password)
       }
     })
-    // this.addHook('afterFetch', async (userInstances) => {
-    //   userInstances.forEach(async (instance) => {
-    //     await this.addPermissions(instance)
-    //   })
-    // })
-    // this.addHook('afterFind', async (userInstance) => {
-    //   await this.addPermissions(userInstance)
-    // })
-    // this.addHook('afterPaginate', async (userInstances, meta) => {
-    //   userInstances.forEach(async instance => {
-    //     await this.addPermissions(instance)
-    //   })
-    // })
   }
 
   /**
@@ -79,25 +50,6 @@ class User extends Model {
 
   async hasRole(roleName) {
     return (await this.role().fetch()).name === roleName
-  }
-
-  /**
-   * Checks if there is a row in `permission_role` table
-   * using user's role and `permission` argument. It is
-   * advised to take `permission` from `permissions` config
-   * module via `use('Access')`
-   * @param {string} permission
-   *
-   * @returns {Boolean}
-   */
-  can(permission) { // hasPermission
-    return this
-      ._permissions
-      .includes(permission)
-  }
-
-  isSuper() {
-    return !!this._permissions
   }
 
   // getters

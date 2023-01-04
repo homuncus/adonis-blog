@@ -1,0 +1,13 @@
+{
+    "DELETE_POSTS": "Beiträge löschen",
+    "REDACT_POSTS": "Beiträge redigieren",
+    "CREATE_USERS": "Benutzer erstellen",
+    "DELETE_USERS": "Benutzer löschen",
+    "REDACT_USERS": "Benutzer redigieren",
+    "MAIL_USERS": "Briefe schreiben",
+    "REDACT_COMMENTS": "Kommentare schwärzen",
+    "DELETE_COMMENTS": "Kommentare löschen",
+    "CREATE_ROLES": "Rollen erstellen",
+    "REDACT_ROLES": "Rollen schwärzen",
+    "DELETE_ROLES": "Rollen löschen"
+}

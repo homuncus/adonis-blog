@@ -51,16 +51,16 @@
 			<ul class="nav navbar-nav navbar-right">
 				<li class="dropdown language-switch">
 					<a class="dropdown-toggle" data-toggle="dropdown">
-						<img src="{{assetsUrl('admin/assets/images/flags/gb.png')}}" class="position-left" alt="">
-						English
+						<img src="{{assetsUrl('admin/assets/images/flags/'+antl.currentLocale()+'.png')}}" class="position-left" alt="">
+						{{ __('props.currLang') }}
 						<span class="caret"></span>
 					</a>
 
 					<ul class="dropdown-menu">
-						<li><a class="deutsch"><img src="{{assetsUrl('admin/assets/images/flags/de.png')}}" alt=""> Deutsch</a></li>
-						<li><a class="ukrainian"><img src="{{assetsUrl('admin/assets/images/flags/ua.png')}}" alt=""> Українська</a></li>
-						<li><a class="english"><img src="{{assetsUrl('admin/assets/images/flags/gb.png')}}" alt=""> English</a></li>
-						<li><a class="espana"><img src="{{assetsUrl('admin/assets/images/flags/es.png')}}" alt=""> España</a></li>
+						<li><a class="deutsch" href="/switch/de"><img src="{{assetsUrl('admin/assets/images/flags/de.png')}}" alt=""> Deutsch</a></li>
+						<li><a class="ukrainian" href="/switch/ua"><img src="{{assetsUrl('admin/assets/images/flags/ua.png')}}" alt=""> Українська</a></li>
+						<li><a class="english" href="/switch/en"><img src="{{assetsUrl('admin/assets/images/flags/en.png')}}" alt=""> English</a></li>
+						<li><a class="espana" href="/switch/es"><img src="{{assetsUrl('admin/assets/images/flags/es.png')}}" alt=""> España</a></li>
 					</ul>
 				</li>
 
@@ -72,12 +72,12 @@
 					</a>
 
 					<ul class="dropdown-menu dropdown-menu-right">
-						<li><a href="/admin/users/{{auth.user.id}}"><i class="icon-user-plus"></i> My profile</a></li>
+						<li><a href="/admin/users/{{auth.user.id}}"><i class="icon-user-plus"></i> {{ __('bars.profile') }}</a></li>
 						{{--  <li><a href="#"><span class="badge bg-teal-400 pull-right">58</span> <i class="icon-comment-discussion"></i> Messages</a></li>  --}}
 						<li class="divider"></li>
-						<li><a href="/users/{{auth.user.id}}/edit"><i class="icon-cog5"></i> Account settings</a></li>
-						<li><a href="/"><i class="icon-user"></i> Back to user</a></li>
-						<li><a href="/logout"><i class="icon-switch2"></i> Logout</a></li>
+						<li><a href="/users/{{auth.user.id}}/edit"><i class="icon-cog5"></i> {{ __('bars.accountSettings') }}</a></li>
+						<li><a href="/"><i class="icon-user"></i> {{ __('bars.backToUser') }}</a></li>
+						<li><a href="/logout"><i class="icon-switch2"></i> {{ __('bars.logout') }}</a></li>
 					</ul>
 				</li>
 			</ul>
@@ -127,37 +127,43 @@
 							<ul class="navigation navigation-main navigation-accordion">
 
 								<!-- Main -->
-								<li class="navigation-header"><span>Main</span> <i class="icon-menu" title="Main pages"></i></li>
-								<li 
+								<li class="navigation-header"><span>{{ __('bars.main') }}</span> <i class="icon-menu" title="Main pages"></i></li>
+								<li
 									@if(url.at(-1) === '/')
 									class="active"
 									@endif
-									><a href="/admin"><i class="icon-home4"></i> Dashboard</a>
+									><a href="/admin"><i class="icon-home4"></i> {{ __('bars.dashboard') }}</a>
 								</li>
+								@if(ACL.hasOneOf(Access.REDACT_POSTS, Access.DELETE_POSTS))
 								<li
 									@if(url.search('posts') !== -1)
 									class="active"
 									@endif
-									><a href="/admin/posts"><i class="icon-quotes-right"></i> Posts</a>
+									><a href="/admin/posts"><i class="icon-quotes-right"></i> {{ __('bars.posts') }}</a>
 								</li>
+								@endif
+								@if(ACL.hasOneOf(Access.CREATE_USERS, Access.REDACT_USERS, Access.DELETE_USERS))
 								<li
 									@if(url.search('users') !== -1)
 									class="active"
 									@endif
-									><a href="/admin/users"><i class="icon-user"></i>Users</a>
+									><a href="/admin/users"><i class="icon-user"></i>{{ __('bars.users') }}</a>
 								</li>
+								@endif
+								@if(ACL.hasOneOf(Access.CREATE_ROLES, Access.REDACT_ROLES, Access.DELETE_ROLES))
 								<li
 									@if(url.search('roles') !== -1)
 									class="active"
 									@endif
-									><a href="/admin/roles"><i class="icon-user-check"></i> <span>Roles</span></a>
+									><a href="/admin/roles"><i class="icon-user-check"></i> <span>{{ __('bars.roles') }}</span></a>
 								</li>
+								@endif
 								@if(ACL.has(Access.MAIL_USERS))
 								<li
 									@if(url.search('mailing') !== -1)
 									class="active"
 									@endif
-									><a href="/admin/mailing"><i class="icon-mailbox"></i> <span>Mailing</span></a>
+									><a href="/admin/mailing"><i class="icon-mailbox"></i> <span>{{ __('bars.mailing') }}</span></a>
 								</li>
 								@endif
 							</ul>
@@ -175,13 +181,13 @@
 				@if(flashMessage('success'))
 				<div class="alert alert-success alert-styled-left alert-arrow-left alert-bordered fixed-end">
 					<button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-					<span class="text-semibold">Well done!</span> {{{ flashMessage('success') }}}
+					<span class="text-semibold">{{ __('alerts.success') }}</span> {{{ flashMessage('success') }}}
 				</div>
 				@endif
 				@if(flashMessage('error'))
 				<div class="alert alert-danger alert-styled-left alert-bordered fixed-end">
 					<button type="button" class="close" data-dismiss="alert"><span>×</span><span class="sr-only">Close</span></button>
-					<span class="text-semibold">Oh snap!</span> {{{ flashMessage('error') }}}
+					<span class="text-semibold">{{ __('alerts.error') }}</span> {{{ flashMessage('error') }}}
 				</div>
 				@endif
 

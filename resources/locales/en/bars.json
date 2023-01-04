@@ -1,0 +1,12 @@
+{
+    "main": "Main",
+    "dashboard": "Dashboard",
+    "posts": "Posts",
+    "users": "Users",
+    "roles": "Roles",
+    "mailing": "Mailing",
+    "profile": "My profile",
+    "accountSettings": "Account settings",
+    "backToUser": "Back to user",
+    "logout": "Logout"
+}

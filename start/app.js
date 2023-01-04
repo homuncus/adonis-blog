@@ -23,8 +23,9 @@ const providers = [
   'adonis-pdf/providers/PDFProvider',
   '@adonisjs/drive/providers/DriveProvider',
   '@adonisjs/validator/providers/ValidatorProvider',
+  '@adonisjs/antl/providers/AntlProvider',
   path.join(__dirname, '..', 'providers', 'ViewProvider'),
-  path.join(__dirname, '..', 'providers', 'AccessProvider')
+  path.join(__dirname, '..', 'providers', 'AccessProvider'),
 ]
 
 /*

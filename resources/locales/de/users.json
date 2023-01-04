@@ -1,0 +1,19 @@
+{
+    "page": "Daten",
+    "subject": "Benutzer",
+    "tableName": "Tabelle der Benutzer",
+    "create": "einen Benutzer erstellen",
+    "delete": "Benutzer entfernen",
+    
+    "namePromt": "Gebe einen Benutzernamen ein",
+    "namePlaceholder": "Baller, Saulus Gutmann...",
+    "rolePromt": "Wählen Sie eine Benutzerrolle aus",
+    "noRole": "Keine Rolle (gewöhnlicher Benutzer)",
+    "passwordPromt": "Passwort",
+    "confirmPasswordPromt": "Passwort bestätigen",
+    
+    "username": "Nutzername",
+    "email": "E-mail",
+    "role": "Rolle",
+    "regDate": "Registrierungsdatum"
+}

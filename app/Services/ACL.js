@@ -10,11 +10,11 @@ module.exports = class ACL {
     return this.permissions.includes(permission)
   }
 
-  hasOneOf(permissions) {
+  hasOneOf(...permissions) {
     return !!permissions.find((permission) => this.permissions.includes(permission))
   }
 
-  hasAll(permissions) {
+  hasAll(...permissions) {
     return permissions.every((permission) => this.permissions.includes(permission))
   }
 
@@ -22,7 +22,7 @@ module.exports = class ACL {
     return !this.has(permission)
   }
 
-  hasNotAny(permissions) {
+  hasNotAny(...permissions) {
     return !this.hasOneOf(permissions)
   }
 }

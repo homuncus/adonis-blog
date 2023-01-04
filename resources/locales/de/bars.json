@@ -1,0 +1,12 @@
+{
+    "main": "Hauptsache",
+    "dashboard": "Administrationsmenü",
+    "posts": "Beiträge",
+    "users": "Benutzer",
+    "roles": "Rollen",
+    "mailing": "Versenden",
+    "profile": "Mein Profil",
+    "accountSettings": "Kontoeinstellungen",
+    "backToUser": "Zurück zum Benutzer",
+    "logout": "Ausloggen"
+}

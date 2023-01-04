@@ -1,0 +1,15 @@
+{
+    "page": "Daten",
+    "subject": "Rollen",
+    "tableName": "Tabelle der Rollen",
+    "create": "eine Rolle erstellen",
+    "delete": "Rolle entfernen",
+    
+    "namePromt": "Geben Sie einen Rollennamen ein",
+    "namePlaceholder": "HR, Verkaufsleiter...",
+    "permissionsPromt": "Rollenberechtigungen auswählen",
+    "allPermissions": "Wählen Sie alle Berechtigungen aus",
+    "clearPermissions": "Aufräumen",
+    
+    "name": "Name"
+}

@@ -1,0 +1,13 @@
+{
+    "DELETE_POSTS": "Створювати пости",
+    "REDACT_POSTS": "Редагувати пости",
+    "CREATE_USERS": "Створювати користувачів",
+    "DELETE_USERS": "Видаляти користувачів",
+    "REDACT_USERS": "Редагувати користувачів",
+    "MAIL_USERS": "Надсилати листи",
+    "REDACT_COMMENTS": "Редагувати коментарі",
+    "DELETE_COMMENTS": "Видаляти коментарі",
+    "CREATE_ROLES": "Створювати ролі",
+    "REDACT_ROLES": "Редагувати ролі",
+    "DELETE_ROLES": "Видаляти ролі"
+}

@@ -1,0 +1,9 @@
+{
+    "error": "Oops, an error has occurred.",
+    "back": "Back to Dashboard",
+    "search": "Advanced search",
+    "searchPlaceholder": "Search",
+    "400": "Bad request",
+    "401": "",
+    "500": "Server error"
+}

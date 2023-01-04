@@ -31,7 +31,7 @@ class PostController {
     })
   }
 
-  async ajaxIndex({ view }) { // index 2.0
+  async ajaxIndex({ view, antl }) { // index 2.0
     return view.render('admin.data.posts')
   }
 

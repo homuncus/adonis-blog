@@ -7,7 +7,9 @@ class ViewProvider extends ServiceProvider {
 
   boot() {
     const View = this.app.use('Adonis/Src/View')
-    View.global('Access', () => this.app.use('Access'))
+    View.global('__', function (message, params = null) {
+      return this.$presenter.$data.antl.formatMessage(message, params)
+    })
   }
 }
 

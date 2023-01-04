@@ -1,0 +1,9 @@
+{
+    "error": "Ups, ein Fehler ist aufgetreten.",
+    "back": "Zurück zum Administratorbereich",
+    "search": "Erweiterte Suche",
+    "searchPlaceholder": "Suche",
+    "400": "Ungültige Anforderung",
+    "401": "",
+    "500": "Serverfehler"
+}

@@ -11,16 +11,16 @@
 @endsection
 
 @section('body')
-@set('title', 'Roles')
+@set('title', __('roles.subject'))
 <!-- Page header -->
 <div class="page-header page-header-transparent">
     <div class="page-header-content">
         <div class="page-title">
-            <h4><i class="icon-arrow-left52 position-left"></i> <span class="text-semibold">Data</span> - Roles</h4>
+            <h4><i class="icon-arrow-left52 position-left"></i> <span class="text-semibold">{{ __('roles.page') }}</span> - {{ __('roles.subject') }}</h4>
 
             <ul class="breadcrumb position-right">
-                <li><a href="/admin">Home</a></li>
-                <li class="active">Roles</li>
+                <li><a href="/admin">{{ __('breadcrumbs.home') }}</a></li>
+                <li class="active">{{ __('breadcrumbs.roles') }}</li>
             </ul>
         </div>
     </div>
@@ -36,7 +36,7 @@
             <div class="modal-content">
                 <div class="modal-header bg-indigo-600">
                     <button type="button" class="close" data-dismiss="modal">×</button>
-                    <h5 id="modal-title" class="modal-title">Create role</h5>
+                    <h5 id="modal-title" class="modal-title">{{ __('roles.create') }}</h5>
                 </div>
                 <form action="/admin/roles" method="POST">
                     {{ csrfField() }}
@@ -46,19 +46,19 @@
                         has-error
                         @endif
                         ">
-                            <label>Enter role name:</label>
-                            <input id="roleName" type="text" name="name" class="form-control" placeholder="HR, Sales manager..." value="{{ old('name', '') }}" required>
+                            <label>{{ __('roles.namePromt') }}:</label>
+                            <input id="roleName" type="text" name="name" class="form-control" placeholder="{{ __('roles.namePlaceholder') }}" value="{{ old('name', '') }}" required>
                             {{ elIf('<span class="help-block">$self</span>', getErrorFor('name'), hasErrorFor('name')) }}
                         </div>
                         <div class="form-group">
-                            <label>Select role permissions:</label>
+                            <label>{{ __('roles.permissionsPromt') }}:</label>
                             <div class="row border-left border-right border-indigo-300" id="permissions_select">
                                 <div class="col-lg-4">
                                     @each((id, key) in permissions)
                                         @if(id % 3 === 1)
                                             <label>
                                                 <input type="checkbox" name="permissions" value="{{id}}" class="switchery" data-switchery="true">
-                                                {{ lowerCase(key) }}
+                                                {{ __('permissions.' + key) }}
                                             </label>
                                         @endif
                                     @endeach
@@ -68,7 +68,7 @@
                                         @if(id % 3 === 2)
                                             <label>
                                                 <input type="checkbox" name="permissions" value="{{id}}" class="switchery" data-switchery="true">
-                                                {{ lowerCase(key) }}
+                                                {{ __('permissions.' + key) }}
                                             </label>
                                         @endif
                                     @endeach
@@ -78,20 +78,20 @@
                                         @if(id % 3 === 0)
                                             <label>
                                                 <input type="checkbox" name="permissions" value="{{id}}" class="switchery" data-switchery="true">
-                                                {{ lowerCase(key) }}
+                                                {{ __('permissions.' + key) }}
                                             </label>
                                         @endif
                                     @endeach
                                 </div>
                             </div>
-                            <button type="button" class="btn btn-link select-all-permissions"><i class="icon-reply-all position-left"></i> Select all permissions</button>
-                            <button type="button" class="btn btn-link text-danger switch-off-all-permissions"><i class="icon-cancel-circle2 position-left"></i> Clear</button>
+                            <button type="button" class="btn btn-link select-all-permissions"><i class="icon-reply-all position-left"></i> {{ __('roles.allPermissions') }}</button>
+                            <button type="button" class="btn btn-link text-danger switch-off-all-permissions"><i class="icon-cancel-circle2 position-left"></i> {{ __('roles.clearPermissions') }}</button>
                         </div>
                     </div>
                     
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-flat bg-indigo-600">Confirm</button>
+                        <button type="button" class="btn btn-link" data-dismiss="modal">{{ __('tables.close') }}</button>
+                        <button type="submit" class="btn btn-flat bg-indigo-600">{{ __('tables.confirm') }}</button>
                     </div>
                 </form>
             </div>
@@ -103,19 +103,19 @@
             <div class="modal-content">
                 <div class="modal-header bg-danger">
                     <button type="button" class="close" data-dismiss="modal">×</button>
-                    <h5 id="modal-title" class="modal-title">Delete role</h5>
+                    <h5 id="modal-title" class="modal-title">{{ __('roles.delete') }}</h5>
                 </div>
                 <form action="/admin/roles" method="POST">
                     {{ csrfField() }}
                     <div class="modal-body">
                         <div class="form-group">
-                            <label>Are you sure? </label>
+                            <label>{{ __('tables.areYouSure') }} </label>
                         </div>
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-link" data-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-flat bg-danger">Delete</button>
+                        <button type="button" class="btn btn-link" data-dismiss="modal">{{ __('tables.cancel') }}</button>
+                        <button type="submit" class="btn btn-flat bg-danger">{{ __('tables.delete') }}</button>
                     </div>
                 </form>
             </div>
@@ -125,9 +125,9 @@
     <!-- Search field -->
     <div class="panel panel-flat">
         <div class="panel-heading">
-            <h5 class="panel-title">Roles table</h5>
+            <h5 class="panel-title">{{ __('roles.tableName') }}</h5>
             <div class="heading-elements">
-                <button id="create-role" class="btn btn-flat bg-indigo-600" data-toggle="modal" data-target="#role-modal"><i class="icon-plus-circle2 position-left"></i> Create Role</button>
+                <button id="create-role" class="btn btn-flat bg-indigo-600" data-toggle="modal" data-target="#role-modal"><i class="icon-plus-circle2 position-left"></i> {{ __('roles.create') }}</button>
             </div>
         </div>
 
@@ -136,16 +136,16 @@
                 <thead>
                     <tr>
                         <th>Id</th>
-                        <th>Name</th>
-                        <th>Actions</th>
+                        <th>{{ __('roles.name') }}</th>
+                        <th>{{ __('tables.actions') }}</th>
                         {{--  <th>Permissions</th>  --}}
                     </tr>
                 </thead>
                 <tfoot>
                     <tr>
                         <th>Id</th>
-                        <th>Name</th>
-                        <th>Actions</th>
+                        <th>{{ __('roles.name') }}</th>
+                        <th>{{ __('tables.actions') }}</th>
                         {{--  <th>Permissions</th>  --}}
                     </tr>
                 </tfoot>

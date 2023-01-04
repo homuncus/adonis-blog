@@ -1,0 +1,19 @@
+{
+    "page": "Data",
+    "subject": "Users",
+    "tableName": "Users table",
+    "create": "Create User",
+    "delete": "Delete user",
+    
+    "namePromt": "Enter user name:",
+    "namePlaceholder": "Baller, Saul Goodman...",
+    "rolePromt": "Select user role",
+    "noRole": "No role (normal user)",
+    "passwordPromt": "Password",
+    "confirmPasswordPromt": "Confirm password",
+    
+    "username": "Username",
+    "email": "E-mail",
+    "role": "Role",
+    "regDate": "Registration date"
+}

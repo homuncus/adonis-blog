@@ -14,6 +14,9 @@
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
 const Access = use('Access')
+const Env = use('Env')
+
+// Route.any('*', 'LocaleController.locale').domain(`:locale.${Env.get('HOST')}:${Env.get('PORT')}`)
 
 Route.get('/', 'PostController.index').middleware('meta')
 Route.get('search', 'PostController.search').middleware('meta')
@@ -45,6 +48,11 @@ Route.group('posts', () => {
 })
   .prefix('posts')
   .middleware('auth')
+
+Route.group('locales', () => {
+  Route.get(':lang', 'LocaleController.locale')
+})
+  .prefix('switch')
 
 Route.group('comments', () => {
   Route.post('create', 'CommentController.store')
@@ -110,7 +118,6 @@ Route.group('posts_admin', () => {
 
 Route.group('admin', () => {
   Route.get('/', 'AdminController.index')
-  Route.patch('users/:id', 'AdminController.updateUser').middleware(`access:${Access.REDACT_USERS}`)
   Route.post('users/:id/email', 'AdminController.email')
     .middleware(`access:${Access.MAIL_USERS}`)
     .validator('Mail/One')

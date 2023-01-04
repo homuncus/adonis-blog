@@ -1,0 +1,18 @@
+{
+    "page": "Daten",
+    "subject": "Beiträge",
+    "tableName": "Tabelle der Beiträge",
+    "create": "einen Beitrag erstellen",
+    "delete": "Beitrag entfernen",
+    
+    "titlePromt": "Geben Sie einen Beitragstitel ein",
+    "titlePlaceholder": "Wie wird sich dies auf LeBrons Vermächtnis auswirken?",
+    "textPromt": "Text",
+    "textPlaceholder": "Text (erforderlich)",
+    "tagsPromt": "Stichworte",
+    "tagsPlaceholder": "Geben Sie Tags ein und trennen Sie sie mit der Eingabetaste",
+    
+    "title": "Titel",
+    "author": "Autor",
+    "creationDate": "Erstellungsdatum"
+}
