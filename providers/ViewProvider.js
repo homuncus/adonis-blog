@@ -10,6 +10,7 @@ class ViewProvider extends ServiceProvider {
     View.global('__', function (message, params = null) {
       return this.$presenter.$data.antl.formatMessage(message, params)
     })
+    View.global('locales', this.app.use('Config').get('locales'))
   }
 }
 

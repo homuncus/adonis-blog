@@ -6,8 +6,9 @@ class UpdateUserAdmin {
   }
 
   get messages() {
+    const { antl } = this.ctx
     return {
-      'username.required': 'You must provide your username.',
+      'username.required': antl.formatMessage('user.username.required'),
       // 'username.unique': 'User with this username already exists.',
     }
   }

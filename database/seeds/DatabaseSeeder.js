@@ -12,6 +12,7 @@
 const Factory = use('Factory')
 const User = use('App/Models/User')
 const Post = use('App/Models/Post')
+const PostTranslation = use('App/Models/PostTranslation')
 const Role = use('App/Models/Role')
 /** @type {import('@adonisjs/../../app/Models/PermissionRole')} */
 const PermissionRole = use('App/Models/PermissionRole')
@@ -56,10 +57,15 @@ class DatabaseSeeder {
     })
 
     await Post.create({
-      title: 'Baller',
-      text: 'Baller',
       user_id: 1,
       img_path: 'https://res.cloudinary.com/de74cryl0/image/upload/v1667423621/forum/uploads/qpv8fckgimekjrggcmtv.jpg'
+    })
+
+    await PostTranslation.create({
+      post_id: 1,
+      locale: 'en',
+      title: 'Baller',
+      text: 'Baller'
     })
   }
 }

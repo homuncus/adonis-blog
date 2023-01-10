@@ -1,8 +1,10 @@
 {
     "actions": "Aktionen",
     "delete": "Löschen",
+    "edit": "Redigieren",
     "confirm": "Bestätigen",
     "cancel": "Abbrechen",
     "close": "schließen",
-    "areYouSure": "Bist du dir sicher?"
+    "areYouSure": "Bist du dir sicher?",
+    "languagePromt": "Spreche"
 }

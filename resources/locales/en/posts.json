@@ -3,6 +3,7 @@
     "subject": "Posts",
     "tableName": "Posts table",
     "create": "Create Post",
+    "edit": "Edit post",
     "delete": "Delete post",
     
     "titlePromt": "Enter post title:",

@@ -7,9 +7,10 @@ class MailMany {
   }
 
   get messages() {
+    const { antl } = this.ctx
     return {
-      'message.required': 'Please enter the e-mail body',
-      'users.required': 'Select at least one user to e-mail'
+      'message.required': antl.formatMessage('mail.message.required'),
+      'users.required': antl.formatMessage('mail.users.required')
     }
   }
 }

@@ -6,8 +6,9 @@ class RoleUpdate {
   }
 
   get messages() {
+    const { antl } = this.ctx
     return {
-      'name.required': 'Please provide role name',
+      'name.required': antl.formatMessage('role.name.required'),
       // 'name.unique': 'There is such role name'
     }
   }

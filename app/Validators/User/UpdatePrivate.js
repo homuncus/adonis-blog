@@ -7,9 +7,10 @@ class UpdateUserPrivate {
   }
 
   get messages() {
+    const { antl } = this.ctx
     return {
-      'password.required': 'You must provide a password.',
-      'confirmPassword.equals': 'Passwords are not equal.'
+      'password.required': antl.formatMessage('user.password.required'),
+      'confirmPassword.equals': antl.formatMessage('user.confirmPassword.equals')
     }
   }
 }

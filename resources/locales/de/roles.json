@@ -3,6 +3,7 @@
     "subject": "Rollen",
     "tableName": "Tabelle der Rollen",
     "create": "eine Rolle erstellen",
+    "edit": "Rolle redigieren",
     "delete": "Rolle entfernen",
     
     "namePromt": "Geben Sie einen Rollennamen ein",

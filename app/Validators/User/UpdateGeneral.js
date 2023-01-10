@@ -7,11 +7,12 @@ class UpdateUserGeneral {
   }
 
   get messages() {
+    const { antl } = this.ctx
     return {
-      'username.required': 'You must provide your username.',
+      'username.required': antl.formatMessage('user.username.required'),
       // 'username.unique': 'User with this username already exists.',
-      'email.required': 'You must provide a email address.',
-      'email.email': 'You must provide a valid email address.',
+      'email.required': antl.formatMessage('user.email.required'),
+      'email.email': antl.formatMessage('user.email.email'),
       // 'email.unique': 'This email is already registered.',
     }
   }

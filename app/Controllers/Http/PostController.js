@@ -1,14 +1,16 @@
 const Post = use('App/Models/Post')
+const PostTranslation = use('App/Models/PostTranslation')
 const User = use('App/Models/User')
-const Comment = use('App/Models/Comment')
+
 const NotFoundException = use('App/Exceptions/NotFoundException')
 const NotAuthorizedException = use('App/Exceptions/NotAuthorizedException')
 
 const cloudinary = use('App/Services/CloudinaryService');
-const Access = use('Config').get('permission')
+const DataTable = use('App/Services/DataTable')
+
 const Mail = use('Mail')
 const Env = use('Env')
-const DataTable = use('App/Services/DataTable')
+const Database = use('Database')
 
 /**
  * Resourceful controller for interacting with posts
@@ -37,7 +39,10 @@ class PostController {
 
   async ajaxShow({ params }) {
     const { id } = params
-    const post = await Post.find(id)
+    const post = await Post.query()
+      .with('translations')
+      .where('id', id)
+      .first()
     return post.toJSON()
   }
 
@@ -46,15 +51,19 @@ class PostController {
 
     const query = Post
       .query()
+      // .column('STRING_AGG(post_translations.title, ", ")', 'STRING_AGG(users.username, ", ")')
       .select([
         'posts.id',
-        'posts.title',
-        'users.username',
+        Database.raw('string_agg(post_translations.title, \' @ \') as title'),
+        Database.raw('min(users.username) as username'),
         'posts.created_at'
       ])
-      .innerJoin('users', 'users.id', 'posts.user_id')
+      // .sum('post_translations.title')
+      .innerJoin('post_translations', 'posts.id', 'post_translations.post_id')
+      .innerJoin('users', 'posts.user_id', 'users.id')
+      .groupBy('posts.id')
 
-    const datatable = new DataTable(query, ['posts.title', 'users.username'], data);
+    const datatable = new DataTable(query, ['post_translations.title', 'users.username'], data);
     const datatableResponse = await datatable.result();
     return datatableResponse;
   }
@@ -92,23 +101,33 @@ class PostController {
       )
       post.img_path = cloudinaryResponse.secure_url
     }
-    post.title = title
-    post.text = text
     post.tags = tags
     post.user_id = auth.user.id
     await post.save()
-    if (share) { // comment in case of accidental email sending
-      // send the notification
-      const users = await User.query().where('subscribed', true).fetch()
-      await Mail
-        .send('emails.post_created', { post: post.toJSON() }, (message) => {
-          message.from(Env.get('MAIL_USERNAME'))
-          users.rows.forEach((user) => {
-            message.to(user.email)
-          })
-          message.subject('A new forum post requires your attention!')
-        })
-    }
+    const postId = post.id
+    const locales = use('Locales').arr
+    const data = title
+      .filter((val, index) => val && text[index])
+      .map((value, index) => ({
+        post_id: postId,
+        title: value,
+        text: text[index],
+        locale: locales[index]
+      }))
+    // console.log(data);
+    await PostTranslation.createMany(data)
+    // if (share) { // comment in case of accidental email sending
+    //   // send the notification
+    //   const users = await User.query().where('subscribed', true).fetch()
+    //   await Mail
+    //     .send('emails.post_created', { post: post.toJSON() }, (message) => {
+    //       message.from(Env.get('MAIL_USERNAME'))
+    //       users.rows.forEach((user) => {
+    //         message.to(user.email)
+    //       })
+    //       message.subject('A new forum post requires your attention!')
+    //     })
+    // }
     const time2 = new Date()
     session.flash({
       success: `Sucessfully created a post ${share ? 'and shared it among users ' : ''} in ${(time2 - time1) / 1000} seconds`,
@@ -202,8 +221,6 @@ class PostController {
     if (auth.user.id !== post.user_id && !request.granted) {
       throw new NotAuthorizedException()
     }
-    post.title = title
-    post.text = text
     if (tags) post.tags = tags
     if (img) {
       // await img.move(Helpers.tmpPath('uploads'), {
@@ -225,6 +242,27 @@ class PostController {
       post.img_path = cloudinaryResponse.secure_url
     }
     await post.save()
+
+    const locales = use('Locales').arr
+    locales.forEach(async (locale, ind) => {
+      let action;
+      const updQuery = PostTranslation.query()
+        .where('post_id', id).andWhere('locale', locale)
+      if (await updQuery.first()) { // if such translation exists
+        await updQuery.update({
+          title: title[ind],
+          text: text[ind]
+        })
+      } else if (text[ind] && title[ind]) { // if such translation doesn`t exist
+        await PostTranslation.create({
+          post_id: id,
+          title: title[ind],
+          text: text[ind],
+          locale
+        })
+      }
+    })
+
     session.flash({ success: `Updated post "${post.title}"` })
     return response.redirect('back')
   }

@@ -1,8 +1,10 @@
 {
     "actions": "Дії",
     "delete": "Видалити",
+    "edit": "Редагувати",
     "confirm": "Підтвердити",
     "cancel": "Скасувати",
     "close": "Закрити",
-    "areYouSure": "Ви впевнені?"
+    "areYouSure": "Ви впевнені?",
+    "languagePromt": "Мова"
 }

@@ -1,6 +1,12 @@
 @layout('layouts.admin')
 
 @section('head')
+<script>
+    transl.titles = {
+        edit: "{{ __('roles.edit') }}",
+        create: "{{ __('roles.create') }}"
+    }
+</script>
 {{ script('admin/assets/js/core/libraries/jquery_ui/interactions.min.js') }}
 {{ script('admin/assets/js/plugins/forms/selects/select2.min.js') }}
 {{ script('admin/assets/js/pages/form_select2.js') }}
@@ -32,7 +38,7 @@
 <div class="content">
 
     <div id="role-modal" class="modal fade">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-indigo-600">
                     <button type="button" class="close" data-dismiss="modal">×</button>
@@ -156,6 +162,13 @@
     <!-- /search field -->
 <!-- Search results -->
 </div>
+
+<script>
+    const perms = {
+        edit: {{ ACL.has(Access.REDACT_ROLES) }},
+        delete: {{ ACL.has(Access.DELETE_ROLES) }}
+    }
+</script>
 
 {{ script('assets/js/roles/index.js') }}
 

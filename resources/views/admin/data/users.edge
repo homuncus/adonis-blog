@@ -1,6 +1,17 @@
 @layout('layouts.admin')
 
 @section('head')
+<script>
+    transl.titles = {
+        edit: "{{ __('users.edit') }}",
+        create: "{{ __('users.create') }}"
+    }
+    transl.regSection = {
+        email: "{{ __('users.emailPromt') }}",
+        password: "{{ __('users.passwordPromt') }}",
+        confirmPassword: "{{ __('users.confirmPasswordPromt') }}"
+    }
+</script>
 {{ script('assets/js/users/modals.js') }}
 {{ script('admin/assets/js/plugins/forms/selects/select2.min.js') }}
 {{ script('admin/assets/js/pages/form_select2.js') }}
@@ -156,5 +167,14 @@
 
     <!-- Search results -->
 </div>
+
+<script>
+    const perms = {
+        edit: {{ ACL.has(Access.REDACT_USERS) }},
+        delete: {{ ACL.has(Access.DELETE_USERS) }}
+    }
+</script>
+
 {{ script('assets/js/users/index.js') }}
+
 @endsection

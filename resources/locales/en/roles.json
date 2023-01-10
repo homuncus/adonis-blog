@@ -3,6 +3,7 @@
     "subject": "Roles",
     "tableName": "Roles table",
     "create": "Create Role",
+    "edit": "Edit role",
     "delete": "Delete role",
     
     "namePromt": "Enter role name:",

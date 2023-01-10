@@ -1,8 +1,10 @@
 {
     "actions": "Actions",
     "delete": "Delete",
+    "edit": "Edit",
     "confirm": "Confirm",
     "cancel": "Cancel",
     "close": "Close",
-    "areYouSure": "Are you sure?"
+    "areYouSure": "Are you sure?",
+    "languagePromt": "Language"
 }

@@ -18,8 +18,8 @@ $('#posts-table').DataTable({
             </button>
 
             <ul class="dropdown-menu dropdown-menu-right">
-              <li><a class="edit-post" data-post-id="${row.id}" data-toggle="modal" data-target="#post-modal"><i class="icon-pencil3"></i> Edit</a></li>
-              <li><a class="delete-post" data-post-id="${row.id}" data-toggle="modal" data-target="#post-delete"><i class="icon-trash"></i> Delete</a></li>
+              ${perms.edit ? `<li><a class="edit-post" data-post-id="${row.id}" data-toggle="modal" data-target="#post-modal"><i class="icon-pencil3"></i> ${transl.edit}</a></li>` : ''}
+              ${perms.delete ? `<li><a class="delete-post" data-post-id="${row.id}" data-toggle="modal" data-target="#post-delete"><i class="icon-trash"></i> ${transl.delete}</a></li>` : ''}              
             </ul>
           </div>
         `;

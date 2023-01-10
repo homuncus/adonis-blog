@@ -3,8 +3,10 @@
     "subject": "Benutzer",
     "tableName": "Tabelle der Benutzer",
     "create": "einen Benutzer erstellen",
+    "edit": "Benutzer redigieren",
     "delete": "Benutzer entfernen",
     
+    "emailPromt": "Gebe einen Benutzer e-mail ein",
     "namePromt": "Gebe einen Benutzernamen ein",
     "namePlaceholder": "Baller, Saulus Gutmann...",
     "rolePromt": "Wählen Sie eine Benutzerrolle aus",

@@ -7,9 +7,10 @@ class PostStore {
   }
 
   get messages() {
+    const { antl } = this.ctx
     return {
-      'title.required': 'Post should have a title',
-      'text.required': 'Post should have a text'
+      'title.required': antl.formatMessage('validation.post.title.required'),
+      'text.required': antl.formatMessage('validation.post.text.required')
     }
   }
 }

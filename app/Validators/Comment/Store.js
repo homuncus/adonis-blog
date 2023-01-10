@@ -6,8 +6,9 @@ class CommentStore {
   }
 
   get messages() {
+    const { antl } = this.ctx
     return {
-      'value.required': 'Commentaries cannot be empty'
+      'value.required': antl.formatMessage('comment.value.required')
     }
   }
 }

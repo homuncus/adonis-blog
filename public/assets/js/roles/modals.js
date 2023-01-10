@@ -6,7 +6,7 @@ $(() => {
   });
 
   $(document).on('click', '#create-role', (event) => {
-    $('#role-modal #modal-title').text('Create role')
+    $('#role-modal #modal-title').text(transl.titles.create)
     $('#role-modal form')
       .attr({
         action: '/admin/roles'
@@ -15,7 +15,7 @@ $(() => {
 
   $(document).on('click', '.edit-role', (event) => {
     const url = `/admin/roles/${event.target.dataset.roleId}`
-    $('#role-modal #modal-title').text('Edit role')
+    $('#role-modal #modal-title').text(transl.titles.edit)
     $('#role-modal form')
       .attr({
         action: `${url}?_method=PATCH`

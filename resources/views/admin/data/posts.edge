@@ -1,6 +1,13 @@
 @layout('layouts.admin')
 
 @section('head')
+<script>
+    transl.titles = {
+        edit: "{{ __('posts.edit') }}",
+        create: "{{ __('posts.create') }}"
+    }
+    const locales = {{toJSON(locales.arr).replaceAll('"', '`')}}
+</script>
 {{ script('admin/assets/js/plugins/uploaders/fileinput.min.js') }}
 {{ script('admin/assets/js/pages/uploader_bootstrap.js') }}
 {{ script('assets/js/posts/modals.js') }}
@@ -40,25 +47,48 @@
                     <h5 id="modal-title" class="modal-title">{{ __('posts.create') }}</h5>
                 </div>
                 <form action="/admin/posts" method="POST">
+                    <ul class="nav nav-tabs nav-tabs-lg nav-justified nav-tabs-component" style="margin-bottom: 0">
+                        <li class="dropdown active">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">{{ __('tables.languagePromt') }} <span class="caret"></span></a>
+                            <ul class="dropdown-menu dropdown-menu-right">
+                                <li class="active"><a href="#ua" data-toggle="tab" aria-expanded="false">{{ __('languages.ua') }}</a></li>
+                                <li class=""><a href="#en" data-toggle="tab" aria-expanded="false">{{ __('languages.en') }}</a></li>
+                                <li class=""><a href="#de" data-toggle="tab" aria-expanded="false">{{ __('languages.de') }}</a></li>
+                            </ul>
+                        </li>
+                    </ul>
                     {{ csrfField() }}
-                    <div class="modal-body">
-                        <div class="form-group has-feedback
-                        @if(hasErrorFor('title'))
-                        has-error
-                        @endif
-                        ">
-                            <label>{{ __('posts.titlePromt') }}:</label>
-                            <input id="postTitle" type="text" name="title" class="form-control" value="{{ old('title', '') }}" placeholder="{{ __('posts.titlePlaceholder') }}">
-                            {{ elIf('<span class="help-block">$self</span>', getErrorFor('title'), hasErrorFor('title')) }}
-                        </div>
-                        <div class="form-group has-feedback
-                        @if(hasErrorFor('text'))
-                        has-error
-                        @endif
-                        ">
-                            <label>{{ __('posts.textPromt') }}:</label>
-                            <textarea name="text" id="editor-full" rows="4" cols="4" placeholder="{{ __('posts.textPlaceholder') }}" required>{{ old('text', '') }}</textarea>
-                            {{ elIf('<span class="help-block">$self</span>', getErrorFor('text'), hasErrorFor('text')) }}
+                    <div class="modal-body" style="padding-top:0">
+                        <div class="tab-content">
+
+                            @each((locale, index) in locales.arr)
+                            <div class="tab-pane 
+                            @if(index == 0)
+                            active
+                            @endif
+                            " id="{{locale}}">
+                                <div class="text-center text-size-large"><ins>{{ __('languages.'+locale) }}</ins></div>
+                                <div class="form-group has-feedback
+                                @if(hasErrorFor('title'))
+                                has-error
+                                @endif
+                                ">
+                                    <label>{{ __('posts.titlePromt') }}:</label>
+                                    <input id="postTitle" type="text" name="title" class="form-control" value="{{ old('title', '') }}" placeholder="{{ __('posts.titlePlaceholder') }}">
+                                    {{ elIf('<span class="help-block">$self</span>', getErrorFor('title'), hasErrorFor('title')) }}
+                                </div>
+                                <div class="form-group has-feedback
+                                @if(hasErrorFor('text'))
+                                has-error
+                                @endif
+                                ">
+                                    <label>{{ __('posts.textPromt') }}:</label>
+                                    <textarea name="text" class="ckeditor" id="editor" rows="4" cols="4" placeholder="{{ __('posts.textPlaceholder') }}" required>{{ old('text', '') }}</textarea>
+                                    {{ elIf('<span class="help-block">$self</span>', getErrorFor('text'), hasErrorFor('text')) }}
+                                </div>
+                            </div>
+                            @endeach
+
                         </div>
                         <div class="form-group">
                             <label>{{ __('posts.tagsPromt') }}: </label>
@@ -80,6 +110,9 @@
                         <button type="submit" class="btn btn-flat bg-indigo-600">{{ __('tables.confirm') }}</button>
                     </div>
                 </form>
+                <script>
+
+                </script>
             </div>
         </div>
     </div>
@@ -144,6 +177,13 @@
 
     <!-- Search results -->
 </div>
+
+<script>
+    const perms = {
+        edit: {{ ACL.has(Access.REDACT_POSTS) }},
+        delete: {{ ACL.has(Access.DELETE_POSTS) }}
+    }
+</script>
 
 {{ script('assets/js/posts/index.js') }}
 

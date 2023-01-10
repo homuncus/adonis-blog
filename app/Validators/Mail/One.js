@@ -6,8 +6,9 @@ class MailOne {
   }
 
   get messages() {
+    const { antl } = this.ctx
     return {
-      'text.required': 'Please enter the e-mail body'
+      'text.required': antl.formatMessage('mail.text.required')
     }
   }
 }

@@ -9,14 +9,15 @@ class StoreUser {
   }
 
   get messages() {
+    const { antl } = this.ctx
     return {
-      'username.required': 'You must provide your username.',
-      'username.unique': 'User with this username already exists.',
-      'email.required': 'You must provide a email address.',
-      'email.email': 'You must provide a valid email address.',
-      'email.unique': 'This email is already registered.',
-      'password.required': 'You must provide a password.',
-      'confirmPassword.equals': 'Passwords are not equal.'
+      'username.required': antl.formatMessage('user.username.required'),
+      'username.unique': antl.formatMessage('user.username.unique'),
+      'email.required': antl.formatMessage('user.email.required'),
+      'email.email': antl.formatMessage('user.email.email'),
+      'email.unique': antl.formatMessage('user.email.unique'),
+      'password.required': antl.formatMessage('user.password.required'),
+      'confirmPassword.equals': antl.formatMessage('user.confirmPassword.equals')
     }
   }
 }

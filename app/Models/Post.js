@@ -7,7 +7,6 @@ class Post extends Model {
     super.boot()
     this.addHook('afterFetch', (posts) => {
       posts.forEach((post) => {
-        post.reading_time = Math.ceil(posts[0].text.split(' ').length / 225)
         const _diffDays = (new Date() - new Date(post.created_at)) / (1000 * 60 * 60 * 24)
         if (_diffDays > 1) {
           post.pub_date = moment(post.created_at).format('MMM Do, YYYY')

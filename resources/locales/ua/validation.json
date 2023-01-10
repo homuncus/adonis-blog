@@ -1,0 +1,20 @@
+{
+    "comment.value.required": "Коментарій не може бути пустим.",
+
+    "mail.message.required": "Будь ласка, введіть текст листа.",
+    "mail.users.required": "Виберіть щонайменьше одного користувача для листування.",
+
+    "post.title.required": "Допис повинен мати заголовок.",
+    "post.text.required": "Допис повинен мати текст.",
+
+    "role.name.required": "Будь ласка, введіть імя ролі.",
+    "role.name.unique": "Роль з такою назвою вже існує.",
+
+    "user.username.required": "Введіть логін користувача.",
+    "user.username.unique": "Користувач з таким логіном вже існує.",
+    "user.email.required": "Введіть адресу електронної пошти користувача.",
+    "user.email.email": "Некоректний формат адреси електронної пошти.",
+    "user.email.unique": "Користувач з такою поштою вже існує.",
+    "user.password.required": "Введіть пароль.",
+    "user.confirmPassword.equals": "Паролі не співпадають."
+}

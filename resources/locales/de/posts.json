@@ -3,6 +3,7 @@
     "subject": "Beiträge",
     "tableName": "Tabelle der Beiträge",
     "create": "einen Beitrag erstellen",
+    "edit": "Beitrag redigieren",
     "delete": "Beitrag entfernen",
     
     "titlePromt": "Geben Sie einen Beitragstitel ein",

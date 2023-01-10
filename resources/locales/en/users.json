@@ -3,8 +3,10 @@
     "subject": "Users",
     "tableName": "Users table",
     "create": "Create User",
+    "edit": "Edit user",
     "delete": "Delete user",
     
+    "emailPromt": "Enter user e-mail",
     "namePromt": "Enter user name:",
     "namePlaceholder": "Baller, Saul Goodman...",
     "rolePromt": "Select user role",

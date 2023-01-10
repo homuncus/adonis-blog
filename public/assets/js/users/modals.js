@@ -7,24 +7,24 @@ $(() => {
   });
 
   $(document).on('click', '#create-user', (event) => {
-    $('#user-modal #modal-title').text('Create user')
+    $('#user-modal #modal-title').text(transl.titles.create)
     $('#user-modal form')
       .attr({
         action: '/admin/users'
       })
     $('#user-registers').html(`
       <div class="form-group">
-        <label>Enter user e-mail:</label>
+        <label>${transl.regSection.email}:</label>
         <input type="email" name="email" class="form-control"
           placeholder="email@test.com" required>
       </div>
       <div class="form-group">
-        <label>Enter user password:</label>
+        <label>${transl.regSection.password}:</label>
         <input type="password" name="password" class="form-control"
           placeholder="********" required>
       </div>
       <div class="form-group">
-        <label>Confirm user password:</label>
+        <label>${transl.regSection.confirmPassword}</label>
         <input type="password" name="confirmPassword" class="form-control"
           placeholder="********" required>
       </div>
@@ -33,7 +33,7 @@ $(() => {
 
   $(document).on('click', '.edit-user', (event) => {
     const url = `/admin/users/${event.target.dataset.userId}`
-    $('#user-modal #modal-title').text('Edit user')
+    $('#user-modal #modal-title').text(transl.titles.edit)
     $('#user-modal form')
       .attr({
         action: `${url}?_method=PATCH`

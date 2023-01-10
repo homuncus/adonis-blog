@@ -25,6 +25,12 @@
 
 	<!-- Theme JS files -->
 	{{ script('admin/assets/js/core/app.js') }}
+	<script>
+		const transl = {
+			edit: "{{ __('tables.edit') }}",
+			delete: "{{ __('tables.delete') }}"
+		}
+	</script>
     @!section('head')
 	<!-- /theme JS files -->
   </head>
@@ -57,9 +63,9 @@
 					</a>
 
 					<ul class="dropdown-menu">
-						<li><a class="deutsch" href="/switch/de"><img src="{{assetsUrl('admin/assets/images/flags/de.png')}}" alt=""> Deutsch</a></li>
 						<li><a class="ukrainian" href="/switch/ua"><img src="{{assetsUrl('admin/assets/images/flags/ua.png')}}" alt=""> Українська</a></li>
 						<li><a class="english" href="/switch/en"><img src="{{assetsUrl('admin/assets/images/flags/en.png')}}" alt=""> English</a></li>
+						<li><a class="deutsch" href="/switch/de"><img src="{{assetsUrl('admin/assets/images/flags/de.png')}}" alt=""> Deutsch</a></li>
 						<li><a class="espana" href="/switch/es"><img src="{{assetsUrl('admin/assets/images/flags/es.png')}}" alt=""> España</a></li>
 					</ul>
 				</li>

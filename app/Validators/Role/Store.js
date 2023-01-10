@@ -6,9 +6,10 @@ class RoleStore {
   }
 
   get messages() {
+    const { antl } = this.ctx
     return {
-      'name.required': 'Please provide role name',
-      'name.unique': 'There is such role name'
+      'name.required': antl.formatMessage('role.name.required'),
+      'name.unique': antl.formatMessage('role.name.unique')
     }
   }
 }

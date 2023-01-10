@@ -1,0 +1,20 @@
+{
+    "comment.value.required": "Commentaries cannot be empty",
+
+    "mail.message.required": "Please enter the e-mail body",
+    "mail.users.required": "Select at least one user to e-mail",
+
+    "post.title.required": "Post should have a title",
+    "post.text.required": "Post should have a text",
+
+    "role.name.required": "Please provide role name",
+    "role.name.unique": "There is such role name",
+
+    "user.username.required": "You must provide your username.",
+    "user.username.unique": "User with this username already exists.",
+    "user.email.required": "You must provide a email address.",
+    "user.email.email": "You must provide a valid email address.",
+    "user.email.unique": "This email is already registered.",
+    "user.password.required": "You must provide a password.",
+    "user.confirmPassword.equals": "Passwords are not equal."
+}
